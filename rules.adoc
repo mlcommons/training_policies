@@ -3,7 +3,7 @@
 
 :sectnums:
 
-= MLPerf User Guide
+= MLPerf Rules
 Version 0.5 
 May 2nd, 2018
 
