@@ -102,7 +102,8 @@ The MLPerf organization provides a reference implementation of each benchmark, w
 Code that implements the model in a framework.
 
 A plain text “README.md” file that describes:
-** Problem 
+
+* Problem 
 ** Dataset/Environment
 ** Publication/Attribution
 ** Data preprocessing
@@ -127,7 +128,9 @@ A plain text “README.md” file that describes:
 ** Steps to run and time
 
 A “download_dataset” script that downloads the dataset.
+
 A “verify_dataset” script that verifies the dataset against the checksum.
+
 A “run_and_time” script that executes the benchmark and reports the wall-clock time.
 
 == Divisions
