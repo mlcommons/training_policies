@@ -15,35 +15,35 @@ The MLPerf name and logo are trademarks. In order to refer to a result using the
 === Definitions (read this section carefully)
 The following definitions are used throughout this document:
 
-Performance always refers to execution speed.
+_Performance_ always refers to execution speed.
 
-Quality always refers to a model’s ability to produce “correct” outputs.
+_Quality_ always refers to a model’s ability to produce “correct” outputs.
 
-A system consists of a defined set of hardware resources such as processors, memories, disks, and interconnect. It also includes specific versions of all software such as operating system, compilers, libraries, and drivers that significantly influences the running time of a benchmark, excluding the ML framework.
+A _system_ consists of a defined set of hardware resources such as processors, memories, disks, and interconnect. It also includes specific versions of all software such as operating system, compilers, libraries, and drivers that significantly influences the running time of a benchmark, excluding the ML framework.
 
-A framework is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
+A _framework_ is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
 
-A benchmark is an abstract problem that can be solved using ML by training a model based on a specific dataset or simulation environment to a target quality level. 
+A _benchmark_ is an abstract problem that can be solved using ML by training a model based on a specific dataset or simulation environment to a target quality level. 
 
-A suite is a specific set of benchmarks.
+A _suite_ is a specific set of benchmarks.
 
-A division is a set of rules for implementing a suite to produce a class of comparable results.
+A _division_ is a set of rules for implementing a suite to produce a class of comparable results.
 
-A reference implementation is a specific implementation of a benchmark provided by the MLPerf organization. 
+A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization. 
 
-A benchmark implementation is an implementation of a benchmark in a particular framework by a user under the rules of a specific division.
+A _benchmark implementation_ is an implementation of a benchmark in a particular framework by a user under the rules of a specific division.
 
-A suite implementation is a set of benchmark implementations for the entire suite using the same framework under the rules of a specific division.
+A _suite implementation_ is a set of benchmark implementations for the entire suite using the same framework under the rules of a specific division.
 
-A run is a complete execution of an implementation on a system, training a model from initialization to the quality target.
+A _run_ is a complete execution of an implementation on a system, training a model from initialization to the quality target.
 
-A run result is the wallclock time required for a run.
+A _run result_ is the wallclock time required for a run.
 
-A reference result is the median of five run results provided by the MLPerf organization for each reference implementation
+A _reference result_ is the median of five run results provided by the MLPerf organization for each reference implementation
 
-A benchmark result is the median of five run results normalized to the reference result for that benchmark. Normalization is of the form (reference result / benchmark result) such that a better benchmark result produces a higher number.
+A _benchmark result_ is the median of five run results normalized to the reference result for that benchmark. Normalization is of the form (reference result / benchmark result) such that a better benchmark result produces a higher number.
 
-A suite result is the geometric mean of the benchmark results for a suite implementation under the rules of a division.
+A _suite result_ is the geometric mean of the benchmark results for a suite implementation under the rules of a division.
 
 == General rules
 The following rules apply to all benchmark implementations.
@@ -66,10 +66,11 @@ Source code used for the benchmark implementations must be open-sourced under a 
 
 === Non-determinism is restricted
 The only forms of acceptable non-determinism are:
-Floating point operation order
-Random initialization of the weights and/or biases
-Random traversal of the inputs
-Reinforcement learning exploration decisions
+
+* Floating point operation order
+* Random initialization of the weights and/or biases
+* Random traversal of the inputs
+* Reinforcement learning exploration decisions
 
 All random numbers must be drawn from the framework’s stock random number generator. The random number generator seed must entirely determine its output sequence. Random numbers must be utilized in a logical and consistent order across runs.
 
@@ -84,70 +85,46 @@ The implementation should not encode any information about the content of the da
 == Benchmarks
 The benchmark suite consists of the benchmarks shown in the following table.
 
-Area
-Problem
-Dataset
-Quality Target
-Vision
-Image classification
-ImageNet
-74.90% classification
+|===
+|Area|Problem |Dataset |Quality Target
 
-
-Object detection
-COCO
-0.377 Box min AP and 0.339 Mask min AP
-Language
-Translation
-WMT
-English-German
-25.00 BLEU
-
-
-Speech recognition
-Librispeech
-23.00 WER
-Commerce
-Recommendation
-MovieLens-20M
-0.9562 HR@10
-
-
-Sentiment analysis
-IMDB
-90.60% accuracy
-General
-Reinforcement learning
-Go
-40.00% pro move prediction
+|Vision |Image classification |ImageNet |74.90% classification
+| |Object detection |COCO |0.377 Box min AP and 0.339 Mask min AP
+|Language |Translation |WMT English-German |25.00 BLEU
+| |Speech recognition |Librispeech |23.00 WER
+|Commerce |Recommendation |MovieLens-20M |0.9562 HR@10
+| |Sentiment analysis |IMDB |90.60% accuracy
+|General |Reinforcement learning |Go |40.00% pro move prediction
+|===
 
 The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
 
 Code that implements the model in a framework.
+
 A plain text “README.md” file that describes:
-Problem 
-Dataset/Environment
-Publication/Attribution
-Data preprocessing
-Training and test data separation
-Training data order
-Test data order
-Simulation environment (RL models only)
-Model
-Publication/Attribution
-List of layers 
-Weight and bias initialization
-Loss function
-Optimizer
-Quality
-Quality metric
-Quality target
-Evaluation frequency (training items between quality evaluations)
-Evaluation thoroughness (test items per quality evaluation)
-Directions
-Steps to configure machine
-Steps to download and verify data
-Steps to run and time
+** Problem 
+** Dataset/Environment
+** Publication/Attribution
+** Data preprocessing
+** Training and test data separation
+** Training data order
+** Test data order
+** Simulation environment (RL models only)
+* Model
+** Publication/Attribution
+** List of layers 
+** Weight and bias initialization
+** Loss function
+** Optimizer
+* Quality
+** Quality metric
+** Quality target
+** Evaluation frequency (training items between quality evaluations)
+** Evaluation thoroughness (test items per quality evaluation)
+* Directions
+** Steps to configure machine
+** Steps to download and verify data
+** Steps to run and time
 
 A “download_dataset” script that downloads the dataset.
 A “verify_dataset” script that verifies the dataset against the checksum.
@@ -161,34 +138,17 @@ The Closed division requires using the same preprocessing, model, and training m
 
 The closed division models are:
 
-Area
-Problem
-Model
-Vision
-Image classification
-Resnet-50 v1
+|===
+|Area |Problem |Model
 
-
-Object detection
-Mask R-CNN
-Language
-Translation
-Transformer
-
-
-Speech recognition
-Deep Speech 2
-Commerce
-Recommendation
-Neural Collaborative Filtering
-
-
-Sentiment analysis
-Seq2-BowN-CNN
-General
-Reinforcement learning
-Mini Go (based on Alpha Go paper)
-
+|Vision |Image classification |Resnet-50 v1
+| |Object detection |Mask R-CNN
+|Language |Translation |Transformer
+| |Speech recognition |Deep Speech 2
+|Commerce |Recommendation |Neural Collaborative Filtering
+| |Sentiment analysis |Seq2-BowN-CNN
+|General |Reinforcement learning |Mini Go (based on Alpha Go paper)
+|===
 
 The unqualified name “MLPerf” must be used when referring to a Closed Division suite result, e.g. “a MLPerf result of 4.5.”
 
