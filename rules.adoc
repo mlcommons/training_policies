@@ -91,7 +91,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Vision |Image classification |ImageNet |74.90% classification
 | |Object detection |COCO |0.377 Box min AP and 0.339 Mask min AP
 |Language |Translation |WMT English-German |25.00 BLEU
-| |Speech recognition |Librispeech |23.00 WER
+| |Speech recognition |Librispeech-clean+other |23.00 WER
 |Commerce |Recommendation |MovieLens-20M |0.9562 HR@10
 | |Sentiment analysis |IMDB |90.60% accuracy
 |General |Reinforcement learning |Go |40.00% pro move prediction
