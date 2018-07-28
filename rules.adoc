@@ -89,11 +89,12 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Area|Problem |Dataset |Quality Target
 
 |Vision |Image classification |ImageNet |74.90% classification
-| |Object detection |COCO |0.377 Box min AP and 0.339 Mask min AP
-|Language |Translation |WMT English-German |25.00 BLEU
-| |Speech recognition |Librispeech-clean+other |23.00 WER
+| |Object detection (light weight) |COCO |TBD
+| |Object detection (heavy weight) |COCO |0.377 Box min AP and 0.339 Mask min AP
+|Language |Speech recognition |Librispeech-clean+other |23.00 WER
+| |Translation (recurrent) |WMT English-German |TBD
+| |Translation (non-recurrent) |WMT English-German |25.00 BLEU
 |Commerce |Recommendation |MovieLens-20M |0.9562 HR@10
-| |Sentiment analysis |IMDB |90.60% accuracy
 |General |Reinforcement learning |Go |40.00% pro move prediction
 |===
 
@@ -145,11 +146,12 @@ The closed division models are:
 |Area |Problem |Model
 
 |Vision |Image classification |Resnet-50 v1
-| |Object detection |Mask R-CNN
-|Language |Translation |Transformer
-| |Speech recognition |Deep Speech 2
+| |Object detection (light weight)|SDD
+| |Object detection (heavy weight) |Mask R-CNN
+|Language |Speech recognition |Deep Speech 2
+| |Translation (recurrent) |NMT
+| |Translation (non-recurrent) |Transformer
 |Commerce |Recommendation |Neural Collaborative Filtering
-| |Sentiment analysis |Seq2-BowN-CNN
 |General |Reinforcement learning |Mini Go (based on Alpha Go paper)
 |===
 
