@@ -30,11 +30,11 @@ just getting started, Github has a [howto](https://help.github.com/articles/usin
 
 ### Contribution guidelines and standards
 
-Technical details TBD by community.
+(Peter Mattson's note: Technical details TBD by community.)
 
 #### General guidelines and philosophy for contribution
 
-Technical details TBD by community.
+(Peter Mattson's note: Technical details TBD by community.)
 
 #### License
 
@@ -45,17 +45,17 @@ Include a license at the top of new files.
 
 #### C++ coding style
 
-Technical details TBD by community.
+(Peter Mattson's note: Technical details TBD by community.)
 
 #### Python coding style
 
-Technical details TBD by community.
+(Peter Mattson's note: Technical details TBD by community.)
 
 #### Running sanity check
 
-Technical details TBD by community.
+(Peter Mattson's note: Technical details TBD by community.)
 
 #### Running unit tests
 
-Technical details TBD by community.
+(Peter Mattson's note: Technical details TBD by community.)
 
