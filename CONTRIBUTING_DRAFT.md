@@ -21,7 +21,7 @@ Please fill out either the individual or corporate Contributor License Agreement
 
 Follow either of the two links above to access the appropriate CLA and instructions for how to sign and return it. Once we receive it, we'll be able to accept your pull requests.
 
-***NOTE***: Only original source code from you and other people that have signed the CLA can be accepted into the main repository. (Peter Mattson's note: we need to modify this to allow third party code under Apache2 or MIT license with additional review.)
+***NOTE***: Only original source code from you and other people that have signed the CLA can be accepted into the main repository. (Note: we need to modify this to allow third party code under Apache2 or MIT license with additional review.)
 
 ### Contributing code
 
@@ -30,11 +30,11 @@ just getting started, Github has a [howto](https://help.github.com/articles/usin
 
 ### Contribution guidelines and standards
 
-(Peter Mattson's note: Technical details TBD by community.)
+(Note: Technical details TBD by community.)
 
 #### General guidelines and philosophy for contribution
 
-(Peter Mattson's note: Technical details TBD by community.)
+(Note: Technical details TBD by community.)
 
 #### License
 
@@ -45,17 +45,16 @@ Include a license at the top of new files.
 
 #### C++ coding style
 
-(Peter Mattson's note: Technical details TBD by community.)
+(Note: Technical details TBD by community.)
 
 #### Python coding style
 
-(Peter Mattson's note: Technical details TBD by community.)
+(Note: Technical details TBD by community.)
 
 #### Running sanity check
 
-(Peter Mattson's note: Technical details TBD by community.)
+(Note: Technical details TBD by community.)
 
 #### Running unit tests
 
-(Peter Mattson's note: Technical details TBD by community.)
-
+(Note: Technical details TBD by community.)
