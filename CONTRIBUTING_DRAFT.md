@@ -41,7 +41,7 @@ just getting started, Github has a [howto](https://help.github.com/articles/usin
 Include a license at the top of new files.
 
 * [C/C++ license example](https://github.com/mlperf/policies/blob/master/license_example_DRAFT.cpp)
-* [Python license example](https://github.com/mlperf/policies/blob/master/license_example_DRAFT.cpy)
+* [Python license example](https://github.com/mlperf/policies/blob/master/license_example_DRAFT.py)
 
 #### C++ coding style
 
