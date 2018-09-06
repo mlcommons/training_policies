@@ -1,4 +1,4 @@
-# Contributing guidelines
+# Contributing guidelines (DRAFT NOT APPROVED)
 
 ## Pull Request Checklist
 
