@@ -6,7 +6,7 @@ Before sending your pull requests, make sure you followed this list.
 
 - Read [contributing guidelines](CONTRIBUTING_DRAFT.md)
 - Ensure you have signed the [Contributor License Agreement (CLA)](https://cla.developers.google.com/).
-- Additional technical details TBD.
+- (Note: additional technical details TBD by community.)
 
 ## How to become a contributor and submit your own code
 
