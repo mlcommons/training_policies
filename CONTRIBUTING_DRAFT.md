@@ -40,8 +40,8 @@ just getting started, Github has a [howto](https://help.github.com/articles/usin
 
 Include a license at the top of new files.
 
-* [C/C++ license example](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/framework/op.cc#L1)
-* [Python license example](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/nn.py#L1)
+* [C/C++ license example](https://github.com/mlperf/policies/blob/master/license_example_DRAFT.cpp)
+* [Python license example](https://github.com/mlperf/policies/blob/master/license_example_DRAFT.cpy)
 
 #### C++ coding style
 
