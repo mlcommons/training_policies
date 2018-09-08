@@ -3,12 +3,12 @@
 
 :sectnums:
 
-= MLPerf Rules
+= MLPerf Training Rules
 Version 0.5 
 May 2nd, 2018
 
 == Overview
-This document describes how to implement the MLPerf Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
+This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
 
