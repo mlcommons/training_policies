@@ -165,20 +165,32 @@ The qualified name “MLPerf Open” must be used when referring to an Open Divi
 == Data Set
 
 === Data State at Start of Run
-Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The dataset must be unchanged at the start of each run.
+Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. 
 
-=== Preprocessing 
-All preprocessing time is included in the wall-clock time for a run result.
+The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. This policy is intended to simplify v0.5 and will be reconsidered.  
+
+You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
+
+=== Preprocessing During the Run
+Only preprocessing that must be done for each run (e.g. random transformations) must be timed.
 
 CLOSED: The same preprocessing steps as the reference implementation must be used. 
 
 OPEN: Any preprocessing steps are allowed. However, each datum must be preprocessed individually in a manner that is not influenced by any other data.
 
+=== Data Representation
+
+CLOSED: Images must have the same size as in the reference implementation. Mathematically equivalent padding of images is allowed.
+
+CLOSED: For benchmarks with sequence inputs, you may choose a length N and either truncate all examples to length N or throw out all examples which exceed length N. This must be done uniformly for all examples. This may only be done on the training set and not the evaluation set. 
+
+OPEN: The closed division data representations restrictions only apply at the start of the run. Data may be represented in an arbitrary fashion during the run.
+
 === Training and Test Sets
 If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
 
 === Training Data Order
-CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size and the random number generator will affect order.
+CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Future versions of the benchmark suite may specify the Closed traversal order.
 
