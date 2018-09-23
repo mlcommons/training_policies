@@ -285,7 +285,7 @@ Include the total cost of obtaining the median run result using fixed prices for
 Report everything that will eventually be required by a third-party user to replicate the result when the hardware and software becomes widely available. 
 
 ==== Power
-Include the total power consumed to produce the median run result.
+For v0.5, power information is not required. You may optionally include a hyperlink to power information for the system.
 
 == Submissions
 The MLPerf organization will create a database that collects submission data; one feature of the database is producing a leaderboard. 
