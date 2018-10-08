@@ -227,7 +227,7 @@ CLOSED: Weights and biases must be initialized using the same constant or random
 OPEN: Weights and biases must be initialized using a consistent constant or random value distribution. 
 
 === Graph Execution
-CLOSED: Frameworks are free to optimize the “non-stateful” parts of the computation graph provided that the semantics are unchanged. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, and loop-invariant code motion are entirely allowed.
+CLOSED: Frameworks are free to optimize the non-weight parts of the computation graph provided that the changes are mathematically equivalent. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, loop-invariant code motion, and recomputation of node state are entirely allowed. 
 
 OPEN: Frameworks are free to alter the graph.
 
