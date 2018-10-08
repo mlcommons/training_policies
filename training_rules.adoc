@@ -27,13 +27,13 @@ A _benchmark_ is an abstract problem that can be solved using ML by training a m
 
 A _suite_ is a specific set of benchmarks.
 
-A _division_ is a set of rules for implementing a suite to produce a class of comparable results.
+A _division_ is a set of rules for implementing benchmarks friom a suite to produce a class of comparable results.
 
 A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization. 
 
 A _benchmark implementation_ is an implementation of a benchmark in a particular framework by a user under the rules of a specific division.
 
-A _suite implementation_ is a set of benchmark implementations for the entire suite using the same framework under the rules of a specific division.
+A _submission implementation set_ is a set of benchmark implementations for one or more benchmarks from a suite under the rules of a specific division using the same framework.
 
 A _run_ is a complete execution of an implementation on a system, training a model from initialization to the quality target.
 
@@ -43,7 +43,11 @@ A _reference result_ is the median of five run results provided by the MLPerf or
 
 A _benchmark result_ is the median of five run results normalized to the reference result for that benchmark. Normalization is of the form (reference result / benchmark result) such that a better benchmark result produces a higher number.
 
-A _suite result_ is the geometric mean of the benchmark results for a suite implementation under the rules of a division.
+A _submission result set_ is a one benchmark result for each benchmark implementation in a  submission implementation set.
+
+A _submission_ is a submission implementation set and a corresponding submission result set.
+
+A _custom summary result_ is the weighted geometric mean of an arbitrary set of results from a specific submission. MLPerf v0.5 endorses this methodology for computing custom summary results but does not endorse any official summary result. 
 
 == General rules
 The following rules apply to all benchmark implementations.
@@ -52,9 +56,7 @@ The following rules apply to all benchmark implementations.
 Benchmarking should be conducted to measure the framework and system performance as fairly as possible. Ethics and reputation matter.
 
 === System and framework must be consistent
-The same system and framework must be used for a suite result or group of benchmark results reported in a single context.
-
-Note that the reference implementations use different frameworks and hence cannot be used collectively for a valid suite result.
+The same system and framework must be used for a submission result set. Note that the reference implementations do not all use the same framework in v0.5.
 
 === System and framework must be available
 If you are measuring the performance of a publicly available and widely-used system or framework, you must use publicly available and widely-used used versions of the system or framework.
@@ -162,12 +164,12 @@ The closed division models are:
 |General |Reinforcement learning |Mini Go (based on Alpha Go paper)
 |===
 
-The unqualified name “MLPerf” must be used when referring to a Closed Division suite result, e.g. “a MLPerf result of 4.5.”
+Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
 
 === Open Division
 The Open division allows using arbitrary preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
 
-The qualified name “MLPerf Open” must be used when referring to an Open Division suite result, e.g. “a MLPerf Open result of 7.2.”
+Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Image Classification Open benchmark, the system achieved a result of 7.2.”
 
 == Data Set
 
@@ -262,8 +264,12 @@ Each benchmark result is the median of five run results produced using the integ
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
 
-== Division Results
-In order to report a division result, a benchmark score must be reported for each benchmark in the suite. The division score is the geometric mean of the benchmark results.
+== Submission Result Set
+All results in a submission result set must be for benchmarks from the same suite and produced under the rules of the same division. Results may be reported for one, some, or all benchmarks. 
+
+All results must be produced using the same framework and system. The only difference in software and hardware between results should be the benchmark implementation. 
+
+An organization or individual may submit multiple submissions.
 
 == Framework Reporting
 Report the framework used, including version.
