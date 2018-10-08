@@ -294,7 +294,7 @@ Report everything that will eventually be required by a third-party user to repl
 For v0.5, power information is not required. You may optionally include a hyperlink to power information for the system.
 
 == Submissions
-The MLPerf organization will create a database that collects submission data; one feature of the database is producing a leaderboard. 
+The MLPerf organization will create a database that collects submission data and a website that presents the results.
 
 === Submission Form
 Submissions to the database must use the provided submission form to report all required information.
