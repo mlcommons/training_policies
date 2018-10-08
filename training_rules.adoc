@@ -234,7 +234,14 @@ OPEN: Frameworks are free to alter the graph.
 == Training Loop
 
 === Hyperparameters
-Hyperparameters (e.g. batch size, learning rate) may be selected to best utilize the framework and system being tested. 
+An arbitrary batch size may be chosen to allow for tailoring the application to the hardware platform’s memory hierarchy. The batch size must be constant for the entire run, with the exception of the final batch in each epoch which may be smaller to account for the remainder when the number of samples is divided by batch.
+
+By default, the only other hyperparameter that may vary is learning rate, because learning rate needs to change to accommodate the change in batch size or different precision. The learning rate schedule is defined relative to the reference implementation using four parameters wb, wr, t, and r:
+- A linear warm-up period of wb batches may be added with a per batch step size wr. It is assumed that the reference implementation learning rate is a constant r0 for more than wb batches. Then the warm up learning rate for batch b is r0 - (wb - b) * wr. The term wr is contrained to be (r0 / (wb * 2^wk)) where wk is a non-negative integer.
+- The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
+- The learning rate may be scaled by a constant factor r, where r is an integer.
+
+Some benchmarks may require extensions of this policy; submitters are encouraged to request extensions based on data.
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
