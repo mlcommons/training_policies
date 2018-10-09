@@ -247,7 +247,7 @@ CLOSED: The same optimizer used in the reference implementation must be used.
 OPEN: Any optimizer must be used, provided that it is used consistently and is deterministic. 
 
 === Quality measure
-Each run must reach a target quality level on the reference implementation quality measure. The time to measure quality is included in the wall-lock time. 
+Each run must reach a target quality level on the reference implementation quality measure. The time to measure quality is included in the wallclock time. 
 
 The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
 
