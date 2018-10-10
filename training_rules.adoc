@@ -291,8 +291,10 @@ If the system is available in the cloud it should be benchmarked in the cloud. O
 ==== Replication recipe
 Report a recipe that starts from a vanilla VM image or Docker container and a sequence of steps that creates the system that performs the benchmark measurement.
 
-==== Price
-Include the total cost of obtaining the median run result using fixed prices for the general public at the time the result is collected. Do not use spot pricing. 
+==== Scale
+Cloud results are presented alongside a _cloud scale_ number which seeks to approximate the cost of the system involved. Cloud scale is main hardware components used in the system. Cloud scale is computed after submission based on a table which relates the set of hardware components to on-demand hourly prices to rent typical systems containing that set. 
+
+The table is populated based on the hourly on-demand price across a specific set of large cloud providers for a specific region, then normalizing all entries to a common system. For the initial v0.5 submission, the set of cloud providers is { Alibaba, Amazon, Google, and Microsoft }, the region is Eastern United States, and the common system is typical system containing 1 NVIDIA P100. Cloud scale for ML accelerators only offered by a subset of the set cloud providers is based on that subset. The table will be updated every submission cycle after submissions but before result posting on a date determined by the cloud scale working group.
 
 === With On-premise Hardware
 
