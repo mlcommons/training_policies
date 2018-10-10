@@ -265,6 +265,21 @@ CLOSED: The numerical formats fp64, fp32, fp16, and bfloat16 are pre-approved fo
 
 OPEN: Any format and scaling may be used.
 
+=== Equivalence exceptions
+The CLOSED division allows limited exemptions to mathematical equivalence between implementations for pragmatic purposes, including:
+
+* Different methods can be used to add color jitter as long as the methods are of a similar distribution and magnitude to the reference.
+
+* If test set size is not evenly divisible by batch size, the last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch.
+
+* Values introduced for padding purposes may be reflected in batch norm computations.
+
+* Adam optimizer implementations may use the very small value epsilon to maintain mathematical stability in slightly different ways, provided that methods are reviewed and approved in advance. One such method involves squaring the value of epsilon and moving epsilon inside the square root in the parameter update equation.
+
+Additional exemptions need to be explicitly requested and approved in advance. In general, exemptions may be approved for techniques that are common industry practice, introduce small differences that would be difficult to engineer around relative to their significance, and do not substantially decrease the required computation. Over time, MLPerf should seek to help the industry converge on standards and remove exemptions.
+
+The OPEN division does not restrict mathematical equivalence.
+
 == Run Results
 A run result consists of a wall-clock timing measurement for an entire run, including model construction, any data preprocessing required to be on the clock, training, and quality testing. The clock may not be paused during the run.
 
