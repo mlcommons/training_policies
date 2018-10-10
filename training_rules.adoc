@@ -162,7 +162,7 @@ Open division benchmarks must be referred to using the benchmark name plus the t
 == Basics 
 
 === Random numbers
-CLOSED: Random numbers must be generated using stock random number generators. All random number generators must be initialized with unique random seeds, such as the system clock. Random number generators may be initialized repeatedly or in muliple processes or threads. 
+CLOSED: Random numbers must be generated using stock random number generators. All random number generators must be initialized with the system clock. Random number generators may be initialized repeatedly or in muliple processes or threads. 
 
 OPEN: Any random number generation may be used.
 
