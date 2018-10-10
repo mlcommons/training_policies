@@ -227,14 +227,23 @@ CLOSED: Weights and biases must be initialized using the same constant or random
 OPEN: Weights and biases must be initialized using a consistent constant or random value distribution. 
 
 === Graph Execution
-CLOSED: Frameworks are free to optimize the “non-stateful” parts of the computation graph provided that the semantics are unchanged. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, and loop-invariant code motion are entirely allowed.
+CLOSED: Frameworks are free to optimize the non-weight parts of the computation graph provided that the changes are mathematically equivalent. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, loop-invariant code motion, and recomputation of node state are entirely allowed. 
 
 OPEN: Frameworks are free to alter the graph.
 
 == Training Loop
 
 === Hyperparameters
-Hyperparameters (e.g. batch size, learning rate) may be selected to best utilize the framework and system being tested. 
+By default, hyperparameters may not be changed. Hyperparameters include regularization terms such as norms and weight decays.
+
+An arbitrary batch size may be chosen to allow for tailoring the application to the hardware platform’s memory hierarchy. The batch size must be constant for the entire run, with the exception of the final batch in each epoch which may be smaller to account for the remainder when the number of samples is divided by batch.
+
+Learning rate may be changed to accommodate the change in batch size or different precision. The learning rate schedule is defined relative to the reference implementation using four parameters wb, wr, t, and r:
+- A linear warm-up period of wb batches may be added with a per batch step size wr. It is assumed that the reference implementation learning rate is a constant r0 for more than wb batches. Then the warm up learning rate for batch b is r0 - (wb - b) * wr. The term wr is contrained to be (r0 / (wb * 2^wk)) where wk is a non-negative integer.
+- The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
+- The learning rate may be scaled by a constant factor r, where r is an integer.
+
+Some benchmarks may require extensions of this policy; submitters are encouraged to request extensions based on data.
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
@@ -251,8 +260,23 @@ Each run must reach a target quality level on the reference implementation quali
 
 The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
 
+=== Equivalence exceptions
+The CLOSED division allows limited exemptions to mathematical equivalence between implementations for pragmatic purposes, including:
+
+* Different methods can be used to add color jitter as long as the methods are of a similar distribution and magnitude to the reference.
+
+* If test set size is not evenly divisible by batch size, the last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch.
+
+* Values introduced for padding purposes may be reflected in batch norm computations.
+
+* Adam optimizer implementations may use the very small value epsilon to maintain mathematical stability in slightly different ways, provided that methods are reviewed and approved in advance. One such method involves squaring the value of epsilon and moving epsilon inside the square root in the parameter update equation.
+
+Additional exemptions need to be explicitly requested and approved in advance. In general, exemptions may be approved for techniques that are common industry practice, introduce small differences that would be difficult to engineer around relative to their significance, and do not substantially decrease the required computation. Over time, MLPerf should seek to help the industry converge on standards and remove exemptions.
+
+The OPEN division does not restrict mathematical equivalence.
+
 == Run Results
-A run result consists of a wall-clock timing measurement for an entire run, including model construction, data preprocessing, and quality testing.
+A run result consists of a wall-clock timing measurement for an entire run, including model construction, any data preprocessing required to be on the clock, training, and quality testing. The clock may not be paused during the run.
 
 == Benchmark Results
 Each benchmark result is based on a set of run results. The number of results for each benchmark is based on a combination of the variance of the benchmark result, the cost of each run, and the likelihood of convergence.
@@ -291,8 +315,10 @@ If the system is available in the cloud it should be benchmarked in the cloud. O
 ==== Replication recipe
 Report a recipe that starts from a vanilla VM image or Docker container and a sequence of steps that creates the system that performs the benchmark measurement.
 
-==== Price
-Include the total cost of obtaining the median run result using fixed prices for the general public at the time the result is collected. Do not use spot pricing. 
+==== Scale
+Cloud results are presented alongside a _cloud scale_ number which seeks to approximate the cost of the system involved. Cloud scale is main hardware components used in the system. Cloud scale is computed after submission based on a table which relates the set of hardware components to on-demand hourly prices to rent typical systems containing that set. 
+
+The table is populated based on the hourly on-demand price across a specific set of large cloud providers for a specific region, then normalizing all entries to a common system. For the initial v0.5 submission, the set of cloud providers is { Alibaba, Amazon, Google, and Microsoft }, the region is Eastern United States, and the common system is typical system containing 1 NVIDIA P100. Cloud scale for ML accelerators only offered by a subset of the set cloud providers is based on that subset. The table will be updated every submission cycle after submissions but before result posting on a date determined by the cloud scale working group.
 
 === With On-premise Hardware
 
