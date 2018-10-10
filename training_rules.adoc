@@ -266,7 +266,7 @@ CLOSED: The numerical formats fp64, fp32, fp16, and bfloat16 are pre-approved fo
 OPEN: Any format and scaling may be used.
 
 == Run Results
-A run result consists of a wall-clock timing measurement for an entire run, including model construction, data preprocessing, and quality testing.
+A run result consists of a wall-clock timing measurement for an entire run, including model construction, any data preprocessing required to be on the clock, training, and quality testing. The clock may not be paused during the run.
 
 == Benchmark Results
 Each benchmark result is the median of five run results produced using the integer random number generator seeds 1 through 5. The seeds will not produce the same random number sequences on different frameworks/systems but make cherry-picking runs harder. All five run results must also be reported.
