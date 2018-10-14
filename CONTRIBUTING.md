@@ -1,10 +1,10 @@
-# Contributing guidelines (DRAFT NOT APPROVED)
+# Contributing guidelines
 
 ## Pull Request Checklist
 
 Before sending your pull requests, make sure you followed this list.
 
-- Read [contributing guidelines](CONTRIBUTING_DRAFT.md)
+- Read [contributing guidelines](CONTRIBUTING.md)
 - Ensure you have signed the [Contributor License Agreement (CLA)](https://cla.developers.google.com/).
 - (Note: additional technical details TBD by community.)
 
