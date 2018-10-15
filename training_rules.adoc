@@ -260,6 +260,8 @@ Each run must reach a target quality level on the reference implementation quali
 
 The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
 
+Check points can be created at the discretion of submitter. No check points are required to be produced or retained. This policy is intended to simplify v0.5 and will be reconsidered.
+
 === Equivalence exceptions
 The CLOSED division allows limited exemptions to mathematical equivalence between implementations for pragmatic purposes, including:
 
