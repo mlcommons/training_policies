@@ -59,7 +59,9 @@ Benchmarking should be conducted to measure the framework and system performance
 The same system and framework must be used for a submission result set. Note that the reference implementations do not all use the same framework in v0.5.
 
 === System and framework must be available
-If you are measuring the performance of a publicly available and widely-used system or framework, you must use publicly available and widely-used used versions of the system or framework.
+Widely-used software frameworks and libraries must be benchmarked using numbered releases, not nightly builds or special benchmarking  builds. However, the selected frameworks and libraries may be built from source to be mutually compatible. For instance Framework version X may be built from source to be compatible with Library version Y and the reverse.
+
+If you are measuring the performance of a publicly available and widely-used system, you must use publicly available and widely-used used versions of the system.
 
 If you are measuring the performance of an experimental framework or system, you must make the system and framework you use available upon demand for replication. 
 
