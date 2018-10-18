@@ -233,12 +233,12 @@ OPEN: Frameworks are free to alter the graph.
 
 == Training Loop
 
-=== Hyperparameters
+=== Hyperparameters and Optimizer
 CLOSED: 
 
 For v0.5.0, the following rules apply:
 
-By default, hyperparameters may not be changed. Hyperparameters include regularization terms such as norms and weight decays.
+By default, the hyperparameters and optimizer must be the same as the reference. Hyperparameters include regularization terms such as norms and weight decays.
 
 The following scheme for scaling learning rate schedule and adding warmup applies to all models that use SGD.
 
@@ -273,19 +273,14 @@ The following model-specific exceptions are also allowed:
 
 Some benchmarks may require extensions of these policies; submitters are encouraged to request extensions based on data.
 
-For version 0.5.1, MLPerf will be moving to a batchsize-to-hyperparameter table. 
+For version 0.5.1, MLPerf will be moving to a batchsize-to-hyperparameter-and-optimizer table. 
 
-OPEN: Hyperparameters may be freely changed.
+OPEN: Hyperparameters and optimizer may be freely changed.
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
 
 OPEN: Any loss function may be used. Do not confuse the loss function with target quality measure.
-
-=== Optimizer 
-CLOSED: The same optimizer used in the reference implementation must be used.
-
-OPEN: Any optimizer must be used, provided that it is used consistently and is deterministic. 
 
 === Quality measure
 Each run must reach a target quality level on the reference implementation quality measure. The time to measure quality is included in the wallclock time. 
