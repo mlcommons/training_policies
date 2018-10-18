@@ -255,7 +255,8 @@ The following model-specific exceptions are also allowed:
 |Model |Hyperparameter |Change allowed
 
 |SSD |lr2 weight decay |Arbitrary constant
-|NCF |lr |Arbitrary constant
+|NCF |optimizer |Adam or Lazy Adam
+| |lr |Arbitrary constant
 | |beta1 |Arbitrary constant
 | |beta2 |Arbitrary constant
 |GNMT |learning rate |Arbitrary constant
@@ -264,7 +265,8 @@ The following model-specific exceptions are also allowed:
 | |decay_steps |Arbitrary constant
 | |warmup function |May use alt_warmup fn in reference
 | |learning_rate_warmup_steps |Arbitary constant, suggest 200
-|Transformer |lr hyperparam to learning rate function |Arbitrary constant
+|Transformer |optimizer |Adam or Lazy Adam
+| |lr hyperparam to learning rate function |Arbitrary constant
 | |learning_rate_warmup_steps hyperparam to lr function |Arbitrary constant
 
 |===
