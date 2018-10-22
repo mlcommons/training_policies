@@ -261,8 +261,8 @@ The following model-specific exceptions are also allowed:
 | |beta2 |Arbitrary constant
 |GNMT |learning rate |Arbitrary constant
 | |learning rate decay function |May use alt_decay fn in reference
-| |remain_steps |Arbitrary constant
-| |decay_steps |Arbitrary constant
+| |decay_start (number of updates after which the first lr decay occurs) |Arbitrary constant
+| |decay_interval (number of updates between lr decays) |Arbitrary constant
 | |warmup function |May use alt_warmup fn in reference
 | |learning_rate_warmup_steps |Arbitary constant, suggest 200
 |Transformer |optimizer |Adam or Lazy Adam
