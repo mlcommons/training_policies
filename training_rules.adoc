@@ -233,27 +233,54 @@ OPEN: Frameworks are free to alter the graph.
 
 == Training Loop
 
-=== Hyperparameters
-By default, hyperparameters may not be changed. Hyperparameters include regularization terms such as norms and weight decays.
+=== Hyperparameters and Optimizer
+CLOSED: 
 
-An arbitrary batch size may be chosen to allow for tailoring the application to the hardware platform’s memory hierarchy. The batch size must be constant for the entire run, with the exception of the final batch in each epoch which may be smaller to account for the remainder when the number of samples is divided by batch.
+For v0.5.0, the following rules apply:
 
-Learning rate may be changed to accommodate the change in batch size or different precision. The learning rate schedule is defined relative to the reference implementation using four parameters wb, wr, t, and r:
-- A linear warm-up period of wb batches may be added with a per batch step size wr. It is assumed that the reference implementation learning rate is a constant r0 for more than wb batches. Then the warm up learning rate for batch b is r0 - (wb - b) * wr. The term wr is contrained to be (r0 / (wb * 2^wk)) where wk is a non-negative integer.
-- The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
-- The learning rate may be scaled by a constant factor r, where r is an integer.
+By default, the hyperparameters and optimizer must be the same as the reference. Hyperparameters include regularization terms such as norms and weight decays.
 
-Some benchmarks may require extensions of this policy; submitters are encouraged to request extensions based on data.
+The following scheme for scaling learning rate schedule and adding warmup applies to all models that use SGD.
+
+* An arbitrary batch size may be chosen to allow for tailoring the application to the hardware platform’s memory hierarchy. The batch size must be constant for the entire run, with the exception of the final batch in each epoch which may be smaller to account for the remainder when the number of samples is divided by batch.
+
+* Learning rate may be changed to accommodate the change in batch size or different precision. The learning rate schedule is defined relative to the reference implementation using four parameters wb, wr, t, and r:
+** A linear warm-up period of wb batches may be added with a per batch step size wr. It is assumed that the reference implementation learning rate is a constant r0 for more than wb batches. Then the warm up learning rate for batch b is r0 - (wb - b) * wr. The term wr is contrained to be (r0 / (wb * 2^wk)) where wk is a non-negative integer.
+** The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
+** The learning rate may be scaled by a constant factor r, where r is an integer.
+
+The following model-specific exceptions are also allowed:
+
+|===
+|Model |Hyperparameter |Change allowed
+
+|SSD |lr2 weight decay |Arbitrary constant
+|NCF |optimizer |Adam or Lazy Adam
+| |lr |Arbitrary constant
+| |beta1 |Arbitrary constant
+| |beta2 |Arbitrary constant
+|GNMT |learning rate |Arbitrary constant
+| |learning rate decay function |May use alt_decay fn in reference
+| |decay_start (number of updates after which the first lr decay occurs) |Arbitrary constant
+| |decay_interval (number of updates between lr decays) |Arbitrary constant
+| |warmup function |May use alt_warmup fn in reference
+| |learning_rate_warmup_steps |Arbitary constant, suggest 200
+|Transformer |optimizer |Adam or Lazy Adam
+| |lr hyperparam to learning rate function |Arbitrary constant
+| |learning_rate_warmup_steps hyperparam to lr function |Arbitrary constant
+
+|===
+
+Some benchmarks may require extensions of these policies; submitters are encouraged to request extensions based on data.
+
+For version 0.5.1, MLPerf will be moving to a batchsize-to-hyperparameter-and-optimizer table. 
+
+OPEN: Hyperparameters and optimizer may be freely changed.
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
 
 OPEN: Any loss function may be used. Do not confuse the loss function with target quality measure.
-
-=== Optimizer 
-CLOSED: The same optimizer used in the reference implementation must be used.
-
-OPEN: Any optimizer must be used, provided that it is used consistently and is deterministic. 
 
 === Quality measure
 Each run must reach a target quality level on the reference implementation quality measure. The time to measure quality is included in the wallclock time. 
