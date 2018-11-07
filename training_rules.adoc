@@ -369,13 +369,13 @@ The MLPerf organization will create a database that collects submission data and
 === Submission Compliance Logs
 Submissions must contain a properly formatted _compliance log_ for each run, even if the run result does not directly impact the benchmark result because it was the lowest, highest, or allowed non-convergence. See the compliance/ directory in the Github repo for the python files used to produce the compliance log. 
 
-Each compliance log is produced by the benchmark implementation calling a standard "mlperf_print" function with a different set of tags. There are a standard set of tags which are required for all submissions. Some tags are required once per run, some once per epoch, some once per eval, and some are only required if optional code is included such as padding. Sample logs are provided for each benchmark. A standard verify_log.sh script is provided that checks for all required tags for a given benchmark.
+Each compliance log is produced by the benchmark implementation calling a standard "mlperf_print" function with a different set of tags. There are a standard set of tags which are required for all submissions. Some tags are required once per run, some once per epoch, some once per eval, and some are only required if optional code is included such as padding. Sample logs are provided for each benchmark. A standard mlp_compliance.py script is provided that checks for all required tags for a given benchmark.
 
 For practical implementation reasons, the compliance log may be the result combining multiple other logs from the run, e.g. from multiple processes.
 
 All official run results will be extracted from the log based on the start and end tags. 
 
-All logs should be encrypted prior to submission using the prepare_submission.sh script. The script will not contain a valid encryption key until two days before submissions and should not be used prior to that point.
+All logs should be encrypted prior to submission using the verify_submission.sh script. The script will not contain a valid encryption key until two days before submissions and should not be used prior to that point.
 
 === Submission Form
 Submissions to the database must use the provided submission form to report all required information.
