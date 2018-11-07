@@ -254,6 +254,8 @@ The following model-specific exceptions are also allowed:
 |===
 |Model |Hyperparameter |Change allowed
 
+
+|ResNet |base learning rate |0.1 or 0.128
 |SSD |lr2 weight decay |Arbitrary constant
 |NCF |optimizer |Adam or Lazy Adam
 | |lr |Arbitrary constant
