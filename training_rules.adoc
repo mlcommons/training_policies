@@ -300,6 +300,8 @@ The CLOSED division allows limited exemptions to mathematical equivalence betwee
 
 * Adam optimizer implementations may use the very small value epsilon to maintain mathematical stability in slightly different ways, provided that methods are reviewed and approved in advance. One such method involves squaring the value of epsilon and moving epsilon inside the square root in the parameter update equation.
 
+* ImageNet has 1000 classes but the reference uses 1001. TF has an additional 'I don't know' class. Both are allowed.
+
 Additional exemptions need to be explicitly requested and approved in advance. In general, exemptions may be approved for techniques that are common industry practice, introduce small differences that would be difficult to engineer around relative to their significance, and do not substantially decrease the required computation. Over time, MLPerf should seek to help the industry converge on standards and remove exemptions.
 
 The OPEN division does not restrict mathematical equivalence.
