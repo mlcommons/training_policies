@@ -255,6 +255,7 @@ The following model-specific exceptions are also allowed:
 |Model |Hyperparameter |Change allowed
 
 |SSD |lr2 weight decay |Arbitrary constant
+|Mask R-CNN |number of image candidates | 2000 or 1000*batch_size patches (may sample either from a pool of all examples, or individually and uniformly from each image)
 |NCF |optimizer |Adam or Lazy Adam
 | |lr |Arbitrary constant
 | |beta1 |Arbitrary constant
