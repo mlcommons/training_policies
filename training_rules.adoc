@@ -373,7 +373,7 @@ Each compliance log is produced by the benchmark implementation calling a standa
 
 The "mlperf_print" function may be reimplemented if needed in another language provided that the semantics are preserved.
 
-For practical implementation reasons, the compliance log may be the result combining multiple other logs from the run, e.g. from multiple processes. 
+For practical implementation reasons, the compliance log may be the result of combining multiple other logs from the run, e.g. from multiple processes. 
 
 All official run results will be extracted from the log based on the start and end tags. 
 
