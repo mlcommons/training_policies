@@ -39,9 +39,9 @@ A _run_ is a complete execution of an implementation on a system, training a mod
 
 A _run result_ is the wallclock time required for a run.
 
-A _reference result_ is the median of five run results provided by the MLPerf organization for each reference implementation
+A _reference result_ is the result provided by the MLPerf organization for each reference implementation
 
-A _benchmark result_ is the median of five run results normalized to the reference result for that benchmark. Normalization is of the form (reference result / benchmark result) such that a better benchmark result produces a higher number.
+A _benchmark result_ is the mean of a benchmark-specific number of run results, dropping the highest and lowest results. The result is then normalized to the reference result for that benchmark. Normalization is of the form (reference result / benchmark result) such that a better benchmark result produces a higher number.
 
 A _submission result set_ is a one benchmark result for each benchmark implementation in a  submission implementation set.
 
