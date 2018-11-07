@@ -313,7 +313,11 @@ Additional exemptions need to be explicitly requested and approved in advance. I
 The OPEN division does not restrict mathematical equivalence.
 
 == Run Results
-A run result consists of a wall-clock timing measurement for an entire run, including model construction, any data preprocessing required to be on the clock, training, and quality testing. The clock may not be paused during the run.
+A run result consists of a wall-clock timing measurement for an entire run, including model construction, any data preprocessing required to be on the clock, training, and quality testing. 
+
+The clock must start before any part of the system performs any benchmark specific work (e.g. model creation, or dataset manipulation), and may be stopped as soon as any part of the system determines target accuracy has been reached.
+
+The clock may not be paused during the run.
 
 == Benchmark Results
 Each benchmark result is based on a set of run results. The number of results for each benchmark is based on a combination of the variance of the benchmark result, the cost of each run, and the likelihood of convergence.
