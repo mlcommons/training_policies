@@ -294,7 +294,7 @@ The CLOSED division allows limited exemptions to mathematical equivalence betwee
 
 * Different methods can be used to add color jitter as long as the methods are of a similar distribution and magnitude to the reference.
 
-* If test set size is not evenly divisible by batch size, the last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch.
+* If test set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch.
 
 * Values introduced for padding purposes may be reflected in batch norm computations.
 
