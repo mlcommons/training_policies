@@ -385,7 +385,9 @@ Submissions must contain a properly formatted _compliance log_ for each run, eve
 
 Each compliance log is produced by the benchmark implementation calling a standard "mlperf_print" function with a different set of tags. There are a standard set of tags which are required for all submissions. Some tags are required once per run, some once per epoch, some once per eval, and some are only required if optional code is included such as padding. Sample logs are provided for each benchmark. A standard mlp_compliance.py script is provided that checks for all required tags for a given benchmark.
 
-For practical implementation reasons, the compliance log may be the result combining multiple other logs from the run, e.g. from multiple processes.
+The "mlperf_print" function may be reimplemented if needed in another language provided that the semantics are preserved.
+
+For practical implementation reasons, the compliance log may be the result of combining multiple other logs from the run, e.g. from multiple processes. 
 
 All official run results will be extracted from the log based on the start and end tags. 
 
