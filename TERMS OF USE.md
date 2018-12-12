@@ -19,7 +19,7 @@ _SmartAI Corp achieved a score of 0.6 on the MLPerf Image Classification benchma
 
 In primary citation or footnote: benchmark version and division***,  ML Framework and version, accelerator library software and version (as applicable), link to MLPerf submission, date and source of retrieval, MLPerf result ID (major-version.minor-version.entry.benchmark), and clear reference to MLPerf trademark. For example:
 
-_ [1] MLPerf v0.5 Training Closed; system employed ML Framework v4.1 with the MLNN v7.4 library. Retrieved from www.mlperf.org 21 December 2018, entry 0.5.12.2. MLPerf name and logo are trademarks. See www.mlperf.org for more information._
+_[1] MLPerf v0.5 Training Closed; system employed ML Framework v4.1 with the MLNN v7.4 library. Retrieved from www.mlperf.org 21 December 2018, entry 0.5.12.2. MLPerf name and logo are trademarks. See www.mlperf.org for more information._
 
 &ast;&ast;&ast; These data items must be included in the primary citation if results from different benchmark versions or divisions are being compared.
 
@@ -40,8 +40,9 @@ Users may see fit to combine or aggregate results from multiple MLPerf benchmark
 Each MLPerf benchmark has a primary metric, for instance time-to-train for Training Image Classification. Any comparison based on different or derived metric such as power, cost, model size/architecture, accuracy, etc. must make the basis for comparison clear in the text and in a footnote. Secondary and derived metrics must not be presented as official MLPerf metrics.
 
 _Prestigious Research University has created a new neural network model called MagicEightBall that is
-100% accurate for Top-1 image classification on the MLPerf v0.5 Training Open Division Image Classification benchmark using a cluster of 10 SmartChips running MLFramework v4.1 [1].
-[1] Accuracy is not the primary metric of MLPerf. MLPerf name and logo are registered trademarks. See www.mlperf.org for more information._
+100% accurate for Top-1 image classification on the MLPerf v0.5 Training Open Division Image Classification benchmark using a cluster of 10 SmartChips running MLFramework v4.1 [1]._
+
+_[1] Accuracy is not the primary metric of MLPerf. MLPerf name and logo are registered trademarks. See www.mlperf.org for more information._
 
 ## Comparisons between major revisions of an MLPerf benchmark are not allowed 
 
