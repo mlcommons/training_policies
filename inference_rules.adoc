@@ -124,16 +124,16 @@ The cloud benchmark suite consists of the benchmarks shown in the following tabl
 
 |===
 |Area |Task |Model |Dataset |Quality |Latency 
-|Vision |Object classification |Resnet50-v1.5 |ImageNet |?? |99% @ min, 10ms, 50ms, 100ms, 200ms, batch 
-|Vision |Object classification |SSD-ResNet34 |COCO |?? |?? 
-|Language/Audio |Speech recognition |DeepSpeech-2 |LibriSpeech+ noisy validation |?? |?? 
-|Language/Audio |Machine translation |GMNT |WMT16 |?? |?? 
-|Language/Audio |Machine translation |Transformer |WMT16 |?? |?? 
-|Commerce |Recommendation |NCF |MovieLens 20M |?? |?? 
-|Commerce |Text classification |seq2-CNN |IMDB |?? |?? 
+|Vision |Object classification |Resnet50-v1.5 |ImageNet |74.9% top-1 |99% @ min, 10ms, 50ms, 100ms, 200ms, batch 
+|Vision |Object classification |SSD-ResNet34 |COCO |0.212 mAP |?? 
+|Language/Audio |Speech recognition |DeepSpeech-2 |LibriSpeech+ noisy validation |23.0 WER |?? 
+|Language/Audio |Machine translation |GMNT |WMT16 |22 uncased BLEU |?? 
+|Language/Audio |Machine translation |Transformer |WMT16 |25 uncased BLEU |?? 
+|Commerce |Recommendation |NCF |MovieLens 20M |0.635 hit rate @ 10 |?? 
+|Commerce |Text classification |seq2-CNN |IMDB |90.6% average |?? 
 |Language/Audio |Language modeling |lm_1b |WMT-monolingual news commentary |?? |99.9% @ min, 50ms, 500ms, 5s, batch (per-word) 
 |Language/Audio |Text-to-speech |Wavenet |LJSpeech |?? |?? 
-|Vision |Image segmentation |MaskRCNN |?? |?? |?? 
+|Vision |Image segmentation |MaskRCNN |?? |0.377 box mAP, 0.339 mask mAP |?? 
 |===
 
 === Edge Benchmarks
