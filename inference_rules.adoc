@@ -1,1 +1,359 @@
-Placeholder pending draft rules from inference WG.
+:toc:
+:toclevels: 4
+
+:sectnums:
+
+= MLPerf Cloud and Edge Inference Rules
+Version 0.5
+December 12th, 2018
+Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi (reddi@google.com/vjreddi@g.harvard.edu)
+
+== Overview
+This document describes how to implement the MLPerf Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware performing inference on cloud or edge devices.
+
+The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
+
+=== Definitions (read this section carefully)
+The following definitions are used throughout this document:
+
+_Performance_ always refers to inference query throughput subject to a latency bound, a latency requirement and a quality requirement, measured using the MLPerf query generator.
+
+_Quality_ always refers to a model’s ability to produce “correct” outputs.
+
+A _system_ consists of a defined set of hardware resources such as processors, memories, disks, and interconnect. It also includes specific versions of all software such as operating system, compilers, libraries, and drivers that significantly influences the running time of a benchmark, excluding the ML framework.
+
+A _framework_ is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training and/or executing ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
+
+A _graph compiler_ is ??
+
+A _task_ is a generalized, high-level, user-understandable problem that is comprised of one or more ML models and includes pre- and post-processing steps for the models.
+  
+A _benchmark_ is a measurable task that can be solved by executing a trained model using a specific input dataset at a target quality level and one or more target latency levels.
+
+A _suite_ is a specific set of benchmarks.
+A _division_ has a set of rules for implementing a suite to produce a class of comparable results.
+
+A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization.  The reference implementation is the canonical implementation of a benchmark. All valid submissions of a benchmark must be *equivalent* to the reference implementation.
+
+A _benchmark implementation_ is an implementation of a benchmark in a particular framework by a user under the rules of a specific division.
+
+A _suite implementation_ is a set of benchmark implementations for the entire suite using the same framework under the rules of a specific division.
+
+A _run_ is a complete execution of a benchmark implementation on a system, executing a model using specific input data with a target quality level and target latency. (BRING INTO ALIGNMENT WITH SECTION BELOW)
+
+An _run result_ consists of completing a set of inference queries, including data pre- and post-processing, meeting a latency requirement and a quality requirement.  Each benchmark has a quality requirement and a 
+
+A _reference result_ is a run result provided by the MLPerf organization for each reference implementation on a reference system.
+
+A _benchmark result_ is a run result normalized to the reference result for that benchmark. Normalization is of the form (reference result * constant / benchmark result) such that a better benchmark result produces a higher number.  The constant shall be selected to ensure that most benchmark results are greater than 1. (FIX ME)
+
+== General rules
+The following rules apply to all benchmark implementations.
+
+=== Strive to be fair
+Benchmarking should be conducted to measure the framework and system performance as fairly as possible. Ethics and reputation matter.
+
+=== System and framework must be consistent
+The same system and framework must be used for a suite result or set of benchmark results reported in a single context.
+
+Note that the reference implementations use different frameworks and hence cannot be used collectively for a valid suite result.
+
+=== System and framework must be available
+If you are measuring the performance of a publicly available and widely-used system or framework, you must use publicly available and widely-used used versions of the system or framework.
+
+If you are measuring the performance of an experimental framework or system, you must make the system and framework you use available upon demand for replication.
+
+=== Benchmark implementations must be shared
+Source code used for the benchmark implementations must be open-sourced under a license that permits a commercial entity to freely use the implementation for benchmarking. The code must be available as long as the results are actively used.
+
+=== Non-determinism is restricted
+The only forms of acceptable non-determinism are:
+
+* Floating point operation order
+* Random traversal of the inputs
+* Rounding
+
+All random numbers must be drawn from the framework’s stock random number generator. The random number generator seed must entirely determine its output sequence. Random numbers must be utilized in a logical and consistent order across runs. Random number generators may be seeded from the following sources:
+
+* Clock
+* System sources of randomness, e.g., /dev/random or /dev/urandom
+* Another random number generator initialized with an allowed seed
+
+Additional rules may apply as described in later sections.
+
+=== Benchmark detection is not allowed
+The framework and system should not detect and behave differently for benchmarks.
+
+=== Input-based optimization is not allowed
+The implementation should not encode any information about the content of the input dataset in any form.
+
+=== Replicability is mandatory
+Results that cannot be replicated are not valid results.
+
+== Benchmarks
+The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
+Code that implements the model in a framework.
+A plain text “README.md” file that describes:
+
+* Problem
+** Dataset/Environment
+** Publication/Attribution
+** Data pre- and post-processing
+** Training and test data separation
+** Test data traversal order
+* Model
+** Publication/Attribution
+** List of layers
+** Weights and biases
+* Quality and latency
+** Quality target
+** Latency target(s)
+* Directions
+** Steps to configure machine
+** Steps to download and verify data
+** Steps to run and time
+
+A “download_dataset” script that downloads the dataset.
+
+A “verify_dataset” script that verifies the dataset against the checksum.
+
+A “run_and_time” script that executes the benchmark and reports the wall-clock time.
+
+=== Cloud Benchmarks
+The cloud benchmark suite consists of the benchmarks shown in the following table.
+
+|===
+|Area |Task |Model |Dataset |Quality |Latency 
+|Vision |Object classification |Resnet50-v1.5 |ImageNet |?? |99% @ min, 10ms, 50ms, 100ms, 200ms, batch 
+|Vision |Object classification |SSD-ResNet34 |COCO |?? |?? 
+|Language/Audio |Speech recognition |DeepSpeech-2 |LibriSpeech+ noisy validation |?? |?? 
+|Language/Audio |Machine translation |GMNT |WMT16 |?? |?? 
+|Language/Audio |Machine translation |Transformer |WMT16 |?? |?? 
+|Commerce |Recommendation |NCF |MovieLens 20M |?? |?? 
+|Commerce |Text classification |seq2-CNN |IMDB |?? |?? 
+|Language/Audio |Language modeling |lm_1b |WMT-monolingual news commentary |?? |99.9% @ min, 50ms, 500ms, 5s, batch (per-word) 
+|Language/Audio |Text-to-speech |Wavenet |LJSpeech |?? |?? 
+|Vision |Image segmentation |MaskRCNN |?? |?? |?? 
+|===
+
+=== Edge Benchmarks
+The edge benchmark suite consists of the benchmarks shown in the following table.
+
+|===
+|Area |Task |Model |Dataset |Quality |Latency 
+|Vision |Image classification |MobileNets-v1 224 |ImageNet |?? |?? 
+|Vision |Image classification |ShuffleNet |ImageNet |?? |?? 
+|Vision |Object detection |SSD-ResNet50 |COCO |?? |?? 
+|Vision |Object detection |SSD-MobileNets-v1 |COCO |?? |?? 
+|Language/Audio |Speech Recognition |DeepSpeech-2 | Librispeech + noisy validation |?? |?? 
+|Language/Audio |Machine Translation |GNMT |WMT16 |?? |?? 
+|Vision |Face identification |SphereFace |CASIA + LFW |?? |?? 
+|Vision |Image segmentation |MaskRCNN2Go |COCO |?? |?? 
+|Vision |Image enhancement |SRGAN |DIV2K |?? |?? 
+|===
+
+== Reference Systems
+The reference systems are the MLPerf developer target platforms.
+
+MLPerf guarantees that each of the cloud/edge reference implementations will achieve the required accuracy on the appropriate cloud/edge reference system.  All submissions must be equivalent to the reference implementation on the reference system, as described in this document.
+
+The reference systems are selected for ease of development and are used as an arbitrary baseline used to compute relative performance of submissions.  The reference systems are not intended to be reflective of any particular market, application, or deployment.
+
+=== Cloud Reference System
+The cloud reference platform is a Google Compute Platform n1-highmem-16 (16 vCPUs, 104GB memory) instance using the Skylake processor generation.
+
+MLPerf guarantees that the reference implementations of all cloud benchmarks will run on the cloud reference system.
+
+=== Edge Reference System
+The edge reference system is an Intel NUC 7 Home (NUC7i3BNHXF):
+
+* Core i3-7100U Processor (dual-core, four-thread Kaby Lake, 2.4GHz base)
+* 4GB of DDR4 memory 
+* 16GB of Optane memory (3DXP connected via PCIe)
+* 1TB SATA hard drive
+* Running Ubuntu 16.04
+
+MLPerf guarantees that the reference implementations of all edge benchmarks will run on the edge reference system. The reference system can be obtained via Amazon and the hardware cost is $400.
+
+== Divisions
+There are two divisions of the benchmark suite, the Closed division and the Open division.
+
+=== Closed Division
+The Closed division requires using pre- and post-processing and model that is equivalent to the reference implementation.  The closed division does not allow any retraining.
+
+The unqualified name “MLPerf” must be used when referring to a Closed Division suite result, e.g. “a MLPerf result of 4.5.”
+
+=== Open Division
+The Open division allows using arbitrary pre- or post-processing and model, including retraining.
+The qualified name “MLPerf Open” must be used when referring to an Open Division suite result, e.g. “a MLPerf Open result of 7.2.”
+
+== Data Set
+=== Data State at Start of Run
+Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The dataset must be unchanged at the start of each run.
+
+=== Pre- and post-processing
+All pre- and post-processing time is included in the wall-clock time for a run result.
+CLOSED: The same pre- and post-processing steps as the reference implementation must be used (and are included in wall-clock time).
+
+OPEN: Any pre- and post-processing steps are allowed (and are included in wall-clock time). However, each datum must be preprocessed individually in a manner that is not influenced by any other data.
+
+=== 6.3. Test Data Traversal Order
+Test data must be traversed in the same conceptual order as the reference implementation.  Batch size may affect order.
+
+Future versions of the benchmark suite may specify the traversal order.
+
+== Model
+CLOSED: The benchmark implementation must use the same model as the reference implementation, as defined by the remainder of this section.
+
+OPEN: The benchmark implementation may use a different model to perform the same task.
+
+=== Graph Definition
+CLOSED: Each of the current frameworks has a graph that describes the operations performed during inference. Benchmark implementations must use the same graph as the reference implementation.
+
+OPEN: Each of the current frameworks has a graph that describes the operations performed during inference.  Benchmark implementations may use a different graph compared to the reference implementation.
+
+=== Weight Definition
+CLOSED: Trained weights and biases are provided in fp32 format, and may be quantized into any format for inference that achieves the desired quality.
+
+OPEN: Weights and biases must be initialized to the same values for each run.
+
+=== Graph Execution
+CLOSED: Graph compilers are free to optimize the “non-stateful” parts of the computation graph provided that the semantics are unchanged. So optimizations and graph / code transformations of the flavor of layer fusion, dead code elimination, common subexpression elimination, and loop-invariant code motion are entirely allowed.
+
+OPEN: Frameworks are free to alter the graph.
+
+== Inference
+=== Hyperparameters
+Hyperparameters (e.g. batch size) may be selected to best utilize the framework and system being tested, given the quality and latency requirements.
+
+=== Quality measure
+Each run must reach a target quality level relative to the reference implementation quality measure (e.g., a run using a quantized model must achieve within x% of the reference implementation). 
+
+== Run Results
+A run result consists of throughput measurements for performing inference queries, including data pre- and post-processing, subject to query latency requirements and inference accuracy requirements.  The latency requirements may vary on a per-benchmark basis.  
+
+<NEW SECTION>
+An inference run comprises completing a set of inference queries, including data pre- and post-processing, meeting the following requirements:
+
+* The per-benchmark quality requirement
+* The per-benchmark latency percentile requirement, and
+* A latency bound selected from the per-benchmark set of latency bounds.  
+
+The quality requirement is an accuracy requirement specified on a per-benchmark basis in the appropriate table in Section 3.
+
+The latency percentile requirement comprises a specified percentage of the inference queries meeting a latency bound.  The percentage is specified on a per-benchmark basis in the appropriate table in Section 3.
+
+For each run, the minimum number of inference queries is based on the latency percentage requirement and determined by the following table.  The duration of the inference queries shall be no less than two minutes regardless of the number of required queries.  For non-batch runs, inference queries will be generated using the MLPerf query generator using a pseudo-random Poisson arrival time distribution.  For batch runs, inference queries will all arrive immediately.
+
+|===
+|%-ile |85% |90% |95% |99% |99.9% 
+|Min. Queries |2^12 |2^12 |2^12 |2^16 |2^19  
+|===
+
+The latency bound is selected from a list of per-benchmark latency bounds that is specified in the appropriate table in Section 3.  The minimum latency is the lowest latency achievable on the system under test.  The batch latency is unlimited latency (i.e., no latency bound).
+
+A run result is the measured throughput of the queries of the inference run.  For the minimum latency run, the throughput is simply the inverse of a single query.
+
+== Benchmark Results
+For each benchmark, a valid benchmark result consists of a run result for each of the latency bounds on the list as described in Section 3; each run result is normalized by dividing by the respective reference result to compute a relative throughput.  This normalization produces higher numbers for better results, which better aligns with human intuition.  For example, the throughput of a ResNet-50 minimum latency run is divided by the throughput of the reference ResNet50-v1.5 minimum latency run.
+
+The relative throughputs are plotted on the Y-axis against the latency bounts on the X-axis.  For example, a ResNet50-v1.5 benchmark result will plot relative throughputs obtained for on an X-axis comprising minimum, 10ms, 50ms, 100ms, 200ms, and batch.
+
+== Division Results
+In order to report a division result, a benchmark score must be reported for each benchmark in the suite. The division score is the geometric mean of the benchmark results.  Benchmark results for individual tests may be reported.
+
+== Framework Reporting
+Report the framework used, including version.
+
+== System Reporting
+Cloud and edge benchmarks may be run both on either hardware as a service or physical hardware.
+
+=== With Hardware as a Service
+==== Replication recipe
+Report a recipe that starts from a vanilla VM image or Docker container and a sequence of steps that creates the system that performs the benchmark measurement.
+
+==== Price
+Include the total cost of obtaining the median run result using fixed prices for the general public at the time the result is collected. Do not use spot pricing.
+
+=== With Physical Hardware
+==== Replication recipe
+Report everything that will eventually be required by a third-party user to replicate the result when the hardware and software becomes widely available.
+
+==== Power
+For v0.5, power measurement is optional, but should be in accordance with recommendations if performed.  As per all performance testing, we expect that power measurements will be reproducible.
+
+* Power is measured for a “device under test” (DUT)
+**The DUT may be wall-powered or battery-powered
+* The DUT for v0.5 is a full system that is capable (without external assistance) of:
+** Receiving input data (e.g., via network or I/O)
+** Pre-processing (e.g., via DSP, CPU)
+** Performing inference (e.g., via CPU, GPU, accelerator)
+** Post-processing (e.g., via GPU), and
+** Any other step deemed necessary
+*** Example DUTs include a smartphone, a server, a server with a PCIe accelerator, a PC with an accelerator USB stick.
+* Metrics
+**Energy and power are recorded and reported for the entirety of the performance test (e.g., including pre-/post-processing) at clearly defined boundaries. The power measurement must report:
+*** Total energy consumed by the DUT
+*** Peak power draw by the DUT (note that peak power draw is typically a microsecond-level granularity event)
+* Measurement equipment
+** We do not specify, but recommend following SPECpower recommendations for wall-powered devices and using https://www.msoon.com/online-store/High-Voltage-Power-Monitor-HVPM-p90002590 for mobile devices
+* The submitted shall report:
+** Complete configuration of DUT, and where/how power is measured
+** Hardware and software used to gather the measurements
+** Detailed instructions to experimentally reproduce the numbers
+
+For recommendations and discussion of power management, please see https://docs.google.com/document/d/1XdX5-PHFuckeZYUJpEupvOgPmn_wmOHPY3JLP8-fjLs/.
+
+== Submissions
+The MLPerf organization will create a database that collects submission data; one feature of the database is producing a leaderboard.
+
+=== Submission Form
+Submissions to the database must use the provided submission form to report all required information.
+
+=== Submission Process
+Submit the completed form and supporting code to the MLPerf organization Github mlperf/results repo as a PR.
+
+== FAQ
+Q: Why does MLPerf specify the test data order?
+
+A: Many systems will use batching to perform inference on multiple inputs. 
+
+
+Q: Do I have to use the reference implementation framework?
+
+A: No, you can use another framework provided that it matches the reference in the required areas.
+
+
+Q: Do I have to use the reference implementation scripts?
+
+A: No, you don’t have to use the reference scripts. The reference is there to settle conformance questions - with a few exceptions, a submission to the closed division must match what the reference is doing.
+
+
+Q: What is the reference system? Do I have to use the reference system?
+
+A: A reference system is a hardware and software platform that is guaranteed by MLPerf to run one or more benchmarks.  You can and should use different hardware and software configurations.  The reference hardware systems were chosen as development targets for MLPerf benchmarks and are not intended to be representative of any particular class of system.
+
+
+Q: Can I run an edge benchmark on a server in a data center?  Can I run a cloud benchmark on a smartphone?
+
+A: Either combination is allowed.
+
+
+Q: Can I perform computations for inference using my favorite data types (int8, int4, IEEE fp16, bfloat16, etc.)?
+
+A: We allow any data types to be used. However, the submission must achieve the required accuracy level in a reproducible manner.
+
+
+Q: Why does a run require so many individual inference queries?
+
+A: The numbers were selected to be sufficiently large to statistically verify that the system meets the latency requirements. 
+
+
+Q: What information should I submit about the software of the system under test?
+
+A: The goal is reproducibility.  At a minimum, a submission should include the OS and version number, software libraries and versions used, frameworks, etc.
+
+
+Q: For my submission, I am going to use a different model format (e.g., ONNX vs TensorFlow Lite).  Should the conversion routine/script be included in the submission? Or is it sufficient to submit the converted model?
+
+A: The goal is reproducibility, so you should include the conversion routine/scripts.
