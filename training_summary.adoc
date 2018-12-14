@@ -8,9 +8,8 @@ MLPerf Training v0.5 is a benchmark suite for measuring ML system speed. Each ML
 
 | Image classification | ImageNet | 74.90% classification | Resnet-50 v1.5
 | Object detection (light weight) | COCO 2017 | 21.2% mAP | SSD (Resnet-34 backbone)
-| Object detection (heavy weight) | COCO 2017 | 0.377 Box min AP, 
-| 0.339 Mask min AP | Mask R-CNN | Translation (recurrent)
-| WMT English-German | 21.8 BLEU | Neural Machine Translation
+| Object detection (heavy weight) | COCO 2017 | 0.377 Box min AP, 0.339 Mask min AP | Mask R-CNN 
+| Translation (recurrent) | WMT English-German | 21.8 BLEU | Neural Machine Translation
 | Translation (non-recurrent) | WMT English-German | 25.0 BLEU | Transformer 
 | Recommendation | MovieLens-20M | 0.635 HR@10 | Neural Collaborative Filtering
 | Reinforcement learning | Pro games | 40.00% move prediction | Mini Go
