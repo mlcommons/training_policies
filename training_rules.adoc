@@ -182,6 +182,9 @@ OPEN: Any format and scaling may be used.
 === Epoch numbering
 Epochs should always be numbered from 0.
 
+=== Result rounding
+Public results should be rounded normally.
+
 == Data Set
 
 === Data State at Start of Run
