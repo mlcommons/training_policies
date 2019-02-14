@@ -143,7 +143,7 @@ The closed division models are:
 |Area |Problem |Model
 
 |Vision |Image classification |Resnet-50 v1.5
-| |Object detection (light weight)|SDD
+| |Object detection (light weight)|SSD
 | |Object detection (heavy weight) |Mask R-CNN
 |Language |Speech recognition |Deep Speech 2
 | |Translation (recurrent) |NMT
