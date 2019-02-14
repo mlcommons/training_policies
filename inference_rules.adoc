@@ -6,7 +6,7 @@
 = MLPerf Cloud and Edge Inference Rules
 Version 0.5
 December 12th, 2018
-Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi (reddi@google.com/vjreddi@g.harvard.edu)
+Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi (vjreddi@g.harvard.edu)
 
 == Overview
 This document describes how to implement the MLPerf Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware performing inference on cloud or edge devices.
