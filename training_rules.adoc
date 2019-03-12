@@ -250,7 +250,7 @@ OPEN: Frameworks are free to alter the graph.
 === Hyperparameters and Optimizer
 CLOSED: 
 
-For v0.5.0, the following rules apply:
+For v0.5, the following rules apply:
 
 By default, the hyperparameters and optimizer must be the same as the reference. Hyperparameters include regularization terms such as norms and weight decays.
 
@@ -292,7 +292,7 @@ The following model-specific exceptions are also allowed:
 
 Some benchmarks may require extensions of these policies; submitters are encouraged to request extensions based on data.
 
-For version 0.5.1, MLPerf will be moving to a batchsize-to-hyperparameter-and-optimizer table. 
+For version 0.6, MLPerf will be moving to a batchsize-to-hyperparameter-and-optimizer table. 
 
 OPEN: Hyperparameters and optimizer may be freely changed.
 
