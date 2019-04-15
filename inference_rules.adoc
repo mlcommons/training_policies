@@ -191,7 +191,7 @@ CLOSED AND OPEN: Sample-independent pre-processing that matches the reference mo
 Any other pre- and post-processing time (e.g., for OPEN) is included in the wall-clock time for a run result.
 
 
-=== 6.3. Test Data Traversal Order
+=== Test Data Traversal Order
 Test data must be traversed in the same conceptual order as the reference implementation.  Batch size may affect order.
 
 Future versions of the benchmark suite may specify the traversal order.
