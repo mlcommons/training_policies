@@ -160,7 +160,7 @@ MLPerf guarantees that the reference implementations of all edge benchmarks will
 There are two divisions of the benchmark suite, the Closed division and the Open division.
 
 === Closed Division
-The Closed division requires using pre- and post-processing and model that is equivalent to the reference implementation.  The closed division does not allow any retraining.
+The Closed division requires using pre-processing, post-processing, and model that is equivalent to the reference implementation.  The closed division does not allow any retraining.
 
 The unqualified name “MLPerf” must be used when referring to a Closed Division suite result, e.g. “a MLPerf result of 4.5.”
 
