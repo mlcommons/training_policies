@@ -133,6 +133,21 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Language/Audio |Machine translation |GMNT |WMT16 |22 uncased BLEU |?? 
 |===
 
+== Scenarios
+
+In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined several different scenarios that differ 
+
+== Load generation
+
+Inference queries are controlled and initiated by the MLPerf provided load generator. The load generator operates in two modes: accuracy and performance. 
+
+ACCURACY: Accuracy mode is intended to measure the quality of the submission and ensure that it meets or exceeds the specified target. Inference queries are initiated by the load generator to measure quality of the system on a quality data set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not timed.
+
+PERFORMANCE: Performance mode is intended to measure the performance of the submission on the selected scenario(s). Input data for inference queries begins in system memory. In principle, system memory is the memory where the operating system resides that is accessed by network and storage I/O. In nearly every case the system memory should correspond to commodity DRAM (e.g., DDRx or LPDDRx) attached to the host CPU.
+
+Inference queries are initiated by the load generator in accordance with a selected scenario(s). Inference queries are timed to compute performance metric(s) in accordance with the selected scenario(s).
+
+
 == Reference Systems
 The reference systems are the MLPerf developer target platforms.
 
