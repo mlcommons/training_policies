@@ -220,11 +220,11 @@ CLOSED: For v0.5, MLPerf provides a reference implementation in a first framewor
 
 |===
 |Area |Task |Model |Reference implementation |Alternative implementation
-|Vision |Image classification |Resnet50-v1.5 |?? |?? 
+|Vision |Image classification |Resnet50-v1.5 |TF |PyTorch/ONNX 
 |Vision |Image classification |MobileNets-v1 224 |TensorFlow/TensorFlow Lite |PyTorch/ONNX  
 |Vision |Object detection |SSD-ResNet34 |PyTorch/ONNX |TensorFlow/TensorFlow Lite 
-|Vision |Object detection |SSD-MobileNets-v1 |?? |?? 
-|Language/Audio |Machine translation |GMNT |TensorFlow/TensorFlow Lite |??  
+|Vision |Object detection |SSD-MobileNets-v1 |TensorFlow |PyTorch/ONNX 
+|Language/Audio |Machine translation |GMNT |TensorFlow |PyTorch/ONNX 
 |===
 
 OPEN: The benchmark implementation may use a different model to perform the same task. Retraining is allowed.
