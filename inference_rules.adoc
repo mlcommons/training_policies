@@ -5,8 +5,7 @@
 
 = MLPerf Inference Rules
 Version 0.5
-December 12th, 2018
-This document is currently out-of-date, please contact David Kanter with any questions. We will sync with inference WG rules soon.
+April 16th, 2019
 
 Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi (vjreddi@g.harvard.edu)
 
