@@ -122,6 +122,7 @@ A “verify_dataset” script that verifies the dataset against the checksum.
 A “run_and_time” script that executes the benchmark and reports the wall-clock time.
 
 === Benchmarks
+
 The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
@@ -133,9 +134,17 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Language/Audio |Machine translation |GMNT |WMT16 |22 uncased BLEU |?? 
 |===
 
+== Load generation
+
+The MLPerf provided load generator controls and initates inference queries to the SUT. The load generator operates in two modes: accuracy and performance.
+
+ACCURACY: Accuracy mode is intended to measure the quality of the submission and ensure that it meets or exceeds the specified quality target. Inference queries are initiated by the load generator to measure quality of the system on a quality data set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not timed.
+
+PERFORMANCE: Performance mode is intended to measure the performance of the submission on the selected scenario(s). Input data for inference queries begins in system memory. In principle, system memory is the memory where the operating system resides that is accessed by network and storage I/O. In nearly every case the system memory should correspond to commodity DRAM (e.g., DDRx or LPDDRx) attached to the host CPU. Inference queries are initiated by the load generator in accordance with a selected scenario(s). Inference queries are timed to compute performance metric(s) in accordance with the selected scenario(s).
+
 == Scenarios
 
-In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined several different scenarios that differ
+In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined several different scenarios as described in the table below.
 
 |===
 |Scenario |Query generation |Duration |Inferences/query |Latency constraint |Tail latency | Metric
@@ -145,16 +154,7 @@ In order to enable representative testing of a wide variety of inference platfor
 |Offline |LoadGen sends all queries to SUT at start |max {1024 queries, 60 seconds} |All |None |N/A | Measured throughput
 |===
 
-== Load generation
-
-Inference queries are controlled and initiated by the MLPerf provided load generator. The load generator operates in two modes: accuracy and performance. 
-
-ACCURACY: Accuracy mode is intended to measure the quality of the submission and ensure that it meets or exceeds the specified target. Inference queries are initiated by the load generator to measure quality of the system on a quality data set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not timed.
-
-PERFORMANCE: Performance mode is intended to measure the performance of the submission on the selected scenario(s). Input data for inference queries begins in system memory. In principle, system memory is the memory where the operating system resides that is accessed by network and storage I/O. In nearly every case the system memory should correspond to commodity DRAM (e.g., DDRx or LPDDRx) attached to the host CPU.
-
-Inference queries are initiated by the load generator in accordance with a selected scenario(s). Inference queries are timed to compute performance metric(s) in accordance with the selected scenario(s).
-
+A submission may compise any combination of benchmark and scenario results.
 
 == Reference Systems
 The reference systems are the MLPerf developer target platforms.
@@ -215,22 +215,34 @@ Any other pre- and post-processing time (e.g., for OPEN) is included in the wall
 
 
 === Test Data Traversal Order
+
 Test data must be traversed in the same conceptual order as the reference implementation.  Batch size may affect order.
 
 Future versions of the benchmark suite may specify the traversal order.
 
 == Model
-CLOSED: The benchmark implementation must use the same model as the reference implementation, as defined by the remainder of this section.
 
-OPEN: The benchmark implementation may use a different model to perform the same task.
+CLOSED: For v0.5, MLPerf provides a reference implementation in a first framework and an alternative implementation in a second framework in accordance with the table below.  The benchmark implementation must use a model that is equivalent to the reference implementation or the alternative implementation, as defined by the remainder of this section.
+
+|===
+|Area |Task |Model |Reference implementation |Alternative implementation
+|Vision |Image classification |Resnet50-v1.5 |?? |?? 
+|Vision |Image classification |MobileNets-v1 224 |TensorFlow/TensorFlow Lite |PyTorch/ONNX  
+|Vision |Object detection |SSD-ResNet34 |PyTorch/ONNX |TensorFlow/TensorFlow Lite 
+|Vision |Object detection |SSD-MobileNets-v1 |?? |?? 
+|Language/Audio |Machine translation |GMNT |TensorFlow/TensorFlow Lite |??  
+|===
+
+OPEN: The benchmark implementation may use a different model to perform the same task. Retraining is allowed.
 
 === Graph Definition
 CLOSED: Each of the current frameworks has a graph that describes the operations performed during inference. Benchmark implementations must use the same graph as the reference implementation.
 
 OPEN: Each of the current frameworks has a graph that describes the operations performed during inference.  Benchmark implementations may use a different graph compared to the reference implementation.
 
-=== Weight Definition
-CLOSED: Trained weights and biases are provided in fp32 format, and may be quantized into any format for inference that achieves the desired quality.
+=== Weight Definition and Quantization
+CLOSED: MLPerf wil provide trained weights and biases in fp32 format for both the reference and alternative implementation.  MLPerf will also provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible public method quantization based only on calibration data and weight and bias tensors from the benchmark owner provided model to any format that achieves the desired quality. 
+Additionally, for image classification using MobileNets-v1 224 and object detection using SSD-MobileNets-v1, MLPerf will provide a retrained int8 (comprising 127 positive, 127 negative, and precise zero) model in two's complement format in a JSON container. Model weights and input activations are scaled per tensor, and must preserve the same shape up to padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No other retraining is allowed.
 
 OPEN: Weights and biases must be initialized to the same values for each run.
 
