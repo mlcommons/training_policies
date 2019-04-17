@@ -133,7 +133,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Language/Audio |Machine translation |GMNT |WMT16 |22 uncased BLEU |?? 
 |===
 
-== Load generation
+== Load Generator
 
 The MLPerf provided load generator controls and initates inference queries to the SUT. The load generator operates in two modes: accuracy and performance.
 
