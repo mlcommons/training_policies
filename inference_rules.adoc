@@ -209,7 +209,6 @@ CLOSED and OPEN: Sample-independent pre-processing that matches the reference mo
 
 Any other pre- and post-processing time (e.g., for OPEN) is included in the wall-clock time for a run result.
 
-
 === Test Data Traversal Order (UPDATE ME)
 Test data DEFINE PER SCENARIO.  Batch size may affect order.
 
@@ -230,9 +229,9 @@ CLOSED: For v0.5, MLPerf provides a reference implementation in a first framewor
 OPEN: The benchmark implementation may use a different model to perform the same task. Retraining is allowed.
 
 === Graph Definition
-CLOSED: Each of the current frameworks has a graph that describes the operations performed during inference. Benchmark implementations must use the same graph as the reference implementation.
+CLOSED: The reference and alternative implementations each have a graph that describes the operations performed during inference. Benchmark implementations must choose and specify the reference or alternative and the same graph.
 
-OPEN: Each of the current frameworks has a graph that describes the operations performed during inference.  Benchmark implementations may use a different graph compared to the reference implementation.
+OPEN: Benchmark implementations may use a different graph compared to the reference or alternative implementation.
 
 === Weight Definition and Quantization
 CLOSED: MLPerf wil provide trained weights and biases in fp32 format for both the reference and alternative implementation.  MLPerf will also provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible public method quantization using only the calibration data and weight and bias tensors from the model to any format that achieves the desired quality. 
