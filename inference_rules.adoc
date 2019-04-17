@@ -125,7 +125,7 @@ A “run_and_time” script that executes the benchmark and reports the wall-clo
 The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
-|Area |Task |Model |Dataset |Quality |Latency 
+|Area |Task |Model |Dataset |Quality |Latency constraint
 |Vision |Image classification |Resnet50-v1.5 |ImageNet (224x224) |74.9% top-1 |99% @ min, 10ms, 50ms, 100ms, 200ms, batch 
 |Vision |Image classification |MobileNets-v1 224 |ImageNet  (224x224) |?? |?? 
 |Vision |Object detection |SSD-ResNet34 |COCO (1200x1200) |0.212 mAP |?? 
@@ -135,7 +135,15 @@ The benchmark suite consists of the benchmarks shown in the following table.
 
 == Scenarios
 
-In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined several different scenarios that differ 
+In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined several different scenarios that differ
+
+|===
+|Scenario |Query generation |Duration |Inferences/query |Latency constraint |Tail latency | Metric
+|Single stream |LoadGen sends new query as soon as SUT completes the current query |max {1024 queries, 60 seconds} |1 |None |90% | 90%-ile measured latency 
+|Multiple stream |LoadGen sends new query every latency_constraint if the SUT has completed the current query, otherwise the new query is dropped and is counted as one overtime query  |max {1024 queries, 60 seconds} |Variable, see metric |Benchmark specific |90% | Maximum number of inferences per query supported
+|Server |LoadGen sends new query to SUT according to Poisson distribution, overtime queries may be queued and processed at end |max {24576 queries, 60 seconds} |1 |Benchmark specific |90% | Maximimum Poisson throughput parameter supported
+|Offline |LoadGen sends all queries to SUT at start |max {1024 queries, 60 seconds} |All |None |N/A | Measured throughput
+|===
 
 == Load generation
 
