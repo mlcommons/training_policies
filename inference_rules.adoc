@@ -121,12 +121,11 @@ A “verify_dataset” script that verifies the dataset against the checksum.
 A “run_and_time” script that executes the benchmark and reports the wall-clock time.
 
 === Benchmarks
-
 The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
 |Area |Task |Model |Dataset |Quality |Latency constraint
-|Vision |Image classification |Resnet50-v1.5 |ImageNet (224x224) |74.9% top-1 |99% @ min, 10ms, 50ms, 100ms, 200ms, batch 
+|Vision |Image classification |Resnet50-v1.5 |ImageNet (224x224) |74.9% top-1 |99% @ 10ms, 50ms, 100ms, 200ms 
 |Vision |Image classification |MobileNets-v1 224 |ImageNet  (224x224) |?? |?? 
 |Vision |Object detection |SSD-ResNet34 |COCO (1200x1200) |0.212 mAP |?? 
 |Vision |Object detection |SSD-MobileNets-v1 |COCO (300x300) |?? |?? 
@@ -134,23 +133,21 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |===
 
 == Load Generator
+The MLPerf provided load generator (LoadGen) controls and initates inference queries to the SUT. The LoadGen operates in two modes: accuracy and performance.
 
-The MLPerf provided load generator controls and initates inference queries to the SUT. The load generator operates in two modes: accuracy and performance.
+ACCURACY: Accuracy mode is intended to measure the quality of the submission and ensure that it meets or exceeds the specified quality target. Inference queries are initiated by the LoadGen to measure quality of the system on a quality data set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not timed.
 
-ACCURACY: Accuracy mode is intended to measure the quality of the submission and ensure that it meets or exceeds the specified quality target. Inference queries are initiated by the load generator to measure quality of the system on a quality data set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not timed.
-
-PERFORMANCE: Performance mode is intended to measure the performance of the submission on the selected scenario(s). Input data for inference queries begins in system memory. In principle, system memory is the memory where the operating system resides that is accessed by network and storage I/O. In nearly every case the system memory should correspond to commodity DRAM (e.g., DDRx or LPDDRx) attached to the host CPU. Inference queries are initiated by the load generator in accordance with a selected scenario(s). Inference queries are timed to compute performance metric(s) in accordance with the selected scenario(s).
+PERFORMANCE: Performance mode is intended to measure the performance of the submission on the selected scenario(s). Input data for inference queries begins in system memory. In principle, system memory is the memory where the operating system resides. In nearly every case the system memory should correspond to commodity DRAM (e.g., DDRx or LPDDRx) attached to the host CPU. Inference queries are initiated by the LoadGen in accordance with a selected scenario(s). Inference queries are timed to calculate performance metric(s) in accordance with the selected scenario(s).
 
 == Scenarios
-
-In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined several different scenarios as described in the table below.
+In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined four different scenarios as described in the table below.
 
 |===
 |Scenario |Query generation |Duration |Inferences/query |Latency constraint |Tail latency | Metric
-|Single stream |LoadGen sends new query as soon as SUT completes the current query |max {1024 queries, 60 seconds} |1 |None |90% | 90%-ile measured latency 
-|Multiple stream |LoadGen sends new query every latency_constraint if the SUT has completed the current query, otherwise the new query is dropped and is counted as one overtime query  |max {1024 queries, 60 seconds} |Variable, see metric |Benchmark specific |90% | Maximum number of inferences per query supported
-|Server |LoadGen sends new query to SUT according to Poisson distribution, overtime queries may be queued and processed at end |max {24576 queries, 60 seconds} |1 |Benchmark specific |90% | Maximimum Poisson throughput parameter supported
-|Offline |LoadGen sends all queries to SUT at start |max {1024 queries, 60 seconds} |All |None |N/A | Measured throughput
+|Single stream |New query as soon as SUT completes the current query |max {1024 queries, 60 seconds} |1 |None |90% | 90%-ile measured latency 
+|Multiple stream |New query every _latency constraint_ if the SUT has completed the current query, otherwise the new query is dropped and is counted as one overtime query |max {1024 queries, 60 seconds} |Variable, see metric |Benchmark specific |90% | Maximum number of inferences per query supported
+|Server |New queries according to Poisson distribution, overtime queries may be queued and processed at end |max {24576 queries, 60 seconds} |1 |Benchmark specific |90% | Maximimum Poisson throughput parameter supported
+|Offline |All queries available at start |max {1024 queries, 60 seconds} |All |None |N/A | Measured throughput
 |===
 
 A submission may compise any combination of benchmark and scenario results.
@@ -162,7 +159,7 @@ MLPerf guarantees that each of the cloud/edge reference implementations will ach
 
 The reference systems are selected for ease of development and are used as an arbitrary baseline used to compute relative performance of submissions.  The reference systems are not intended to be reflective of any particular market, application, or deployment.
 
-=== Cloud Reference System
+=== Cloud Reference System (UPDATE ME)
 The cloud reference platform is a Google Compute Platform n1-highmem-16 (16 vCPUs, 104GB memory) instance using the Skylake processor generation.
 
 MLPerf guarantees that the reference implementations of all cloud benchmarks will run on the cloud reference system.
@@ -182,7 +179,7 @@ MLPerf guarantees that the reference implementations of all edge benchmarks will
 There are two divisions of the benchmark suite, the Closed division and the Open division.
 
 === Closed Division
-The Closed division requires using pre-processing, post-processing, and model that is equivalent to the reference implementation.  The closed division does not allow any retraining.
+The Closed division requires using pre-processing, post-processing, and model that is equivalent to the reference or alternative implementation.  The closed division allows calibration for quantization and does not allow any retraining.
 
 The unqualified name “MLPerf” must be used when referring to a Closed Division suite result, e.g. “a MLPerf result of 4.5.”
 
@@ -190,9 +187,9 @@ The unqualified name “MLPerf” must be used when referring to a Closed Divisi
 The Open division allows using arbitrary pre- or post-processing and model, including retraining.
 The qualified name “MLPerf Open” must be used when referring to an Open Division suite result, e.g. “a MLPerf Open result of 7.2.”
 
-== Data Set
+== Data Sets
 === Data State at Start of Run
-Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The dataset must be unchanged at the start of each run.
+Each reference implementation includes a script to download the accuracy, speed, and calibration datasets and a script to verify the datasets using a checksum. The dataset must be unchanged at the start of each run.
 
 === Pre- and post-processing
 All imaging benchmarks take uncropped uncompressed bitmap as inputs, NMT takes text. 
@@ -201,7 +198,7 @@ CLOSED: The same pre- and post-processing steps as the reference implementation 
 
 OPEN: Any pre- and post-processing steps are allowed. Each datum must be preprocessed individually in a manner that is not influenced by any other data.
 
-CLOSED AND OPEN: Sample-independent pre-processing that matches the reference model is untimed. However, it must be pre-approved and added to the following list:
+CLOSED and OPEN: Sample-independent pre-processing that matches the reference model is untimed. However, it must be pre-approved and added to the following list:
 
 * May resize to processed size (e.g. SSD-large)
 * May reorder channels / do arbitrary transpositions
@@ -213,14 +210,12 @@ CLOSED AND OPEN: Sample-independent pre-processing that matches the reference mo
 Any other pre- and post-processing time (e.g., for OPEN) is included in the wall-clock time for a run result.
 
 
-=== Test Data Traversal Order
-
+=== Test Data Traversal Order (UPDATE ME)
 Test data DEFINE PER SCENARIO.  Batch size may affect order.
 
 Future versions of the benchmark suite may specify the traversal order.
 
 == Model
-
 CLOSED: For v0.5, MLPerf provides a reference implementation in a first framework and an alternative implementation in a second framework in accordance with the table below.  The benchmark implementation must use a model that is equivalent to the reference implementation or the alternative implementation, as defined by the remainder of this section.
 
 |===
@@ -240,8 +235,8 @@ CLOSED: Each of the current frameworks has a graph that describes the operations
 OPEN: Each of the current frameworks has a graph that describes the operations performed during inference.  Benchmark implementations may use a different graph compared to the reference implementation.
 
 === Weight Definition and Quantization
-CLOSED: MLPerf wil provide trained weights and biases in fp32 format for both the reference and alternative implementation.  MLPerf will also provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible public method quantization based only on calibration data and weight and bias tensors from the benchmark owner provided model to any format that achieves the desired quality. 
-Additionally, for image classification using MobileNets-v1 224 and object detection using SSD-MobileNets-v1, MLPerf will provide a retrained int8 (comprising 127 positive, 127 negative, and precise zero) model in two's complement format in a JSON container. Model weights and input activations are scaled per tensor, and must preserve the same shape up to padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No other retraining is allowed.
+CLOSED: MLPerf wil provide trained weights and biases in fp32 format for both the reference and alternative implementation.  MLPerf will also provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible public method quantization using only the calibration data and weight and bias tensors from the model to any format that achieves the desired quality. 
+Additionally, for image classification using MobileNets-v1 224 and object detection using SSD-MobileNets-v1, MLPerf will provide a retrained int8 (comprising 127 positive, 127 negative, and precise zero) model in two's complement format in a JSON container. Model weights and input activations are scaled per tensor, and must preserve the same shape modulo padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No other retraining is allowed.
 
 OPEN: Weights and biases must be initialized to the same values for each run.
 
