@@ -10,14 +10,14 @@ April 16th, 2019
 Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi (vjreddi@g.harvard.edu)
 
 == Overview
-This document describes how to implement the MLPerf Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware performing inference on cloud or edge devices.
+This document describes how to implement one or more benchmark in the MLPerf Inference Suite and how to use that implementation to measure the performance of an an ML system performing inference.
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
 
 === Definitions (read this section carefully)
 The following definitions are used throughout this document:
 
-_Performance_ always refers to inference query throughput subject to a latency bound, a latency requirement and a quality requirement, measured using the MLPerf query generator.
+_Performance_ always refers to a scenario-specific metric for inference queries measured using the MLPerf load generator.
 
 _Quality_ always refers to a model’s ability to produce “correct” outputs.
 
@@ -100,8 +100,8 @@ A plain text “README.md” file that describes:
 ** Dataset/Environment
 ** Publication/Attribution
 ** Data pre- and post-processing
-** Training and test data separation
-** Test data traversal order
+** Performance, accuracy, and calibration data sets
+** Test data traversal order (CHECK)
 * Model
 ** Publication/Attribution
 ** List of layers
@@ -114,7 +114,7 @@ A plain text “README.md” file that describes:
 ** Steps to download and verify data
 ** Steps to run and time
 
-A “download_dataset” script that downloads the dataset.
+A “download_dataset” script that downloads the accuracy, speed, and calibration datasets.
 
 A “verify_dataset” script that verifies the dataset against the checksum.
 
