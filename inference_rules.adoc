@@ -216,7 +216,7 @@ Any other pre- and post-processing time (e.g., for OPEN) is included in the wall
 
 === Test Data Traversal Order
 
-Test data must be traversed in the same conceptual order as the reference implementation.  Batch size may affect order.
+Test data DEFINE PER SCENARIO.  Batch size may affect order.
 
 Future versions of the benchmark suite may specify the traversal order.
 
@@ -251,48 +251,8 @@ CLOSED: Graph compilers are free to optimize the “non-stateful” parts of the
 
 OPEN: Frameworks are free to alter the graph.
 
-== Inference
 === Hyperparameters
 Hyperparameters (e.g. batch size) may be selected to best utilize the framework and system being tested, given the quality and latency requirements.
-
-=== Quality measure
-Each run must reach a target quality level relative to the reference implementation quality measure (e.g., a run using a quantized model must achieve within x% of the reference implementation). 
-
-== Run Results
-A run result consists of throughput measurements for performing inference queries, including data pre- and post-processing, subject to query latency requirements and inference accuracy requirements.  The latency requirements may vary on a per-benchmark basis.  
-
-<NEW SECTION>
-An inference run comprises completing a set of inference queries, including data pre- and post-processing, meeting the following requirements:
-
-* The per-benchmark quality requirement
-* The per-benchmark latency percentile requirement, and
-* A latency bound selected from the per-benchmark set of latency bounds.  
-
-The quality requirement is an accuracy requirement specified on a per-benchmark basis in the appropriate table in Section 3.
-
-The latency percentile requirement comprises a specified percentage of the inference queries meeting a latency bound.  The percentage is specified on a per-benchmark basis in the appropriate table in Section 3.
-
-For each run, the minimum number of inference queries is based on the latency percentage requirement and determined by the following table.  The duration of the inference queries shall be no less than two minutes regardless of the number of required queries.  For non-batch runs, inference queries will be generated using the MLPerf query generator using a pseudo-random Poisson arrival time distribution.  For batch runs, inference queries will all arrive immediately.
-
-|===
-|%-ile |85% |90% |95% |99% |99.9% 
-|Min. Queries |2^12 |2^12 |2^12 |2^16 |2^19  
-|===
-
-The latency bound is selected from a list of per-benchmark latency bounds that is specified in the appropriate table in Section 3.  The minimum latency is the lowest latency achievable on the system under test.  The batch latency is unlimited latency (i.e., no latency bound).
-
-A run result is the measured throughput of the queries of the inference run.  For the minimum latency run, the throughput is simply the inverse of a single query.
-
-== Benchmark Results
-For each benchmark, a valid benchmark result consists of a run result for each of the latency bounds on the list as described in Section 3; each run result is normalized by dividing by the respective reference result to compute a relative throughput.  This normalization produces higher numbers for better results, which better aligns with human intuition.  For example, the throughput of a ResNet-50 minimum latency run is divided by the throughput of the reference ResNet50-v1.5 minimum latency run.
-
-The relative throughputs are plotted on the Y-axis against the latency bounts on the X-axis.  For example, a ResNet50-v1.5 benchmark result will plot relative throughputs obtained for on an X-axis comprising minimum, 10ms, 50ms, 100ms, 200ms, and batch.
-
-== Division Results
-In order to report a division result, a benchmark score must be reported for each benchmark in the suite. The division score is the geometric mean of the benchmark results.  Benchmark results for individual tests may be reported.
-
-== Framework Reporting
-Report the framework used, including version.
 
 == System Reporting
 Cloud and edge benchmarks may be run both on either hardware as a service or physical hardware.
