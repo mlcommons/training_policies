@@ -21,9 +21,13 @@ The following definitions are used throughout this document:
 
 _Performance_ always refers to a scenario-specific metric for inference queries measured using the MLPerf load generator.
 
+A _sample_ is the unit on which inference is run. E.g., an image, or a sentence.
+
+A _query_ is a set of N samples that are issued to an inference system together. N is a positive integer. For example, a single query contains 8 images.
+
 _Quality_ always refers to a model’s ability to produce “correct” outputs.
 
-A _system_ consists of a defined set of hardware resources such as processors, memories, disks, and interconnect. It also includes specific versions of all software such as operating system, compilers, libraries, and drivers that significantly influences the running time of a benchmark, excluding the ML framework.
+A _system under test_ consists of a defined set of hardware and software resources that will be measured for perforamnce.  The hardware resources may include processors, accelerators, memories, disks, and interconnect. The software resources may include an operating system, compilers, libraries, and drivers that significantly influences the running time of a benchmark.
 
 A _framework_ is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training and/or executing ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
 
