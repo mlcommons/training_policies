@@ -247,6 +247,7 @@ OPEN: Benchmark implementations may use a different graph compared to the refere
 CLOSED: MLPerf will provide trained weights and biases in fp32 format for both the reference and alternative implementations.
 
 MLPerf will provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible quantization using only the calibration data and weight and bias tensors from the benchmark owner provided model to any combination of permissive whitelist numerical format that achieves the desired quality. The whitelist currently includes:
+
 * INT8
 * INT16
 * UINT8
@@ -263,8 +264,6 @@ Calibration is allowed and must only use the calibration data set provided by th
 Additionally, for image classification using MobileNets-v1 224 and object detection using SSD-MobileNets-v1, MLPerf will provide a retrained INT8 (comprising 127 positive, 127 negative, and precise zero for weights and biases) model in two's complement format in a JSON container. Model weights and input activations are scaled per tensor, and must preserve the same shape modulo padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No other retraining is allowed.
 
 OPEN: Weights and biases must be initialized to the same values for each run, any quantization scheme is allowed that achieves the desired quality.
-
-=== Quantization
 
 === Graph Execution
 CLOSED: Graph compilers are free to optimize the “non-stateful” parts of the computation graph provided that the semantics are unchanged. So optimizations and graph / code transformations of the flavor of layer fusion, dead code elimination, common subexpression elimination, and loop-invariant code motion are entirely allowed.
