@@ -149,11 +149,11 @@ PERFORMANCE: Performance mode is intended to measure the performance of the subm
 In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined four different scenarios as described in the table below.
 
 |===
-|Scenario |Query Generation |Duration |Inferences/query |Latency Constraint |Tail Latency | Performance Metric
-|Single stream |New query as soon as SUT completes the current query |max {1024 queries, 60 seconds} |1 |None |90% | 90%-ile measured latency 
-|Multiple stream |New query every _latency constraint_ if the SUT has completed the current query, otherwise the new query is dropped and is counted as one overtime query |max {24K queries, 60 seconds} |Variable, see metric |Benchmark specific |90% | Maximum number of inferences per query supported
-|Server |New queries according to Poisson distribution, overtime queries may be queued and processed at end |max {24K queries, 60 seconds} |1 |Benchmark specific |90% | Maximimum Poisson throughput parameter supported
-|Offline |All queries available at start |max {24K queries, 60 seconds} |All |None |N/A | Measured throughput
+|Scenario |Query Generation |Duration |Samples/query |Latency Constraint |Tail Latency | Performance Metric
+|Single stream |LoadGen sends next query as soon as SUT completes the previous query |max {1024 queries, 60 seconds} |1 |None |90% | 90%-ile measured latency 
+|Multiple stream |LoadGen sends a new query every _latency constraint_ if the SUT has completed the prior query, otherwise the new query is dropped and is counted as one overtime query |max {24K queries, 60 seconds} |Variable, see metric |Benchmark specific |90% | Maximum number of inferences per query supported
+|Server |LoadGen sends new queries to the SUT according to a Poisson distribution, overtime queries must not exceed 2X the latency bound |max {24K queries, 60 seconds} |1 |Benchmark specific |90% | Maximimum Poisson throughput parameter supported
+|Offline |LoadGen sends all queries to the SUT at start |max {24K queries, 60 seconds} |All |None |N/A | Measured throughput
 |===
 
 A submission may compise any combination of benchmark and scenario results.
