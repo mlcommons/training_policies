@@ -139,7 +139,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |===
 
 == Load Generator
-The MLPerf provided load generator (LoadGen) controls and initates inference queries to the SUT. The LoadGen operates in two modes: accuracy and performance.
+The MLPerf provided load generator (LoadGen) controls and initates inference queries to the SUT. The LoadGen is provided in C++ with Python bindings and must be used. The LoadGen operates in two modes: accuracy and performance.
 
 ACCURACY: Accuracy mode is intended to measure the quality of the submission and ensure that it meets or exceeds the specified quality target. Inference queries are initiated by the LoadGen to measure quality of the system on a quality data set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not timed.
 
