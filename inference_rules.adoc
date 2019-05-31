@@ -368,29 +368,9 @@ Include the total cost of obtaining the median run result using fixed prices for
 Report everything that will eventually be required by a third-party user to replicate the result when the hardware and software becomes widely available.
 
 ==== Power
-For v0.5, power measurement is optional, but should be in accordance with recommendations if performed.  As per all performance testing, we expect that power measurements will be reproducible.
+For v0.5, power measurement is optional, but should be in accordance with MLPerf recommendations if performed.  As per all performance testing, we expect that power measurements will be reproducible.
 
-* Power is measured for a “device under test” (DUT)
-**The DUT may be wall-powered or battery-powered
-* The DUT for v0.5 is a full system that is capable (without external assistance) of:
-** Receiving input data (e.g., via network or I/O)
-** Pre-processing (e.g., via DSP, CPU)
-** Performing inference (e.g., via CPU, GPU, accelerator)
-** Post-processing (e.g., via GPU), and
-** Any other step deemed necessary
-*** Example DUTs include a smartphone, a server, a server with a PCIe accelerator, a PC with an accelerator USB stick.
-* Metrics
-**Energy and power are recorded and reported for the entirety of the performance test (e.g., including pre-/post-processing) at clearly defined boundaries. The power measurement must report:
-*** Total energy consumed by the DUT
-*** Peak power draw by the DUT (note that peak power draw is typically a microsecond-level granularity event)
-* Measurement equipment
-** We do not specify, but recommend following SPECpower recommendations for wall-powered devices and using https://www.msoon.com/online-store/High-Voltage-Power-Monitor-HVPM-p90002590 for mobile devices
-* The submitted shall report:
-** Complete configuration of DUT, and where/how power is measured
-** Hardware and software used to gather the measurements
-** Detailed instructions to experimentally reproduce the numbers
-
-For recommendations and discussion of power management, please see https://docs.google.com/document/d/1XdX5-PHFuckeZYUJpEupvOgPmn_wmOHPY3JLP8-fjLs/.
+The current power measurement recommendations for single-node wall-powered and battery-powered systems is available at https://docs.google.com/document/d/1fnhjauZE_eQk5sLT5h6BumyWtyh-S-Lk4pRlkVU0hH4/edit# and will be migrated into GitHub once it is suitably stable.
 
 == Submissions
 The MLPerf organization will create a database that collects submission data; one feature of the database is producing a leaderboard.
