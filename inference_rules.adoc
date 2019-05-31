@@ -44,13 +44,13 @@ A _benchmark implementation_ is an implementation of a benchmark in a particular
 
 A _suite implementation_ is a set of benchmark implementations for the entire suite using the same framework under the rules of a specific division.
 
-A _run_ is a complete execution of a benchmark implementation on a system, executing a model in accordance with a scenario.
+A _run_ is a complete execution of a benchmark implementation on a system under control of the load generator that consists of completing a set of inference queries, including data pre- and post-processing, meeting a latency requirement and a quality requirement in accordance with a scenario.
 
-An _run result_ consists of completing a set of inference queries, including data pre- and post-processing, meeting a latency requirement and a quality requirement.  Each benchmark has a quality requirement and a 
+An _run result_ consists of the scenario-specific metric.
 
 A _reference result_ is a run result provided by the MLPerf organization for each reference implementation on a reference system.
 
-A _benchmark result_ is a run result normalized to the reference result for that benchmark. Normalization is of the form (reference result * constant / benchmark result) such that a better benchmark result produces a higher number.  The constant shall be selected to ensure that most benchmark results are greater than 1. (FIX ME)
+A _benchmark result_ is a run result normalized to the reference result for that benchmark. Normalization is of the form (reference result * constant / benchmark result) such that a better benchmark result produces a higher number.  The constant shall be selected to ensure that most benchmark results are greater than 1. (FIX ME??)
 
 == General rules
 The following rules apply to all benchmark implementations.
