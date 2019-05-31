@@ -273,6 +273,43 @@ OPEN: Frameworks are free to alter the graph.
 === Hyperparameters
 Hyperparameters (e.g. batch size) may be selected to best utilize the framework and system being tested, given the quality and latency requirements.
 
+=== Model Equivalence
+
+All implementations are allowed as long as the latency and accuracy bounds are met and the reference weights are used. Reference weights may be modified according to the quantization rules.
+
+Examples of legal variance in implementations include, but are not limited to:
+
+* Arbitrary frameworks and runtimes: TF, TF-lite, ONNX, PyTorch, etc, provided they conform to the rest of the rules
+* Running any given control flow or operations on or off an accelerator
+* Arbitrary data arrangement
+* Different input and in-memory representations of weights
+* Variation in matrix-multiplication or convolution algorithm provided the algorithm produces asymptotically accurate results when evaluated with asymptotic precision
+* Mathematically equivalent transformations (e.g. Tanh versus Logistic, Relu6 versus Relu8) or approximations and including but not limited to transcendental functions (or equivalent transformations)
+* Processing queries out-of-order within discretion provided by scenario
+* Replacing dense operations with mathematically equivalent sparse operations
+* Hand picking different numerical precisions for different operations
+* Fusing or unfusing operations
+* Dynamically switching between one or more batch sizes
+* Different implementations based on dynamically determined batch size
+* Mixture of experts combining differently quantized weights
+* Stochastic quantization algorithms with seeds for reproducibility.
+* Reducing ImageNet classifiers with 1001 classes to 1000 classes
+* For anything else you want on this list contact submitters five weeks prior to the submission deadline
+
+Examples of legal variance in implementations include, but are not limited to:
+
+* Wholesale weight replacement or supplements
+* Discarding non-zero weight elements
+* Caching queries or responses
+* Coalescing identical queries
+* Modifying weights during the timed portion of an inference run (no online learning or related techniques)
+* “Soft dropping” queries by scheduling them for execution in the indefinite future. The latency bound enforces worst-case behavior, it is not a backdoor for dropping 10% of queries.
+* Weight quantization algorithms that are similar in size to the non-zero weights they produce
+* Hard coding the total number of queries
+* Techniques that boost performance for fixed length experiments but are inapplicable to long-running services except in the offline scenario
+* Using knowledge of the LoadGen implementation to predict upcoming lulls or spikes in the server scenario
+* For anything else you want on this list contact submitters five weeks prior to the submission deadline
+
 == System Reporting
 Cloud and edge benchmarks may be run both on either hardware as a service or physical hardware.
 
