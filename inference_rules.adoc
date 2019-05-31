@@ -339,7 +339,7 @@ Examples of legal variance in implementations include, but are not limited to:
 * Reducing ImageNet classifiers with 1001 classes to 1000 classes
 * For anything else you want on this list contact submitters five weeks prior to the submission deadline
 
-Examples of legal variance in implementations include, but are not limited to:
+Examples of illegal variance in implementations include, but are not limited to:
 
 * Wholesale weight replacement or supplements
 * Discarding non-zero weight elements
