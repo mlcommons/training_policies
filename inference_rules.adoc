@@ -95,6 +95,28 @@ The implementation should not encode any information about the content of the in
 === Replicability is mandatory
 Results that cannot be replicated are not valid results.
 
+== Scenarios
+In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined four different scenarios as described in the table below.
+
+|===
+|Scenario |Query Generation |Duration |Samples/query |Latency Constraint |Tail Latency | Performance Metric
+|Single stream |LoadGen sends next query as soon as SUT completes the previous query |max {1024 queries, 60 seconds} |1 |None |90% | 90%-ile measured latency 
+|Multiple stream |LoadGen sends a new query every _latency constraint_ if the SUT has completed the prior query, otherwise the new query is dropped and is counted as one overtime query |max {24K queries, 60 seconds} |Variable, see metric |Benchmark specific |90% | Maximum number of inferences per query supported
+|Server |LoadGen sends new queries to the SUT according to a Poisson distribution, overtime queries must not exceed 2X the latency bound |max {24K queries, 60 seconds} |1 |Benchmark specific |90% | Maximimum Poisson throughput parameter supported
+|Offline |LoadGen sends all queries to the SUT at start |max {24K queries, 60 seconds} |All |None |N/A | Measured throughput
+|===
+
+The number of queries is selected to ensure sufficient statistical confidence in the reported metric. Specifically, the top line in the following table. Lower lines are being evaluated for future versions of MLPerf Inference (e.g., 95% tail latency for v0.6 and 99% tail latency for v0.7).
+
+|===
+|Tail Latency Percentile |Confidence Interval |Margin-of-Error |Inferences |Rounded Inferences
+|90%|99%|0.50%|23,886|3*2^13 = 24,576
+|95%|99%|0.25%|50,425|7*2^13 = 57,344
+|99%|99%|0.05%|262,742|33*2^13 = 270,336
+|===
+
+A submission may comprise any combination of benchmark and scenario results.
+
 == Benchmarks
 The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
 Code that implements the model in a framework.
@@ -178,28 +200,6 @@ The execution of LoadGen is restricted as follows:
 * Caching of any queries, any query params, or any intermediate results is prohibited.
 
 LoadGen generates queries based on trace. The trace is constructed by uniformly sampling (with replacement) from a library based on a fixed random seed and deterministic generator. The trace is usually pre-generated, but may optionally be incrementally generated if it does not fit in memory. LoadGen validates accuracy via a separate test run that use each sample in the test library exactly once but is otherwise identical to the above normal metric run.
-
-== Scenarios
-In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined four different scenarios as described in the table below.
-
-|===
-|Scenario |Query Generation |Duration |Samples/query |Latency Constraint |Tail Latency | Performance Metric
-|Single stream |LoadGen sends next query as soon as SUT completes the previous query |max {1024 queries, 60 seconds} |1 |None |90% | 90%-ile measured latency 
-|Multiple stream |LoadGen sends a new query every _latency constraint_ if the SUT has completed the prior query, otherwise the new query is dropped and is counted as one overtime query |max {24K queries, 60 seconds} |Variable, see metric |Benchmark specific |90% | Maximum number of inferences per query supported
-|Server |LoadGen sends new queries to the SUT according to a Poisson distribution, overtime queries must not exceed 2X the latency bound |max {24K queries, 60 seconds} |1 |Benchmark specific |90% | Maximimum Poisson throughput parameter supported
-|Offline |LoadGen sends all queries to the SUT at start |max {24K queries, 60 seconds} |All |None |N/A | Measured throughput
-|===
-
-The number of queries is selected to ensure sufficient statistical confidence in the reported metric. Specifically, the top line in the following table. Lower lines are being evaluated for future versions of MLPerf Inference (e.g., 95% tail latency for v0.6 and 99% tail latency for v0.7).
-
-|===
-|Tail Latency Percentile |Confidence Interval |Margin-of-Error |Inferences |Rounded Inferences
-|90%|99%|0.50%|23,886|3*2^13 = 24,576
-|95%|99%|0.25%|50,425|7*2^13 = 57,344
-|99%|99%|0.05%|262,742|33*2^13 = 270,336
-|===
-
-A submission may compise any combination of benchmark and scenario results.
 
 == Reference Systems
 The reference systems are the MLPerf developer target platforms.
