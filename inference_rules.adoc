@@ -192,6 +192,15 @@ In order to enable representative testing of a wide variety of inference platfor
 |Offline |LoadGen sends all queries to the SUT at start |max {24K queries, 60 seconds} |All |None |N/A | Measured throughput
 |===
 
+The number of queries is selected to ensure sufficient statistical confidence in the reported metric. Specifically, the top line in the following table. Lower lines are being evaluated for future versions of MLPerf Inference (e.g., 95% tail latency for v0.6 and 99% tail latency for v0.7).
+
+|===
+|Tail Latency Percentile |Confidence Interval |Margin-of-Error |Inferences |Rounded Inferences
+|90%|99%|0.50%|23,886|3*2^13 = 24,576
+|95%|99%|0.25%|50,425|7*2^13 = 57,344
+|99%|99%|0.05%|262,742|33*2^13 = 270,336
+|===
+
 A submission may compise any combination of benchmark and scenario results.
 
 == Reference Systems
