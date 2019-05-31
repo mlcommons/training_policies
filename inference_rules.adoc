@@ -195,7 +195,13 @@ The qualified name “MLPerf Open” must be used when referring to an Open Divi
 
 == Data Sets
 === Data State at Start of Run
-Each reference implementation includes a script to download the accuracy, speed, and calibration datasets and a script to verify the datasets using a checksum. The dataset must be unchanged at the start of each run.
+For each benchmark, MLPerf will provide pointers to:
+
+*A calibration data set, to be used for quantization (see quantization section), that is a small subset of the training data set used to generate the weights
+*An accuracy data set, to be used to determine whether a submission meets the quality target, and used as a validation set
+*A speed/performance data set that is a subset of the accuracy data set to be used to measure performance
+
+Each reference implementation shall include a script to verify the datasets using a checksum. The dataset must be unchanged at the start of each run.
 
 === Pre- and post-processing
 All imaging benchmarks take uncropped uncompressed bitmap as inputs, NMT takes text. 
@@ -215,10 +221,8 @@ CLOSED and OPEN: Sample-independent pre-processing that matches the reference mo
 
 Any other pre- and post-processing time (e.g., for OPEN) is included in the wall-clock time for a run result.
 
-=== Test Data Traversal Order (UPDATE ME)
-Test data DEFINE PER SCENARIO.  Batch size may affect order.
-
-Future versions of the benchmark suite may specify the traversal order.
+=== Test Data Traversal Order
+Test data is determined by the LoadGen. For scenarios where processing multiple samples can occur (i.e., server, multi-stream, and offline), any ordering is allowed subject to latency requirements.
 
 == Model
 CLOSED: For v0.5, MLPerf provides a reference implementation in a first framework and an alternative implementation in a second framework in accordance with the table below.  The benchmark implementation must use a model that is equivalent to the reference implementation or the alternative implementation, as defined by the remainder of this section.
