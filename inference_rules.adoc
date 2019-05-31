@@ -9,8 +9,6 @@ April 16th, 2019
 
 Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi (vjreddi@g.harvard.edu)
 
-This document is stale with respect to the inference rules, please consult https://docs.google.com/document/d/1PUYLYr4eENzrsAM4XoeJY17ehmhdEpVxaFjhcGxO9xc/edit# for the most recent rules.
-
 == Overview
 This document describes how to implement one or more benchmark in the MLPerf Inference Suite and how to use that implementation to measure the performance of an an ML system performing inference.
 
@@ -46,7 +44,7 @@ A _benchmark implementation_ is an implementation of a benchmark in a particular
 
 A _suite implementation_ is a set of benchmark implementations for the entire suite using the same framework under the rules of a specific division.
 
-A _run_ is a complete execution of a benchmark implementation on a system, executing a model using specific input data with a target quality level and target latency. (BRING INTO ALIGNMENT WITH SECTION BELOW)
+A _run_ is a complete execution of a benchmark implementation on a system, executing a model in accordance with a scenario.
 
 An _run result_ consists of completing a set of inference queries, including data pre- and post-processing, meeting a latency requirement and a quality requirement.  Each benchmark has a quality requirement and a 
 
