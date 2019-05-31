@@ -370,7 +370,7 @@ Report everything that will eventually be required by a third-party user to repl
 ==== Power
 For v0.5, power measurement is optional, but should be in accordance with MLPerf recommendations if performed.  As per all performance testing, we expect that power measurements will be reproducible.
 
-The current power measurement recommendations for wall-powered and battery-powered systems is available at https://docs.google.com/document/d/1fnhjauZE_eQk5sLT5h6BumyWtyh-S-Lk4pRlkVU0hH4/edit# and will be migrated into GitHub once it is suitably stable.
+The current power measurement recommendations for single-node wall-powered and battery-powered systems is available at https://docs.google.com/document/d/1fnhjauZE_eQk5sLT5h6BumyWtyh-S-Lk4pRlkVU0hH4/edit# and will be migrated into GitHub once it is suitably stable.
 
 == Submissions
 The MLPerf organization will create a database that collects submission data; one feature of the database is producing a leaderboard.
