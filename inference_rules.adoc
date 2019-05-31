@@ -197,9 +197,9 @@ The qualified name “MLPerf Open” must be used when referring to an Open Divi
 === Data State at Start of Run
 For each benchmark, MLPerf will provide pointers to:
 
-*A calibration data set, to be used for quantization (see quantization section), that is a small subset of the training data set used to generate the weights
-*An accuracy data set, to be used to determine whether a submission meets the quality target, and used as a validation set
-*A speed/performance data set that is a subset of the accuracy data set to be used to measure performance
+* A calibration data set, to be used for quantization (see quantization section), that is a small subset of the training data set used to generate the weights
+* An accuracy data set, to be used to determine whether a submission meets the quality target, and used as a validation set
+* A speed/performance data set that is a subset of the accuracy data set to be used to measure performance
 
 Each reference implementation shall include a script to verify the datasets using a checksum. The dataset must be unchanged at the start of each run.
 
@@ -244,10 +244,27 @@ CLOSED: The reference and alternative implementations each have a graph that des
 OPEN: Benchmark implementations may use a different graph compared to the reference or alternative implementation.
 
 === Weight Definition and Quantization
-CLOSED: MLPerf wil provide trained weights and biases in fp32 format for both the reference and alternative implementation.  MLPerf will also provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible public method quantization using only the calibration data and weight and bias tensors from the model to any format that achieves the desired quality. 
-Additionally, for image classification using MobileNets-v1 224 and object detection using SSD-MobileNets-v1, MLPerf will provide a retrained int8 (comprising 127 positive, 127 negative, and precise zero) model in two's complement format in a JSON container. Model weights and input activations are scaled per tensor, and must preserve the same shape modulo padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No other retraining is allowed.
+CLOSED: MLPerf will provide trained weights and biases in fp32 format for both the reference and alternative implementations.
 
-OPEN: Weights and biases must be initialized to the same values for each run.
+MLPerf will provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible quantization using only the calibration data and weight and bias tensors from the benchmark owner provided model to any combination of permissive whitelist numerical format that achieves the desired quality. The whitelist currently includes:
+* INT8
+* INT16
+* UINT8
+* UINT16
+* FP11 (1-bit sign, 5-bit exponent, 5-bit mantissa)
+* FP16
+* bfloat16
+* FP32
+
+To be considered principled, the description of the quantization method must be much much smaller than the non-zero weights it produces.
+
+Calibration is allowed and must only use the calibration data set provided by the benchmark owner.
+
+Additionally, for image classification using MobileNets-v1 224 and object detection using SSD-MobileNets-v1, MLPerf will provide a retrained INT8 (comprising 127 positive, 127 negative, and precise zero for weights and biases) model in two's complement format in a JSON container. Model weights and input activations are scaled per tensor, and must preserve the same shape modulo padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No other retraining is allowed.
+
+OPEN: Weights and biases must be initialized to the same values for each run, any quantization scheme is allowed that achieves the desired quality.
+
+=== Quantization
 
 === Graph Execution
 CLOSED: Graph compilers are free to optimize the “non-stateful” parts of the computation graph provided that the semantics are unchanged. So optimizations and graph / code transformations of the flavor of layer fusion, dead code elimination, common subexpression elimination, and loop-invariant code motion are entirely allowed.
