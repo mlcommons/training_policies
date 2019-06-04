@@ -289,7 +289,7 @@ OPEN: Benchmark implementations may use a different graph compared to the refere
 === Weight Definition and Quantization
 CLOSED: MLPerf will provide trained weights and biases in fp32 format for both the reference and alternative implementations.
 
-MLPerf will provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible quantization using only the calibration data and weight and bias tensors from the benchmark owner provided model to any combination of permissive whitelist numerical format that achieves the desired quality. The whitelist currently includes:
+MLPerf will provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible quantization using only the calibration data and weight and bias tensors from the benchmark owner provided model to any combination of permissive whitelist numerical format that achieves the desired quality. The quantization method must be publicly described at a level where it could be reproduced.  The whitelist currently includes:
 
 * INT8
 * INT16
