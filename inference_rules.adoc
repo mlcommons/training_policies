@@ -204,7 +204,7 @@ table. Quality and latency targets are still being finalized.
 |Vision |Image classification |MobileNets-v1 224 |ImageNet  (224x224) | ?? | ?? 
 |Vision |Object detection |SSD-ResNet34 |COCO (1200x1200) | ?? | ?? 
 |Vision |Object detection |SSD-MobileNets-v1 |COCO (300x300) | ?? | ?? 
-|Language |Machine translation |GMNT |WMT16 |22 uncased BLEU | ?? 
+|Language |Machine translation |GMNT |WMT16 | ?? | ?? 
 |===
 
 == Load Generator
