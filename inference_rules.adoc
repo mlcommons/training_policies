@@ -4,99 +4,176 @@
 :sectnums:
 
 = MLPerf Inference Rules
-Version 0.5
-April 16th, 2019
 
-Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi (vjreddi@g.harvard.edu)
+Version 0.5 April 16th, 2019
+
+Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa
+Reddi (vjreddi@g.harvard.edu)
 
 == Overview
-This document describes how to implement one or more benchmark in the MLPerf Inference Suite and how to use that implementation to measure the performance of an an ML system performing inference.
 
-The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
+This document describes how to implement one or more benchmark in the
+MLPerf Inference Suite and how to use that implementation to measure
+the performance of an an ML system performing inference.
+
+The MLPerf name and logo are trademarks. In order to refer to a result
+using the MLPerf name, the result must conform to the letter and
+spirit of the rules specified in this document. The MLPerf
+organization reserves the right to solely determine if a use of its
+name or logo is acceptable.
 
 === Definitions (read this section carefully)
+
 The following definitions are used throughout this document:
 
-_Performance_ always refers to a scenario-specific metric for inference queries measured using the MLPerf load generator.
+_Performance_ always refers to a scenario-specific metric for
+inference queries measured using the MLPerf load generator.
 
-A _sample_ is the unit on which inference is run. E.g., an image, or a sentence.
+A _sample_ is the unit on which inference is run. E.g., an image, or a
+sentence.
 
-A _query_ is a set of N samples that are issued to an inference system together. N is a positive integer. For example, a single query contains 8 images.
+A _query_ is a set of N samples that are issued to an inference system
+together. N is a positive integer. For example, a single query
+contains 8 images.
 
-_Quality_ always refers to a model’s ability to produce “correct” outputs.
+_Quality_ always refers to a model’s ability to produce “correct”
+outputs.
 
-A _system under test_ consists of a defined set of hardware and software resources that will be measured for perforamnce.  The hardware resources may include processors, accelerators, memories, disks, and interconnect. The software resources may include an operating system, compilers, libraries, and drivers that significantly influences the running time of a benchmark.
+A _system under test_ consists of a defined set of hardware and
+software resources that will be measured for perforamnce.  The
+hardware resources may include processors, accelerators, memories,
+disks, and interconnect. The software resources may include an
+operating system, compilers, libraries, and drivers that significantly
+influences the running time of a benchmark.
 
-A _framework_ is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training and/or executing ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
+A _framework_ is a specific version of a software library or set of
+related libraries, possibly with associated offline compiler, for
+training and/or executing ML models using a system. Examples include
+specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or
+TensorFlow.
 
 A _graph compiler_ is ??
 
-A _task_ is a generalized, high-level, user-understandable problem that is comprised of one or more ML models and includes pre- and post-processing steps for the models.
+A _task_ is a generalized, high-level, user-understandable problem
+that is comprised of one or more ML models and includes pre- and
+post-processing steps for the models.
   
-A _benchmark_ is a measurable task that can be solved by executing a trained model using a specific input dataset at a target quality level and one or more target latency levels.
+A _benchmark_ is a measurable task that can be solved by executing a
+trained model using a specific input dataset at a target quality level
+and one or more target latency levels.
 
 A _suite_ is a specific set of benchmarks.
-A _division_ has a set of rules for implementing a suite to produce a class of comparable results.
 
-A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization.  The reference implementation is the canonical implementation of a benchmark. All valid submissions of a benchmark must be *equivalent* to the reference implementation.
+A _division_ has a set of rules for implementing a suite to produce a
+class of comparable results.
 
-A _benchmark implementation_ is an implementation of a benchmark in a particular framework by a user under the rules of a specific division.
+A _reference implementation_ is a specific implementation of a
+benchmark provided by the MLPerf organization.  The reference
+implementation is the canonical implementation of a benchmark. All
+valid submissions of a benchmark must be *equivalent* to the reference
+implementation.
 
-A _suite implementation_ is a set of benchmark implementations for the entire suite using the same framework under the rules of a specific division.
+A _benchmark implementation_ is an implementation of a benchmark in a
+particular framework by a user under the rules of a specific division.
 
-A _run_ is a complete execution of a benchmark implementation on a system under control of the load generator that consists of completing a set of inference queries, including data pre- and post-processing, meeting a latency requirement and a quality requirement in accordance with a scenario.
+A _suite implementation_ is a set of benchmark implementations for the
+entire suite using the same framework under the rules of a specific
+division.
+
+A _run_ is a complete execution of a benchmark implementation on a
+system under control of the load generator that consists of completing
+a set of inference queries, including data pre- and post-processing,
+meeting a latency requirement and a quality requirement in accordance
+with a scenario.
 
 An _run result_ consists of the scenario-specific metric.
 
-A _reference result_ is a run result provided by the MLPerf organization for each reference implementation on a reference system.
+A _reference result_ is a run result provided by the MLPerf
+organization for each reference implementation on a reference system.
 
-A _benchmark result_ is a run result normalized to the reference result for that benchmark. Normalization is of the form (reference result * constant / benchmark result) such that a better benchmark result produces a higher number.  The constant shall be selected to ensure that most benchmark results are greater than 1. (FIX ME??)
+A _benchmark result_ is a run result normalized to the reference
+result for that benchmark. Normalization is of the form (reference
+result * constant / benchmark result) such that a better benchmark
+result produces a higher number.  The constant shall be selected to
+ensure that most benchmark results are greater than 1. (FIX ME??)
 
 == General rules
+
 The following rules apply to all benchmark implementations.
 
 === Strive to be fair
-Benchmarking should be conducted to measure the framework and system performance as fairly as possible. Ethics and reputation matter.
+
+Benchmarking should be conducted to measure the framework and system
+performance as fairly as possible. Ethics and reputation matter.
 
 === System and framework must be consistent
-The same system and framework must be used for a suite result or set of benchmark results reported in a single context.
 
-Note that the reference implementations use different frameworks and hence cannot be used collectively for a valid suite result.
+The same system and framework must be used for a suite result or set
+of benchmark results reported in a single context.
+
+Note that the reference implementations use different frameworks and
+hence cannot be used collectively for a valid suite result.
 
 === System and framework must be available
-If you are measuring the performance of a publicly available and widely-used system or framework, you must use publicly available and widely-used used versions of the system or framework.
 
-If you are measuring the performance of an experimental framework or system, you must make the system and framework you use available upon demand for replication.
+If you are measuring the performance of a publicly available and
+widely-used system or framework, you must use publicly available and
+widely-used used versions of the system or framework.
+
+If you are measuring the performance of an experimental framework or
+system, you must make the system and framework you use available upon
+demand for replication.
 
 === Benchmark implementations must be shared
-Source code used for the benchmark implementations must be open-sourced under a license that permits a commercial entity to freely use the implementation for benchmarking. The code must be available as long as the results are actively used.
+
+Source code used for the benchmark implementations must be
+open-sourced under a license that permits a commercial entity to
+freely use the implementation for benchmarking. The code must be
+available as long as the results are actively used.
 
 === Non-determinism is restricted
+
 The only forms of acceptable non-determinism are:
 
 * Floating point operation order
+
 * Random traversal of the inputs
+
 * Rounding
 
-All random numbers must be drawn from the framework’s stock random number generator. The random number generator seed must entirely determine its output sequence. Random numbers must be utilized in a logical and consistent order across runs. Random number generators may be seeded from the following sources:
+All random numbers must be drawn from the framework’s stock random
+number generator. The random number generator seed must entirely
+determine its output sequence. Random numbers must be utilized in a
+logical and consistent order across runs. Random number generators may
+be seeded from the following sources:
 
 * Clock
+
 * System sources of randomness, e.g., /dev/random or /dev/urandom
+
 * Another random number generator initialized with an allowed seed
 
 Additional rules may apply as described in later sections.
 
 === Benchmark detection is not allowed
-The framework and system should not detect and behave differently for benchmarks.
+
+The framework and system should not detect and behave differently for
+benchmarks.
 
 === Input-based optimization is not allowed
-The implementation should not encode any information about the content of the input dataset in any form.
+
+The implementation should not encode any information about the content
+of the input dataset in any form.
 
 === Replicability is mandatory
+
 Results that cannot be replicated are not valid results.
 
 == Scenarios
-In order to enable representative testing of a wide variety of inference platforms and use cases, MLPerf has defined four different scenarios as described in the table below.
+
+In order to enable representative testing of a wide variety of
+inference platforms and use cases, MLPerf has defined four different
+scenarios as described in the table below.
 
 |===
 |Scenario |Query Generation |Duration |Samples/query |Latency Constraint |Tail Latency | Performance Metric
@@ -106,7 +183,11 @@ In order to enable representative testing of a wide variety of inference platfor
 |Offline |LoadGen sends all queries to the SUT at start |max {24K queries, 60 seconds} |All |None |N/A | Measured throughput
 |===
 
-The number of queries is selected to ensure sufficient statistical confidence in the reported metric. Specifically, the top line in the following table. Lower lines are being evaluated for future versions of MLPerf Inference (e.g., 95% tail latency for v0.6 and 99% tail latency for v0.7).
+The number of queries is selected to ensure sufficient statistical
+confidence in the reported metric. Specifically, the top line in the
+following table. Lower lines are being evaluated for future versions
+of MLPerf Inference (e.g., 95% tail latency for v0.6 and 99% tail
+latency for v0.7).
 
 |===
 |Tail Latency Percentile |Confidence Interval |Margin-of-Error |Inferences |Rounded Inferences
@@ -115,36 +196,58 @@ The number of queries is selected to ensure sufficient statistical confidence in
 |99%|99%|0.05%|262,742|33*2^13 = 270,336
 |===
 
-A submission may comprise any combination of benchmark and scenario results.
+A submission may comprise any combination of benchmark and scenario
+results.
 
 == Benchmarks
-The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
-Code that implements the model in a framework.
-A plain text “README.md” file that describes:
+
+The MLPerf organization provides a reference implementation of each
+benchmark, which includes the following elements: Code that implements
+the model in a framework.  A plain text “README.md” file that
+describes:
 
 * Problem
+
 ** Dataset/Environment
+
 ** Publication/Attribution
+
 ** Data pre- and post-processing
+
 ** Performance, accuracy, and calibration data sets
+
 ** Test data traversal order (CHECK)
+
 * Model
+
 ** Publication/Attribution
+
 ** List of layers
+
 ** Weights and biases
+
 * Quality and latency
+
 ** Quality target
+
 ** Latency target(s)
+
 * Directions
+
 ** Steps to configure machine
+
 ** Steps to download and verify data
+
 ** Steps to run and time
 
-A “download_dataset” script that downloads the accuracy, speed, and calibration datasets.
+A “download_dataset” script that downloads the accuracy, speed, and
+calibration datasets.
 
-A “verify_dataset” script that verifies the dataset against the checksum.
+A “verify_dataset” script that verifies the dataset against the
+checksum.
 
-A “run_and_time” script that executes the benchmark and reports the wall-clock time.
+A “run_and_time” script that executes the benchmark and reports the
+wall-clock time.
 
 === Benchmarks
 The benchmark suite consists of the benchmarks shown in the following table.
@@ -159,116 +262,236 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |===
 
 == Load Generator
-The MLPerf provided load generator (LoadGen) controls and initates inference queries to the SUT. The LoadGen operates in two modes: accuracy and performance.
 
-ACCURACY: Accuracy mode is intended to measure the quality of the submission and ensure that it meets or exceeds the specified quality target. Inference queries are initiated by the LoadGen to measure quality of the system on a quality data set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not timed.
+The MLPerf provided load generator (LoadGen) controls and initates
+inference queries to the SUT. The LoadGen operates in two modes:
+accuracy and performance.
 
-PERFORMANCE: Performance mode is intended to measure the performance of the submission on the selected scenario(s). Input data for inference queries begins in system memory. In principle, system memory is the memory where the operating system resides. In nearly every case the system memory should correspond to commodity DRAM (e.g., DDRx or LPDDRx) attached to the host CPU. Inference queries are initiated by the LoadGen in accordance with a selected scenario(s). Inference queries are timed to calculate performance metric(s) in accordance with the selected scenario(s).
+ACCURACY: Accuracy mode is intended to measure the quality of the
+submission and ensure that it meets or exceeds the specified quality
+target. Inference queries are initiated by the LoadGen to measure
+quality of the system on a quality data set. The result of accuracy
+mode is either PASS or FAIL and accuracy mode is not timed.
+
+PERFORMANCE: Performance mode is intended to measure the performance
+of the submission on the selected scenario(s). Input data for
+inference queries begins in system memory. In principle, system memory
+is the memory where the operating system resides. In nearly every case
+the system memory should correspond to commodity DRAM (e.g., DDRx or
+LPDDRx) attached to the host CPU. Inference queries are initiated by
+the LoadGen in accordance with a selected scenario(s). Inference
+queries are timed to calculate performance metric(s) in accordance
+with the selected scenario(s).
 
 === LoadGen Operation
 
-The LoadGen is provided in C++ with Python bindings and must be used by all submissions. The LoadGen is responsible:
+The LoadGen is provided in C++ with Python bindings and must be used
+by all submissions. The LoadGen is responsible:
 
 * Generating the queries according to one of the scenarios.
 * Tracking the latency of queries.
 * Validating the accuracy of the results.
 * Computing final metrics.
 
-Latency is defined as the time from LoadGen passing a query to the SUT, to the time it receives a reply.
+Latency is defined as the time from LoadGen passing a query to the
+SUT, to the time it receives a reply.
 
-SINGLE STREAM: LoadGen measures average latency using a single test run. For the test run, LoadGen sends an initial query then continually sends the next query as soon as the previous query is processed. 
+SINGLE STREAM: LoadGen measures average latency using a single test
+run. For the test run, LoadGen sends an initial query then continually
+sends the next query as soon as the previous query is processed.
 
-MULTI-STREAM: LoadGen determines the maximum supported number of streams using multiple test runs. Each test run evaluates a specific integer number of streams. For a specific number of streams, queries are generated with a number of samples per query equal to the number of streams tested. All samples in a query will be allocated contiguously in memory. LoadGen will use a binary search to find a candidate value. It will then verify stability by testing the value 5 times. If one run fails, it will reduce the number of streams by one and then try again.
+MULTI-STREAM: LoadGen determines the maximum supported number of
+streams using multiple test runs. Each test run evaluates a specific
+integer number of streams. For a specific number of streams, queries
+are generated with a number of samples per query equal to the number
+of streams tested. All samples in a query will be allocated
+contiguously in memory. LoadGen will use a binary search to find a
+candidate value. It will then verify stability by testing the value 5
+times. If one run fails, it will reduce the number of streams by one
+and then try again.
 
-SERVER: LoadGen determines the system throughput using multiple test runs. Each test run evaluates a specific throughput value in queries-per-second (QPS). For a specific throughput value, queries are generated at that QPS using a Poisson distribution. LoadGen will use a binary search to find a candidate value. It will then verify stability by testing the value 5 times. If one run fails, it will reduce the value by a small delta then try again.
+SERVER: LoadGen determines the system throughput using multiple test
+runs. Each test run evaluates a specific throughput value in
+queries-per-second (QPS). For a specific throughput value, queries are
+generated at that QPS using a Poisson distribution. LoadGen will use a
+binary search to find a candidate value. It will then verify stability
+by testing the value 5 times. If one run fails, it will reduce the
+value by a small delta then try again.
 
-OFFLINE: LoadGen measures throughput using a single test run. For the test run, LoadGen sends all queries at once.
+OFFLINE: LoadGen measures throughput using a single test run. For the
+test run, LoadGen sends all queries at once.
 
 The run procedure is as follows:
 
 1. LoadGen signals system under test (SUT).
 2. SUT starts up and signals readiness. 
 3. LoadGen starts clock and begins generating queries.
-4. LoadGen stops generating queries as soon as the benchmark-specific minimum number of queries have been generated and the benchmark specific minimum time has elapsed.
-5. LoadGen waits for all queries to complete, and errors if all queries fail to complete.
+4. LoadGen stops generating queries as soon as the benchmark-specific
+minimum number of queries have been generated and the benchmark
+specific minimum time has elapsed.
+5. LoadGen waits for all queries to complete, and errors if all
+queries fail to complete.
 6. LoadGen computes metrics for the run.
 
 The execution of LoadGen is restricted as follows:
 
-* LoadGen must run on the processor that most faithfully simulates queries arriving from the most logical source, which is usually the network or an I/O device such as a camera. For example, if the most logical source is the network and the system is characterized as host - accelerator, then LoadGen should run on the host unless the accelerator incorporates a NIC.
-* The trace generated by LoadGen must be stored in the non-HBM DRAM that most faithfully simulates queries arriving from the most logical source, which is usually the network or an I/O device such as a camera. It may be pinned. Submitters need prior approval for anything that is not DRAM.
-* Caching of any queries, any query params, or any intermediate results is prohibited.
+* LoadGen must run on the processor that most faithfully simulates
+  queries arriving from the most logical source, which is usually the
+  network or an I/O device such as a camera. For example, if the most
+  logical source is the network and the system is characterized as
+  host - accelerator, then LoadGen should run on the host unless the
+  accelerator incorporates a NIC.
 
-LoadGen generates queries based on trace. The trace is constructed by uniformly sampling (with replacement) from a library based on a fixed random seed and deterministic generator. The trace is usually pre-generated, but may optionally be incrementally generated if it does not fit in memory. LoadGen validates accuracy via a separate test run that use each sample in the test library exactly once but is otherwise identical to the above normal metric run.
+* The trace generated by LoadGen must be stored in the non-HBM DRAM
+  that most faithfully simulates queries arriving from the most
+  logical source, which is usually the network or an I/O device such
+  as a camera. It may be pinned. Submitters need prior approval for
+  anything that is not DRAM.
+
+* Caching of any queries, any query params, or any intermediate
+  results is prohibited.
+
+LoadGen generates queries based on trace. The trace is constructed by
+uniformly sampling (with replacement) from a library based on a fixed
+random seed and deterministic generator. The trace is usually
+pre-generated, but may optionally be incrementally generated if it
+does not fit in memory. LoadGen validates accuracy via a separate test
+run that use each sample in the test library exactly once but is
+otherwise identical to the above normal metric run.
 
 == Reference Systems
+
 The reference systems are the MLPerf developer target platforms.
 
-MLPerf guarantees that each of the cloud/edge reference implementations will achieve the required accuracy on the appropriate cloud/edge reference system.  All submissions must be equivalent to the reference implementation on the reference system, as described in this document.
+MLPerf guarantees that each of the cloud/edge reference
+implementations will achieve the required accuracy on the appropriate
+cloud/edge reference system.  All submissions must be equivalent to
+the reference implementation on the reference system, as described in
+this document.
 
-The reference systems are selected for ease of development and are used as an arbitrary baseline used to compute relative performance of submissions.  The reference systems are not intended to be reflective of any particular market, application, or deployment.
+The reference systems are selected for ease of development and are
+used as an arbitrary baseline used to compute relative performance of
+submissions.  The reference systems are not intended to be reflective
+of any particular market, application, or deployment.
 
 === Cloud Reference System (UPDATE ME)
-The cloud reference platform is a Google Compute Platform n1-highmem-16 (16 vCPUs, 104GB memory) instance using the Skylake processor generation.
 
-MLPerf guarantees that the reference implementations of all cloud benchmarks will run on the cloud reference system.
+The cloud reference platform is a Google Compute Platform
+n1-highmem-16 (16 vCPUs, 104GB memory) instance using the Skylake
+processor generation.
+
+MLPerf guarantees that the reference implementations of all cloud
+benchmarks will run on the cloud reference system.
 
 === Edge Reference System
+
 The edge reference system is an Intel NUC 7 Home (NUC7i3BNHXF):
 
-* Core i3-7100U Processor (dual-core, four-thread Kaby Lake, 2.4GHz base)
-* 4GB of DDR4 memory 
+* Core i3-7100U Processor (dual-core, four-thread Kaby Lake, 2.4GHz
+  base)
+
+* 4GB of DDR4 memory
+
 * 16GB of Optane memory (3DXP connected via PCIe)
+
 * 1TB SATA hard drive
+
 * Running Ubuntu 16.04
 
-MLPerf guarantees that the reference implementations of all edge benchmarks will run on the edge reference system. The reference system can be obtained via Amazon and the hardware cost is $400.
+MLPerf guarantees that the reference implementations of all edge
+benchmarks will run on the edge reference system. The reference system
+can be obtained via Amazon and the hardware cost is $400.
 
 == Divisions
-There are two divisions of the benchmark suite, the Closed division and the Open division.
+
+There are two divisions of the benchmark suite, the Closed division
+and the Open division.
 
 === Closed Division
-The Closed division requires using pre-processing, post-processing, and model that is equivalent to the reference or alternative implementation.  The closed division allows calibration for quantization and does not allow any retraining.
 
-The unqualified name “MLPerf” must be used when referring to a Closed Division suite result, e.g. “a MLPerf result of 4.5.”
+The Closed division requires using pre-processing, post-processing,
+and model that is equivalent to the reference or alternative
+implementation.  The closed division allows calibration for
+quantization and does not allow any retraining.
+
+The unqualified name “MLPerf” must be used when referring to a Closed
+Division suite result, e.g. “a MLPerf result of 4.5.”
 
 === Open Division
-The Open division allows using arbitrary pre- or post-processing and model, including retraining.
-The qualified name “MLPerf Open” must be used when referring to an Open Division suite result, e.g. “a MLPerf Open result of 7.2.”
+
+The Open division allows using arbitrary pre- or post-processing and
+model, including retraining.  The qualified name “MLPerf Open” must be
+used when referring to an Open Division suite result, e.g. “a MLPerf
+Open result of 7.2.”
 
 == Data Sets
+
 === Data State at Start of Run
+
 For each benchmark, MLPerf will provide pointers to:
 
-* A calibration data set, to be used for quantization (see quantization section), that is a small subset of the training data set used to generate the weights
-* An accuracy data set, to be used to determine whether a submission meets the quality target, and used as a validation set
-* A speed/performance data set that is a subset of the accuracy data set to be used to measure performance
+* A calibration data set, to be used for quantization (see
+  quantization section), that is a small subset of the training data
+  set used to generate the weights
 
-Each reference implementation shall include a script to verify the datasets using a checksum. The dataset must be unchanged at the start of each run.
+* An accuracy data set, to be used to determine whether a submission
+  meets the quality target, and used as a validation set
+
+* A speed/performance data set that is a subset of the accuracy data
+  set to be used to measure performance
+
+Each reference implementation shall include a script to verify the
+datasets using a checksum. The dataset must be unchanged at the start
+of each run.
 
 === Pre- and post-processing
-All imaging benchmarks take uncropped uncompressed bitmap as inputs, NMT takes text. 
 
-CLOSED: The same pre- and post-processing steps as the reference implementation must be used. Additional pre- and post-processing is not allowed.
+All imaging benchmarks take uncropped uncompressed bitmap as inputs,
+NMT takes text.
 
-OPEN: Any pre- and post-processing steps are allowed. Each datum must be preprocessed individually in a manner that is not influenced by any other data.
+CLOSED: The same pre- and post-processing steps as the reference
+implementation must be used. Additional pre- and post-processing is
+not allowed.
 
-CLOSED and OPEN: Sample-independent pre-processing that matches the reference model is untimed. However, it must be pre-approved and added to the following list:
+OPEN: Any pre- and post-processing steps are allowed. Each datum must
+be preprocessed individually in a manner that is not influenced by any
+other data.
+
+CLOSED and OPEN: Sample-independent pre-processing that matches the
+reference model is untimed. However, it must be pre-approved and added
+to the following list:
 
 * May resize to processed size (e.g. SSD-large)
-* May reorder channels / do arbitrary transpositions
-* May pad to arbitrary size (don’t be creative)
-* May do a single, consistent crop
-* Mean subtraction and normalization provided reference model expect those to be done
-* May quantize image data from fp32 to int8 and between signed and unsigned
 
-Any other pre- and post-processing time (e.g., for OPEN) is included in the wall-clock time for a run result.
+* May reorder channels / do arbitrary transpositions
+
+* May pad to arbitrary size (don’t be creative)
+
+* May do a single, consistent crop
+
+* Mean subtraction and normalization provided reference model expect
+  those to be done
+
+* May quantize image data from fp32 to int8 and between signed and
+  unsigned
+
+Any other pre- and post-processing time (e.g., for OPEN) is included
+in the wall-clock time for a run result.
 
 === Test Data Traversal Order
-Test data is determined by the LoadGen. For scenarios where processing multiple samples can occur (i.e., server, multi-stream, and offline), any ordering is allowed subject to latency requirements.
+
+Test data is determined by the LoadGen. For scenarios where processing
+multiple samples can occur (i.e., server, multi-stream, and offline),
+any ordering is allowed subject to latency requirements.
 
 == Model
-CLOSED: For v0.5, MLPerf provides a reference implementation in a first framework and an alternative implementation in a second framework in accordance with the table below.  The benchmark implementation must use a model that is equivalent to the reference implementation or the alternative implementation, as defined by the remainder of this section.
+
+CLOSED: For v0.5, MLPerf provides a reference implementation in a
+first framework and an alternative implementation in a second
+framework in accordance with the table below.  The benchmark
+implementation must use a model that is equivalent to the reference
+implementation or the alternative implementation, as defined by the
+remainder of this section.
 
 |===
 |Area |Task |Model |Reference implementation |Alternative implementation
@@ -279,17 +502,31 @@ CLOSED: For v0.5, MLPerf provides a reference implementation in a first framewor
 |Language/Audio |Machine translation |GMNT |TensorFlow |PyTorch/ONNX 
 |===
 
-OPEN: The benchmark implementation may use a different model to perform the same task. Retraining is allowed.
+OPEN: The benchmark implementation may use a different model to
+perform the same task. Retraining is allowed.
 
 === Graph Definition
-CLOSED: The reference and alternative implementations each have a graph that describes the operations performed during inference. Benchmark implementations must choose and specify the reference or alternative and the same graph.
 
-OPEN: Benchmark implementations may use a different graph compared to the reference or alternative implementation.
+CLOSED: The reference and alternative implementations each have a
+graph that describes the operations performed during
+inference. Benchmark implementations must choose and specify the
+reference or alternative and the same graph.
+
+OPEN: Benchmark implementations may use a different graph compared to
+the reference or alternative implementation.
 
 === Weight Definition and Quantization
-CLOSED: MLPerf will provide trained weights and biases in fp32 format for both the reference and alternative implementations.
 
-MLPerf will provide a calibration data set. Submitters may do arbitrary purely mathematical, reproducible quantization using only the calibration data and weight and bias tensors from the benchmark owner provided model to any combination of permissive whitelist numerical format that achieves the desired quality. The quantization method must be publicly described at a level where it could be reproduced.  The whitelist currently includes:
+CLOSED: MLPerf will provide trained weights and biases in fp32 format
+for both the reference and alternative implementations.
+
+MLPerf will provide a calibration data set. Submitters may do
+arbitrary purely mathematical, reproducible quantization using only
+the calibration data and weight and bias tensors from the benchmark
+owner provided model to any combination of permissive whitelist
+numerical format that achieves the desired quality. The quantization
+method must be publicly described at a level where it could be
+reproduced.  The whitelist currently includes:
 
 * INT8
 * INT16
@@ -300,128 +537,242 @@ MLPerf will provide a calibration data set. Submitters may do arbitrary purely m
 * bfloat16
 * FP32
 
-To be considered principled, the description of the quantization method must be much much smaller than the non-zero weights it produces.
+To be considered principled, the description of the quantization
+method must be much much smaller than the non-zero weights it
+produces.
 
-Calibration is allowed and must only use the calibration data set provided by the benchmark owner.
+Calibration is allowed and must only use the calibration data set
+provided by the benchmark owner.
 
-Additionally, for image classification using MobileNets-v1 224 and object detection using SSD-MobileNets-v1, MLPerf will provide a retrained INT8 (comprising 127 positive, 127 negative, and precise zero for weights and biases) model in two's complement format in a JSON container. Model weights and input activations are scaled per tensor, and must preserve the same shape modulo padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No other retraining is allowed.
+Additionally, for image classification using MobileNets-v1 224 and
+object detection using SSD-MobileNets-v1, MLPerf will provide a
+retrained INT8 (comprising 127 positive, 127 negative, and precise
+zero for weights and biases) model in two's complement format in a
+JSON container. Model weights and input activations are scaled per
+tensor, and must preserve the same shape modulo padding. Convolution
+layers are allowed to be in either NCHW or NHWC format.  No other
+retraining is allowed.
 
-OPEN: Weights and biases must be initialized to the same values for each run, any quantization scheme is allowed that achieves the desired quality.
+OPEN: Weights and biases must be initialized to the same values for
+each run, any quantization scheme is allowed that achieves the desired
+quality.
 
 === Graph Execution
-CLOSED: Graph compilers are free to optimize the “non-stateful” parts of the computation graph provided that the semantics are unchanged. So optimizations and graph / code transformations of the flavor of layer fusion, dead code elimination, common subexpression elimination, and loop-invariant code motion are entirely allowed.
+
+CLOSED: Graph compilers are free to optimize the “non-stateful” parts
+of the computation graph provided that the semantics are unchanged. So
+optimizations and graph / code transformations of the flavor of layer
+fusion, dead code elimination, common subexpression elimination, and
+loop-invariant code motion are entirely allowed.
 
 OPEN: Frameworks are free to alter the graph.
 
 === Hyperparameters
-Hyperparameters (e.g. batch size) may be selected to best utilize the framework and system being tested, given the quality and latency requirements.
+
+Hyperparameters (e.g. batch size) may be selected to best utilize the
+framework and system being tested, given the quality and latency
+requirements.
 
 === Model Equivalence
 
-All implementations are allowed as long as the latency and accuracy bounds are met and the reference weights are used. Reference weights may be modified according to the quantization rules.
+All implementations are allowed as long as the latency and accuracy
+bounds are met and the reference weights are used. Reference weights
+may be modified according to the quantization rules.
 
-Examples of legal variance in implementations include, but are not limited to:
+Examples of legal variance in implementations include, but are not
+limited to:
 
-* Arbitrary frameworks and runtimes: TF, TF-lite, ONNX, PyTorch, etc, provided they conform to the rest of the rules
-* Running any given control flow or operations on or off an accelerator
+* Arbitrary frameworks and runtimes: TF, TF-lite, ONNX, PyTorch, etc,
+  provided they conform to the rest of the rules
+
+* Running any given control flow or operations on or off an
+  accelerator
+
 * Arbitrary data arrangement
-* Different input and in-memory representations of weights
-* Variation in matrix-multiplication or convolution algorithm provided the algorithm produces asymptotically accurate results when evaluated with asymptotic precision
-* Mathematically equivalent transformations (e.g. Tanh versus Logistic, Relu6 versus Relu8) or approximations and including but not limited to transcendental functions (or equivalent transformations)
-* Processing queries out-of-order within discretion provided by scenario
-* Replacing dense operations with mathematically equivalent sparse operations
-* Hand picking different numerical precisions for different operations
-* Fusing or unfusing operations
-* Dynamically switching between one or more batch sizes
-* Different implementations based on dynamically determined batch size
-* Mixture of experts combining differently quantized weights
-* Stochastic quantization algorithms with seeds for reproducibility.
-* Reducing ImageNet classifiers with 1001 classes to 1000 classes
-* For anything else you want on this list contact submitters five weeks prior to the submission deadline
 
-Examples of legal variance in implementations include, but are not limited to:
+* Different input and in-memory representations of weights
+
+* Variation in matrix-multiplication or convolution algorithm provided
+  the algorithm produces asymptotically accurate results when
+  evaluated with asymptotic precision
+
+* Mathematically equivalent transformations (e.g. Tanh versus
+  Logistic, Relu6 versus Relu8) or approximations and including but
+  not limited to transcendental functions (or equivalent
+  transformations)
+
+* Processing queries out-of-order within discretion provided by scenario
+
+* Replacing dense operations with mathematically equivalent sparse
+  operations
+
+* Hand picking different numerical precisions for different operations
+
+* Fusing or unfusing operations
+
+* Dynamically switching between one or more batch sizes
+
+* Different implementations based on dynamically determined batch size
+
+* Mixture of experts combining differently quantized weights
+
+* Stochastic quantization algorithms with seeds for reproducibility.
+
+* Reducing ImageNet classifiers with 1001 classes to 1000 classes
+
+* For anything else you want on this list contact submitters five
+  weeks prior to the submission deadline
+
+Examples of legal variance in implementations include, but are not
+limited to:
 
 * Wholesale weight replacement or supplements
+
 * Discarding non-zero weight elements
+
 * Caching queries or responses
+
 * Coalescing identical queries
-* Modifying weights during the timed portion of an inference run (no online learning or related techniques)
-* “Soft dropping” queries by scheduling them for execution in the indefinite future. The latency bound enforces worst-case behavior, it is not a backdoor for dropping 10% of queries.
-* Weight quantization algorithms that are similar in size to the non-zero weights they produce
+
+* Modifying weights during the timed portion of an inference run (no
+  online learning or related techniques)
+
+* “Soft dropping” queries by scheduling them for execution in the
+  indefinite future. The latency bound enforces worst-case behavior,
+  it is not a backdoor for dropping 10% of queries.
+
+* Weight quantization algorithms that are similar in size to the
+  non-zero weights they produce
+
 * Hard coding the total number of queries
-* Techniques that boost performance for fixed length experiments but are inapplicable to long-running services except in the offline scenario
-* Using knowledge of the LoadGen implementation to predict upcoming lulls or spikes in the server scenario
-* For anything else you want on this list contact submitters five weeks prior to the submission deadline
+
+* Techniques that boost performance for fixed length experiments but
+  are inapplicable to long-running services except in the offline
+  scenario
+
+* Using knowledge of the LoadGen implementation to predict upcoming
+  lulls or spikes in the server scenario
+
+* For anything else you want on this list contact submitters five
+  weeks prior to the submission deadline
 
 == System Reporting
-Cloud and edge benchmarks may be run both on either hardware as a service or physical hardware.
+
+Cloud and edge benchmarks may be run both on either hardware as a
+service or physical hardware.
 
 === With Hardware as a Service
+
 ==== Replication recipe
-Report a recipe that starts from a vanilla VM image or Docker container and a sequence of steps that creates the system that performs the benchmark measurement.
+
+Report a recipe that starts from a vanilla VM image or Docker
+container and a sequence of steps that creates the system that
+performs the benchmark measurement.
 
 ==== Price
-Include the total cost of obtaining the median run result using fixed prices for the general public at the time the result is collected. Do not use spot pricing.
+
+Include the total cost of obtaining the median run result using fixed
+prices for the general public at the time the result is collected. Do
+not use spot pricing.
 
 === With Physical Hardware
+
 ==== Replication recipe
-Report everything that will eventually be required by a third-party user to replicate the result when the hardware and software becomes widely available.
+
+Report everything that will eventually be required by a third-party
+user to replicate the result when the hardware and software becomes
+widely available.
 
 ==== Power
-For v0.5, power measurement is optional, but should be in accordance with MLPerf recommendations if performed.  As per all performance testing, we expect that power measurements will be reproducible.
 
-The current power measurement recommendations for single-node wall-powered and battery-powered systems is available at https://docs.google.com/document/d/1fnhjauZE_eQk5sLT5h6BumyWtyh-S-Lk4pRlkVU0hH4/edit# and will be migrated into GitHub once it is suitably stable.
+For v0.5, power measurement is optional, but should be in accordance
+with MLPerf recommendations if performed.  As per all performance
+testing, we expect that power measurements will be reproducible.
+
+The current power measurement recommendations for single-node
+wall-powered and battery-powered systems is available at
+https://docs.google.com/document/d/1fnhjauZE_eQk5sLT5h6BumyWtyh-S-Lk4pRlkVU0hH4/edit#
+and will be migrated into GitHub once it is suitably stable.
 
 == Submissions
-The MLPerf organization will create a database that collects submission data; one feature of the database is producing a leaderboard.
+
+The MLPerf organization will create a database that collects
+submission data; one feature of the database is producing a
+leaderboard.
 
 === Submission Form
-Submissions to the database must use the provided submission form to report all required information.
+
+Submissions to the database must use the provided submission form to
+report all required information.
 
 === Submission Process
-Submit the completed form and supporting code to the MLPerf organization Github mlperf/results repo as a PR.
+
+Submit the completed form and supporting code to the MLPerf
+organization Github mlperf/results repo as a PR.
 
 == FAQ
+
 Q: Why does MLPerf specify the test data order?
 
-A: Many systems will use batching to perform inference on multiple inputs. 
+A: Many systems will use batching to perform inference on multiple
+inputs.
 
 
 Q: Do I have to use the reference implementation framework?
 
-A: No, you can use another framework provided that it matches the reference in the required areas.
+A: No, you can use another framework provided that it matches the
+reference in the required areas.
 
 
 Q: Do I have to use the reference implementation scripts?
 
-A: No, you don’t have to use the reference scripts. The reference is there to settle conformance questions - with a few exceptions, a submission to the closed division must match what the reference is doing.
+A: No, you don’t have to use the reference scripts. The reference is
+there to settle conformance questions - with a few exceptions, a
+submission to the closed division must match what the reference is
+doing.
 
 
-Q: What is the reference system? Do I have to use the reference system?
+Q: What is the reference system? Do I have to use the reference
+system?
 
-A: A reference system is a hardware and software platform that is guaranteed by MLPerf to run one or more benchmarks.  You can and should use different hardware and software configurations.  The reference hardware systems were chosen as development targets for MLPerf benchmarks and are not intended to be representative of any particular class of system.
+A: A reference system is a hardware and software platform that is
+guaranteed by MLPerf to run one or more benchmarks.  You can and
+should use different hardware and software configurations.  The
+reference hardware systems were chosen as development targets for
+MLPerf benchmarks and are not intended to be representative of any
+particular class of system.
 
 
-Q: Can I run an edge benchmark on a server in a data center?  Can I run a cloud benchmark on a smartphone?
+Q: Can I run an edge benchmark on a server in a data center?  Can I
+run a cloud benchmark on a smartphone?
 
 A: Either combination is allowed.
 
 
-Q: Can I perform computations for inference using my favorite data types (int8, int4, IEEE fp16, bfloat16, etc.)?
+Q: Can I perform computations for inference using my favorite data
+types (int8, int4, IEEE fp16, bfloat16, etc.)?
 
-A: We allow any data types to be used. However, the submission must achieve the required accuracy level in a reproducible manner.
-
+A: We allow any data types to be used. However, the submission must
+achieve the required accuracy level in a reproducible manner.
 
 Q: Why does a run require so many individual inference queries?
 
-A: The numbers were selected to be sufficiently large to statistically verify that the system meets the latency requirements. 
+A: The numbers were selected to be sufficiently large to statistically
+verify that the system meets the latency requirements.
 
 
-Q: What information should I submit about the software of the system under test?
+Q: What information should I submit about the software of the system
+under test?
 
-A: The goal is reproducibility.  At a minimum, a submission should include the OS and version number, software libraries and versions used, frameworks, etc.
+A: The goal is reproducibility.  At a minimum, a submission should
+include the OS and version number, software libraries and versions
+used, frameworks, etc.
 
 
-Q: For my submission, I am going to use a different model format (e.g., ONNX vs TensorFlow Lite).  Should the conversion routine/script be included in the submission? Or is it sufficient to submit the converted model?
+Q: For my submission, I am going to use a different model format
+(e.g., ONNX vs TensorFlow Lite).  Should the conversion routine/script
+be included in the submission? Or is it sufficient to submit the
+converted model?
 
-A: The goal is reproducibility, so you should include the conversion routine/scripts.
+A: The goal is reproducibility, so you should include the conversion
+routine/scripts.
