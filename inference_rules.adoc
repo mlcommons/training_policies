@@ -530,10 +530,6 @@ Examples of legal variance in implementations include, but are not limited to:
 
 == FAQ
 
-Q: Why does MLPerf specify the test data order?
-
-A: Many systems will use batching to perform inference on multiple inputs.
-
 Q: Do I have to use the reference implementation framework?
 
 A: No, you can use another framework provided that it matches the reference in
@@ -554,26 +550,10 @@ and software configurations.  The reference hardware systems were chosen as
 development targets for MLPerf benchmarks and are not intended to be
 representative of any particular class of system.
 
-Q: Can I run an edge benchmark on a server in a data center?  Can I run a cloud
-benchmark on a smartphone?
-
-A: Either combination is allowed.
-
-Q: Can I perform computations for inference using my favorite data types (int8,
-int4, IEEE fp16, bfloat16, etc.)?
-
-A: We allow any data types to be used. However, the submission must achieve the
-required accuracy level in a reproducible manner.
-
 Q: Why does a run require so many individual inference queries?
 
 A: The numbers were selected to be sufficiently large to statistically verify
 that the system meets the latency requirements.
-
-Q: What information should I submit about the software of the system under test?
-
-A: The goal is reproducibility.  At a minimum, a submission should include the
-OS and version number, software libraries and versions used, frameworks, etc.
 
 Q: For my submission, I am going to use a different model format (e.g., ONNX vs
 TensorFlow Lite).  Should the conversion routine/script be included in the
