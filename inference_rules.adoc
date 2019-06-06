@@ -195,15 +195,16 @@ time.
 
 === Benchmarks
 
-The benchmark suite consists of the benchmarks shown in the following table.
+The benchmark suite consists of the benchmarks shown in the following
+table. Quality and latency targets are still being finalized.
 
 |===
 |Area |Task |Model |Dataset |Quality |Latency constraint
-|Vision |Image classification |Resnet50-v1.5 |ImageNet (224x224) |74.9% top-1 |99% @ 10ms, 50ms, 100ms, 200ms 
-|Vision |Image classification |MobileNets-v1 224 |ImageNet  (224x224) |?? |?? 
-|Vision |Object detection |SSD-ResNet34 |COCO (1200x1200) |0.212 mAP |?? 
-|Vision |Object detection |SSD-MobileNets-v1 |COCO (300x300) |?? |?? 
-|Language |Machine translation |GMNT |WMT16 |22 uncased BLEU |?? 
+|Vision |Image classification |Resnet50-v1.5 |ImageNet (224x224) | ?? | ??
+|Vision |Image classification |MobileNets-v1 224 |ImageNet  (224x224) | ?? | ?? 
+|Vision |Object detection |SSD-ResNet34 |COCO (1200x1200) | ?? | ?? 
+|Vision |Object detection |SSD-MobileNets-v1 |COCO (300x300) | ?? | ?? 
+|Language |Machine translation |GMNT |WMT16 |22 uncased BLEU | ?? 
 |===
 
 == Load Generator
