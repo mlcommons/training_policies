@@ -25,9 +25,6 @@ determine if a use of its name or logo is acceptable.
 
 The following definitions are used throughout this document:
 
-_Performance_ always refers to a scenario-specific metric for inference queries
-measured using the MLPerf load generator.
-
 A _sample_ is the unit on which inference is run. E.g., an image, or a sentence.
 
 A _query_ is a set of N samples that are issued to an inference system
@@ -42,52 +39,23 @@ include processors, accelerators, memories, disks, and interconnect. The
 software resources may include an operating system, compilers, libraries, and
 drivers that significantly influences the running time of a benchmark.
 
-A _framework_ is a specific version of a software library or set of related
-libraries, possibly with associated offline compiler, for training and/or
-executing ML models using a system. Examples include specific versions of
-Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
-
-A _graph compiler_ is ??
-
-A _task_ is a generalized, high-level, user-understandable problem that is
-comprised of one or more ML models and includes pre- and post-processing steps
-for the models.
-  
-A _benchmark_ is a measurable task that can be solved by executing a trained
-model using a specific input dataset at a target quality level and one or more
-target latency levels.
-
-A _suite_ is a specific set of benchmarks.
-
-A _division_ has a set of rules for implementing a suite to produce a class of
-comparable results.
-
 A _reference implementation_ is a specific implementation of a benchmark
 provided by the MLPerf organization.  The reference implementation is the
 canonical implementation of a benchmark. All valid submissions of a benchmark
 must be *equivalent* to the reference implementation.
 
-A _benchmark implementation_ is an implementation of a benchmark in a particular
-framework by a user under the rules of a specific division.
-
-A _suite implementation_ is a set of benchmark implementations for the entire
-suite using the same framework under the rules of a specific division.
-
 A _run_ is a complete execution of a benchmark implementation on a system under
-control of the load generator that consists of completing a set of inference
+the control of the load generator that consists of completing a set of inference
 queries, including data pre- and post-processing, meeting a latency requirement
 and a quality requirement in accordance with a scenario.
 
-An _run result_ consists of the scenario-specific metric.
+A _run result_ consists of the scenario-specific metric.
 
 A _reference result_ is a run result provided by the MLPerf organization for
 each reference implementation on a reference system.
 
 A _benchmark result_ is a run result normalized to the reference result for that
-benchmark. Normalization is of the form (reference result * constant / benchmark
-result) such that a better benchmark result produces a higher number.  The
-constant shall be selected to ensure that most benchmark results are greater
-than 1. (FIX ME??)
+benchmark.
 
 == General rules
 
