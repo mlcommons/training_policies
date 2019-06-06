@@ -225,11 +225,11 @@ submissions. The LoadGen is responsible:
 Latency is defined as the time from LoadGen passing a query to the SUT, to the
 time it receives a reply.
 
-SINGLE STREAM: LoadGen measures average latency using a single test run. For the
-test run, LoadGen sends an initial query then continually sends the next query
-as soon as the previous query is processed.
+* Single-stream: LoadGen measures average latency using a single test run. For
+the test run, LoadGen sends an initial query then continually sends the next
+query as soon as the previous query is processed.
 
-MULTI-STREAM: LoadGen determines the maximum supported number of streams using
+* Multi-stream: LoadGen determines the maximum supported number of streams using
 multiple test runs. Each test run evaluates a specific integer number of
 streams. For a specific number of streams, queries are generated with a number
 of samples per query equal to the number of streams tested. All samples in a
@@ -238,15 +238,15 @@ to find a candidate value. It will then verify stability by testing the value 5
 times. If one run fails, it will reduce the number of streams by one and then
 try again.
 
-SERVER: LoadGen determines the system throughput using multiple test runs. Each
-test run evaluates a specific throughput value in queries-per-second (QPS). For
-a specific throughput value, queries are generated at that QPS using a Poisson
-distribution. LoadGen will use a binary search to find a candidate value. It
-will then verify stability by testing the value 5 times. If one run fails, it
-will reduce the value by a small delta then try again.
+* Server: LoadGen determines the system throughput using multiple test
+runs. Each test run evaluates a specific throughput value in queries-per-second
+(QPS). For a specific throughput value, queries are generated at that QPS using
+a Poisson distribution. LoadGen will use a binary search to find a candidate
+value. It will then verify stability by testing the value 5 times. If one run
+fails, it will reduce the value by a small delta then try again.
 
-OFFLINE: LoadGen measures throughput using a single test run. For the test run,
-LoadGen sends all queries at once.
+* Offline: LoadGen measures throughput using a single test run. For the test
+run, LoadGen sends all queries at once.
 
 The run procedure is as follows:
 
