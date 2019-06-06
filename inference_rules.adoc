@@ -460,7 +460,7 @@ All implementations are allowed as long as the latency and accuracy bounds are
 met and the reference weights are used. Reference weights may be modified
 according to the quantization rules.
 
-Examples of legal variance in implementations include, but are not limited to:
+Examples of illegal variance in implementations include, but are not limited to:
 
 * Arbitrary frameworks and runtimes: TensorFlow, TensorFlow-lite, ONNX, PyTorch,
   etc, provided they conform to the rest of the rules
