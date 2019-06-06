@@ -446,9 +446,8 @@ the benchmark owner.
 
 Additionally, for image classification using MobileNets-v1 224 and object
 detection using SSD-MobileNets-v1, MLPerf will provide a retrained INT8
-(comprising 127 positive, 127 negative, and precise zero for weights and biases)
-model in two's complement format in a JSON container. Model weights and input
-activations are scaled per tensor, and must preserve the same shape modulo
+(asymmetric for TFLite and symmetric for pyTorch/ONNX) model. Model weights and
+input activations are scaled per tensor, and must preserve the same shape modulo
 padding. Convolution layers are allowed to be in either NCHW or NHWC format.  No
 other retraining is allowed.
 
