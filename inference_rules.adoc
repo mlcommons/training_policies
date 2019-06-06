@@ -12,9 +12,9 @@ Points of contact: David Kanter (dkanter@gmail.com), Vijay Janapa Reddi
 
 == Overview
 
-This document describes how to implement one or more benchmark in the MLPerf
-Inference Suite and how to use that implementation to measure the performance of
-an an ML system performing inference.
+This document describes how to implement one or more benchmarks in the MLPerf
+Inference Suite and how to use those implementations to measure the performance
+of an ML system performing inference.
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the
 MLPerf name, the result must conform to the letter and spirit of the rules
