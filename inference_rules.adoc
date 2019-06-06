@@ -407,7 +407,7 @@ defined by the remainder of this section.
 
 |===
 |Area |Task |Model |Reference implementation |Alternative implementation
-|Vision |Image classification |Resnet50-v1.5 |TF |PyTorch/ONNX 
+|Vision |Image classification |Resnet50-v1.5 |TensorFlow |PyTorch/ONNX 
 |Vision |Image classification |MobileNets-v1 224 |TensorFlow/TensorFlow Lite |PyTorch/ONNX  
 |Vision |Object detection |SSD-ResNet34 |PyTorch/ONNX |TensorFlow/TensorFlow Lite 
 |Vision |Object detection |SSD-MobileNets-v1 |TensorFlow |PyTorch/ONNX 
@@ -487,8 +487,8 @@ according to the quantization rules.
 
 Examples of legal variance in implementations include, but are not limited to:
 
-* Arbitrary frameworks and runtimes: TF, TF-lite, ONNX, PyTorch, etc, provided
-  they conform to the rest of the rules
+* Arbitrary frameworks and runtimes: TensorFlow, TensorFlow-lite, ONNX, PyTorch,
+  etc, provided they conform to the rest of the rules
 
 * Running any given control flow or operations on or off an accelerator
 
