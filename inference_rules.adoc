@@ -454,21 +454,6 @@ other retraining is allowed.
 OPEN: Weights and biases must be initialized to the same values for each run,
 any quantization scheme is allowed that achieves the desired quality.
 
-=== Graph Execution
-
-CLOSED: Graph compilers are free to optimize the “non-stateful” parts of the
-computation graph provided that the semantics are unchanged. So optimizations
-and graph / code transformations of the flavor of layer fusion, dead code
-elimination, common subexpression elimination, and loop-invariant code motion
-are entirely allowed.
-
-OPEN: Frameworks are free to alter the graph.
-
-=== Hyperparameters
-
-Hyperparameters (e.g. batch size) may be selected to best utilize the framework
-and system being tested, given the quality and latency requirements.
-
 === Model Equivalence
 
 All implementations are allowed as long as the latency and accuracy bounds are
