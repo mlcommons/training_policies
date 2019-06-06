@@ -417,15 +417,6 @@ defined by the remainder of this section.
 OPEN: The benchmark implementation may use a different model to perform the same
 task. Retraining is allowed.
 
-=== Graph Definition
-
-CLOSED: The reference and alternative implementations each have a graph that
-describes the operations performed during inference. Benchmark implementations
-must choose and specify the reference or alternative and the same graph.
-
-OPEN: Benchmark implementations may use a different graph compared to the
-reference or alternative implementation.
-
 === Weight Definition and Quantization
 
 CLOSED: MLPerf will provide trained weights and biases in fp32 format for both
