@@ -209,24 +209,6 @@ table. Quality and latency targets are still being finalized.
 
 == Load Generator
 
-The MLPerf provided load generator (LoadGen) controls and initiates inference
-queries to the SUT. The LoadGen operates in two modes: accuracy and performance.
-
-ACCURACY: Accuracy mode is intended to measure the quality of the submission and
-ensure that it meets or exceeds the specified quality target. Inference queries
-are initiated by the LoadGen to measure quality of the system on a quality data
-set. The result of accuracy mode is either PASS or FAIL and accuracy mode is not
-timed.
-
-PERFORMANCE: Performance mode is intended to measure the performance of the
-submission on the selected scenario(s). Input data for inference queries begins
-in system memory. In principle, system memory is the memory where the operating
-system resides. In nearly every case the system memory should correspond to
-commodity DRAM (e.g., DDRx or LPDDRx) attached to the host CPU. Inference
-queries are initiated by the LoadGen in accordance with a selected
-scenario(s). Inference queries are timed to calculate performance metric(s) in
-accordance with the selected scenario(s).
-
 === LoadGen Operation
 
 The LoadGen is provided in C++ with Python bindings and must be used by all
