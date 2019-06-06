@@ -561,3 +561,50 @@ submission? Or is it sufficient to submit the converted model?
 
 A: The goal is reproducibility, so you should include the conversion
 routine/scripts.
+
+== Appendix Number of Queries
+
+In order to be statistically valid, a certain number of queries are necessary to
+verify a given latency-bound performance result. How many queries are necessary?
+Every query either meets the latency bound or exceeds the latency bound. The
+math for determining the appropriate sample size for a latency bound throughput
+experiment is exactly the same as determining the appropriate sample size for an
+electoral poll given an infinite electorate. Three variables determine the
+sample size: the tail latency percentage, confidence, and margin. Confidence is
+the probability that a latency bound is within a particular margin of the
+reported result.
+
+A 99% confidence bound was somewhat arbitrarily selected. For systems with noisy
+latencies, it is possible to obtain better MLPerf results by cherry picking the
+best runs. Approximately 1 in 100 runs will be marginally better. Please don’t
+do this. It is very naughty and will make the MLPerf community feel sad.
+
+The margin should be set to a value much less than the difference between the
+tail latency percentage and one. Conceptually, the margin ought to be small
+compared to the distance between the tail latency percentile and 100%. A margin
+of 0.5% was selected. This margin is one twentieth of the difference between the
+tail latency percentage and one. In the future, when the tail latency percentage
+rises, the margin should fall by a proportional amount. The full equation is:
+
+Margin = (1 - TailLatency) / 20
+
+NumQueries = NormsInv((1 - Confidence) / 2)^2 * (TailLatency)(TailLatency - 1) /
+Margin^2
+
+Concretely:
+
+NumQueries = NormsInv((1 - 0.99) / 2)^2 * (0.9)(1 - 0.9) / 0.005^2 =
+NormsInv(0.005)^2 * 3600 = (-2.58)^2 * 3,600 = 23,886
+
+To keep the numbers nice, the sample sizes are rounded up. Here is a table
+showing proposed sample sizes for subsequent rounds of MLPerf:
+
+|===
+|Tail Latency Percentile |Confidence Interval |Margin-of-Error |Inferences |Rounded Inferences
+|90%|99%|0.50%|23,886|3*2^13 = 24,576
+|95%|99%|0.25%|50,425|7*2^13 = 57,344
+|99%|99%|0.05%|262,742|33*2^13 = 270,336
+|===
+
+These are mostly for the Server scenario which has tight bounds for tail
+latency. The other scenario may continue to use lower samples sizes.
