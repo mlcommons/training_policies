@@ -497,8 +497,8 @@ Examples of illegal variance in implementations include, but are not limited to:
 
 * Reducing ImageNet classifiers with 1001 classes to 1000 classes
 
-* For anything else you want on this list contact submitters five weeks prior to
-  the submission deadline
+For anything else you want on this list contact submitters five weeks prior to
+the submission deadline.
 
 Examples of legal variance in implementations include, but are not limited to:
 
@@ -527,9 +527,6 @@ Examples of legal variance in implementations include, but are not limited to:
 
 * Using knowledge of the LoadGen implementation to predict upcoming lulls or
   spikes in the server scenario
-
-* For anything else you want on this list contact submitters five weeks prior to
-  the submission deadline
 
 == System Reporting
 
