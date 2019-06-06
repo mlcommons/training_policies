@@ -372,15 +372,8 @@ using a checksum. The dataset must be unchanged at the start of each run.
 All imaging benchmarks take uncropped uncompressed bitmap as inputs, NMT takes
 text.
 
-CLOSED: The same pre- and post-processing steps as the reference implementation
-must be used. Additional pre- and post-processing is not allowed.
-
-OPEN: Any pre- and post-processing steps are allowed. Each datum must be
-preprocessed individually in a manner that is not influenced by any other data.
-
-CLOSED and OPEN: Sample-independent pre-processing that matches the reference
-model is untimed. However, it must be pre-approved and added to the following
-list:
+Sample-independent pre-processing that matches the reference model is
+untimed. However, it must be pre-approved and added to the following list:
 
 * May resize to processed size (e.g. SSD-large)
 
@@ -395,8 +388,8 @@ list:
 
 * May quantize image data from fp32 to int8 and between signed and unsigned
 
-Any other pre- and post-processing time (e.g., for OPEN) is included in the
-wall-clock time for a run result.
+Any other pre- and post-processing time is included in the wall-clock time for a
+run result.
 
 === Test Data Traversal Order
 
