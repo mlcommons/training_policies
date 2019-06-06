@@ -350,7 +350,7 @@ referring to an Open Division suite result, e.g. “a MLPerf Open result of 7.2.
 
 == Data Sets
 
-=== Data State at Start of Run
+=== Data State at the Start of Run
 
 For each benchmark, MLPerf will provide pointers to:
 
