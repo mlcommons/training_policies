@@ -508,6 +508,19 @@ submission? Or is it sufficient to submit the converted model?
 A: The goal is reproducibility, so you should include the conversion
 routine/scripts.
 
+===SSD
+
+Q: Is non-maximal suppression (NMS) timed?
+
+A: Yes. NMS is a per image operation. NMS is used to make sure that in object
+detection, a particular object is identified only once. Production systems need
+NMS to ensure high-quality inference.
+
+Q: Is COCO eval timed?
+
+A: No. COCO eval compares the proposed boxes and classes in all the images
+against ground truth in COCO dataset. COCO eval is not possible in production.
+
 == Appendix Number of Queries
 
 In order to be statistically valid, a certain number of queries are necessary to
