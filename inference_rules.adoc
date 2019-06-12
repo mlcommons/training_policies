@@ -51,12 +51,6 @@ and a quality requirement in accordance with a scenario.
 
 A _run result_ consists of the scenario-specific metric.
 
-A _reference result_ is a run result provided by the MLPerf organization for
-each reference implementation on a reference system.
-
-A _benchmark result_ is a run result normalized to the reference result for that
-benchmark.
-
 == General rules
 
 The following rules apply to all benchmark implementations.
@@ -288,46 +282,6 @@ be incrementally generated if it does not fit in memory. LoadGen validates
 accuracy via a separate test run that use each sample in the test library
 exactly once but is otherwise identical to the above normal metric run.
 
-== Reference Systems
-
-The reference systems are the MLPerf developer target platforms.
-
-MLPerf guarantees that each of the cloud/edge reference implementations will
-achieve the required accuracy on the appropriate cloud/edge reference system.
-All submissions must be equivalent to the reference implementation on the
-reference system, as described in this document.
-
-The reference systems are selected for ease of development and are used as an
-arbitrary baseline used to compute relative performance of submissions.  The
-reference systems are not intended to be reflective of any particular market,
-application, or deployment.
-
-=== Cloud Reference System (UPDATE ME)
-
-The cloud reference platform is a Google Compute Platform n1-highmem-16 (16
-vCPUs, 104GB memory) instance using the Skylake processor generation.
-
-MLPerf guarantees that the reference implementations of all cloud benchmarks
-will run on the cloud reference system.
-
-=== Edge Reference System
-
-The edge reference system is an Intel NUC 7 Home (NUC7i3BNHXF):
-
-* Core i3-7100U Processor (dual-core, four-thread Kaby Lake, 2.4GHz base)
-
-* 4GB of DDR4 memory
-
-* 16GB of Optane memory (3DXP connected via PCIe)
-
-* 1TB SATA hard drive
-
-* Running Ubuntu 16.04
-
-MLPerf guarantees that the reference implementations of all edge benchmarks will
-run on the edge reference system. The reference system can be obtained via
-Amazon and the hardware cost is $400.
-
 == Divisions
 
 There are two divisions of the benchmark suite, the Closed division and the Open
@@ -540,15 +494,6 @@ Q: Do I have to use the reference implementation scripts?
 A: No, you don’t have to use the reference scripts. The reference is there to
 settle conformance questions - with a few exceptions, a submission to the closed
 division must match what the reference is doing.
-
-
-Q: What is the reference system? Do I have to use the reference system?
-
-A: A reference system is a hardware and software platform that is guaranteed by
-MLPerf to run one or more benchmarks.  You can and should use different hardware
-and software configurations.  The reference hardware systems were chosen as
-development targets for MLPerf benchmarks and are not intended to be
-representative of any particular class of system.
 
 Q: Why does a run require so many individual inference queries?
 
