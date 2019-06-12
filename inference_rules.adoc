@@ -304,19 +304,19 @@ referring to an Open Division suite result, e.g. “a MLPerf Open result of 7.2.
 
 == Data Sets
 
-=== Data State at the Start of Run
-
 For each benchmark, MLPerf will provide pointers to:
-
-* A calibration data set, to be used for quantization (see quantization
-  section), that is a small subset of the training data set used to generate the
-  weights
 
 * An accuracy data set, to be used to determine whether a submission meets the
   quality target, and used as a validation set
 
 * A speed/performance data set that is a subset of the accuracy data set to be
   used to measure performance
+
+For each benchmark except GNMT, MLPerf will provide pointers to:
+
+* A calibration data set, to be used for quantization (see quantization
+  section), that is a small subset of the training data set used to generate the
+  weights
 
 Each reference implementation shall include a script to verify the datasets
 using a checksum. The dataset must be unchanged at the start of each run.
@@ -376,12 +376,13 @@ task. Retraining is allowed.
 CLOSED: MLPerf will provide trained weights and biases in fp32 format for both
 the reference and alternative implementations.
 
-MLPerf will provide a calibration data set. Submitters may do arbitrary purely
-mathematical, reproducible quantization using only the calibration data and
-weight and bias tensors from the benchmark owner provided model to any
-combination of permissive whitelist numerical format that achieves the desired
-quality. The quantization method must be publicly described at a level where it
-could be reproduced.  The whitelist currently includes:
+MLPerf will provide a calibration data set for all models except
+GNMT. Submitters may do arbitrary purely mathematical, reproducible quantization
+using only the calibration data and weight and bias tensors from the benchmark
+owner provided model to any combination of permissive whitelist numerical format
+that achieves the desired quality. The quantization method must be publicly
+described at a level where it could be reproduced.  The whitelist currently
+includes:
 
 * INT8
 * INT16
