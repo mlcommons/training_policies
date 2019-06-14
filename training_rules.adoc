@@ -404,3 +404,7 @@ Submissions to the database must use the provided submission form to report all 
 === Submission Process
 Submit the completed form and supporting code to the MLPerf organization Github mlperf/results repo as a PR.
 
+== Appendix: FAQ
+1. For NCF, the test positive example must always come last if there is a tie.
+
+
