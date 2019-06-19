@@ -308,6 +308,12 @@ The same quality measure as the reference implementation must be used. The quali
 
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained. This policy is intended to simplify v0.5 and will be reconsidered.
 
+|===
+|Area |Problem |Model|Evaluation frequency
+
+|Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
+|===
+
 === Equivalence exceptions
 The CLOSED division allows limited exemptions to mathematical equivalence between implementations for pragmatic purposes, including:
 
