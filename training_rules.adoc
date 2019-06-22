@@ -351,59 +351,6 @@ Each benchmark result is computed by dropping the fastest and slowest runs, then
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
 
-== Submission Result Set
-All results in a submission result set must be for benchmarks from the same suite and produced under the rules of the same division. Results may be reported for one, some, or all benchmarks. 
-
-All results must be produced using the same framework and system. The only difference in software and hardware between results should be the benchmark implementation. 
-
-An organization or individual may submit multiple submissions.
-
-== Framework Reporting
-Report the framework used, including version.
-
-== System Reporting
-If the system is available in the cloud it should be benchmarked in the cloud. On premise benchmarking is allowed when the required system is not available in the cloud.
-
-=== With Cloud Hardware	
-
-==== Replication recipe
-Report a recipe that starts from a vanilla VM image or Docker container and a sequence of steps that creates the system that performs the benchmark measurement.
-
-==== Scale
-Cloud results are presented alongside a _cloud scale_ number which seeks to approximate the cost of the system involved. Cloud scale is main hardware components used in the system. Cloud scale is computed after submission based on a table which relates the set of hardware components to on-demand hourly prices to rent typical systems containing that set. 
-
-The table is populated based on the hourly on-demand price across a specific set of large cloud providers for a specific region, then normalizing all entries to a common system. For the initial v0.5 submission, the set of cloud providers is { Alibaba, Amazon, Google, and Microsoft }, the region is Eastern United States, and the common system is typical system containing 1 NVIDIA P100. Cloud scale for ML accelerators only offered by a subset of the set cloud providers is based on that subset. The table will be updated every submission cycle after submissions but before result posting on a date determined by the cloud scale working group.
-
-=== With On-premise Hardware
-
-==== Replication recipe
-Report everything that will eventually be required by a third-party user to replicate the result when the hardware and software becomes widely available. 
-
-==== Power
-For v0.5, power information is not required. You may optionally include a hyperlink to power information for the system.
-
-== Submissions
-The MLPerf organization will create a database that collects submission data and a website that presents the results.
-
-=== Submission Compliance Logs
-Submissions must contain a properly formatted _compliance log_ for each run, even if the run result does not directly impact the benchmark result because it was the lowest, highest, or allowed non-convergence. See the compliance/ directory in the Github repo for the python files used to produce the compliance log. 
-
-Each compliance log is produced by the benchmark implementation calling a standard "mlperf_print" function with a different set of tags. There are a standard set of tags which are required for all submissions. Some tags are required once per run, some once per epoch, some once per eval, and some are only required if optional code is included such as padding. Sample logs are provided for each benchmark. A standard mlp_compliance.py script is provided that checks for all required tags for a given benchmark.
-
-The "mlperf_print" function may be reimplemented if needed in another language provided that the semantics are preserved.
-
-For practical implementation reasons, the compliance log may be the result of combining multiple other logs from the run, e.g. from multiple processes. 
-
-All official run results will be extracted from the log based on the start and end tags. 
-
-All logs should be encrypted prior to submission using the verify_submission.sh script. The script will not contain a valid encryption key until two days before submissions and should not be used prior to that point.
-
-=== Submission Form
-Submissions to the database must use the provided submission form to report all required information.
-
-=== Submission Process
-Submit the completed form and supporting code to the MLPerf organization Github mlperf/results repo as a PR.
-
 == Appendix: FAQ
 1. For NCF, the test positive example must always come last if there is a tie.
 
