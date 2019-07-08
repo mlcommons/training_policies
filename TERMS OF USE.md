@@ -17,9 +17,9 @@ _SmartAI Corp achieved a score of 0.6 on the MLPerf Image Classification benchma
 
 &ast;&ast; System description must be consistent with the description in the official MLPerf results. Furthermore, chip count must be included if another submitter’s score for the same benchmark is listed in the document.
 
-In primary citation or footnote: benchmark version and division***,  ML Framework and version, accelerator library software and version (as applicable), link to MLPerf submission, date and source of retrieval, MLPerf result ID (major-version.minor-version.entry.benchmark), and clear reference to MLPerf trademark. For example:
+In primary citation or footnote: benchmark version and division***, date and source of retrieval (e.g. URL), MLPerf result ID (major-version.minor-version.entry.benchmark), and clear reference to MLPerf trademark. For example:
 
-_[1] MLPerf v0.5 Training Closed; system employed ML Framework v4.1 with the MLNN v7.4 library. Retrieved from www.mlperf.org 21 December 2018, entry 0.5.12.2. MLPerf name and logo are trademarks. See www.mlperf.org for more information._
+_[1] MLPerf v0.5 Training Closed; Retrieved from www.mlperf.org 21 December 2018, entry 0.5-12. MLPerf name and logo are trademarks. See www.mlperf.org for more information._
 
 &ast;&ast;&ast; These data items must be included in the primary citation if results from different benchmark versions or divisions are being compared.
 
@@ -46,7 +46,9 @@ _[1] Accuracy is not the primary metric of MLPerf. MLPerf name and logo are regi
 
 ## Comparisons between major revisions of an MLPerf benchmark are not allowed 
 
-Whether comparing official results or estimates, comparisons must be made between results of compatible revisions of an MLPerf benchmark. Compatible revisions are determined by the MLPerf organization and are described in each benchmark’s documentation.
+Whether comparing official results or estimates, comparisons must be made between results of compatible revisions of an MLPerf benchmark. Compatible revisions are determined by the MLPerf organization.
+
+MLPerf Training v0.5 anbd v0.6 are not directly compatible and should not be comparted without additional analysis to remove influence of changes such as overheads and quality targets.
 
 ## The MLPerf website is hosted by Google; the following terms apply
 
