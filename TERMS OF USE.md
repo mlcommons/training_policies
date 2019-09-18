@@ -48,6 +48,14 @@ _[1] Accuracy is not the primary metric of MLPerf. MLPerf name and logo are regi
 
 Whether comparing official results or estimates, comparisons must be made between results of compatible revisions of an MLPerf benchmark. Compatible revisions are determined by the MLPerf organization and are described in each benchmark’s documentation.
 
+## MLPerf Records
+
+An "MLPerf Record" is the name of an award given out by the MLPerf organization for outstanding achievement. To avoid confusion, top-line performance in a particular benchmark or benchmark category must not be presented as an ML or AI perfomance record.
+
+## Winning and Losing
+
+An MLPerf benchmark is a performance measurement, not a sports event. There are no winners or losers. Top-of-the-line submissions must not be presented as winning MLPerf.
+
 ## The MLPerf website is hosted by Google; the following terms apply
 
 In addition to the [Google Terms of Service](https://policies.google.com/terms?hl=en) and [Privacy Policy](https://policies.google.com/privacy?hl=en), the following terms will apply to your use of the MLPerf website (the “Website”), service (the “Service), and software (the “Software”). If you do not accept these terms and conditions in full, you must terminate the use of the Website, Service, and Software immediately.
