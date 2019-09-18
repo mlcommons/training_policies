@@ -50,7 +50,7 @@ Whether comparing official results or estimates, comparisons must be made betwee
 
 ## MLPerf Records
 
-An "MLPerf Record" is the name of an award given out by the MLPerf organization for outstanding achievement. To avoid confusion, top-line performance in a particular benchmark or benchmark category must not be presented as an ML or AI perfomance record.
+An "MLPerf Record" is the name of an award given out by the MLPerf organization for outstanding achievement. To avoid confusion, top-line performance in a particular benchmark or benchmark category must not be presented as an ML or AI performance record.
 
 ## Winning and Losing
 
