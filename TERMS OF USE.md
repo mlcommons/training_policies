@@ -44,6 +44,10 @@ _Prestigious Research University has created a new neural network model called M
 
 _[1] Accuracy is not the primary metric of MLPerf. MLPerf name and logo are registered trademarks. See www.mlperf.org for more information._
 
+## Comparison across categories or divisions should be explicit
+
+Comparisons between benchmarks across different divisions or submission categories (e.g. open vs closed, RDI vs available) should explicitly state the different divisions or categories.
+
 ## Comparisons between major revisions of an MLPerf benchmark are not allowed 
 
 Whether comparing official results or estimates, comparisons must be made between results of compatible revisions of an MLPerf benchmark. Compatible revisions are determined by the MLPerf organization and are described in each benchmark’s documentation.
