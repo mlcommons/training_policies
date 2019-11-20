@@ -266,6 +266,12 @@ The following scheme for scaling learning rate schedule and adding warmup applie
 ** The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
 ** The learning rate may be scaled by a constant factor r, where r is an integer.
 
+For v0.7, the following rules apply:
+
+CLOSED:
+
+The implementation of the optimizer must match the equation specified in the "MLPerf optimizers review" document.  That document describes  which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
+
 The following model-specific exceptions are also allowed:
 
 |===
