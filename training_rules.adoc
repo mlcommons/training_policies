@@ -266,6 +266,10 @@ The following scheme for scaling learning rate schedule and adding warmup applie
 ** The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
 ** The learning rate may be scaled by a constant factor r, where r is an integer.
 
+CLOSED:
+
+The implementation of the optimizer must match the optimizer specified in the Appendex: Allowed Optimizer.  The Appendex lists which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
+
 The following model-specific exceptions are also allowed:
 
 |===
@@ -357,4 +361,30 @@ Each benchmark result should be normalized by dividing the reference result for 
 == Appendix: FAQ
 1. For NCF, the test positive example must always come last if there is a tie.
 
+== Appendix: Allowed Optimizers
 
+Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
+
+|===
+| Benchmark | Algorithm | Framework | Allowed Optimizer
+
+| RN50 | SGD with Momentum & LARS | PyTorch	| ?	
+|      |                          |	TensorFlow | ?	
+|      |                          | MxNet | SGDwFASTLARS
+| Minigo| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD	
+|      |                          | PyTorch | torch.optim.SGD	
+|      |                          | TensorFlow | tf.train.MomentumOptimizer	
+| GNMT | Adam	                    | PyTorch |	apex.optimizers.FusedAdam	
+|      |                          | PyTorch | torch.optim.Adam (PyT < 1.3)	
+|      |                          | TensorFlow | tf.train.AdamOptimizer	
+| Mask-RCNN	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD	
+|      |                          | PyTorch	| torch.optim.SGD	
+|      |                          | TensorFlow | tf.train.MomentumOptimizer	
+| SSD  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD	
+|      |                          | PyTorch	| torch.optim.SGD	
+|      |                          | TensorFlow | tf.train.MomentumOptimizer	
+| Transformer	| Adam	            | PyTorch	| apex.optimizers.FusedAdam	
+|      |                          | PyTorch	| torch.optim.Adam (PyT < 1.3)	
+|      |                          | TensorFlow | tf.train.AdamOptimizer	
+|      | Lazy Adam	              | PyTorch	| torch.optim.sparse_adam	
+|      |                          | TensorFlow | tf.contrib.opt.LazyAdamOptimizer	
