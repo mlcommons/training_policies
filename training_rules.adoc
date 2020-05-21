@@ -27,7 +27,7 @@ A _benchmark_ is an abstract problem that can be solved using ML by training a m
 
 A _suite_ is a specific set of benchmarks.
 
-A _division_ is a set of rules for implementing benchmarks friom a suite to produce a class of comparable results.
+A _division_ is a set of rules for implementing benchmarks from a suite to produce a class of comparable results.
 
 A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization. 
 
@@ -92,7 +92,7 @@ The following benchmarks are included but delayed to the next submission cycle:
 |===
 |Area|Problem |Dataset |Quality Target
 
-|Language |Speech recognition |Librispeech-clean+other |TBD
+|Language |Speech recognition |LibriSpeech-clean+other |TBD
 |===
 
 The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
@@ -142,10 +142,9 @@ The closed division models are:
 |===
 |Area |Problem |Model
 
-|Vision |Image classification |Resnet-50 v1.5
+|Vision |Image classification |ResNet-50 v1.5
 | |Object detection (light weight)|SSD
 | |Object detection (heavy weight) |Mask R-CNN
-|Language |Speech recognition |Deep Speech 2
 | |Translation (recurrent) |NMT
 | |Translation (non-recurrent) |Transformer
 |Commerce |Recommendation |Neural Collaborative Filtering
@@ -170,7 +169,7 @@ Random number generators may be seeded from the following sources:
 * System source of randomness, e.g. /dev/random or /dev/urandom
 * Another random number generator initialized with an allowed seed
 
-Random number generators may be initialized repeatedly in muliple processes or threads. For a single run, the same seed may be shared across multiple processes or threads.
+Random number generators may be initialized repeatedly in multiple processes or threads. For a single run, the same seed may be shared across multiple processes or threads.
 
 OPEN: Any random number generation may be used.
 
@@ -262,15 +261,13 @@ The following scheme for scaling learning rate schedule and adding warmup applie
 * An arbitrary batch size may be chosen to allow for tailoring the application to the hardware platform’s memory hierarchy. The batch size must be constant for the entire run, with the exception of the final batch in each epoch which may be smaller to account for the remainder when the number of samples is divided by batch.
 
 * Learning rate may be changed to accommodate the change in batch size or different precision. The learning rate schedule is defined relative to the reference implementation using four parameters wb, wr, t, and r:
-** A linear warm-up period of wb batches may be added with a per batch step size wr. It is assumed that the reference implementation learning rate is a constant r0 for more than wb batches. Then the warm up learning rate for batch b is r0 - (wb - b) * wr. The term wr is contrained to be (r0 / (wb * 2^wk)) where wk is a non-negative integer.
+** A linear warm-up period of wb batches may be added with a per batch step size wr. It is assumed that the reference implementation learning rate is a constant r0 for more than wb batches. Then the warm up learning rate for batch b is r0 - (wb - b) * wr. The term wr is constrained to be (r0 / (wb * 2^wk)) where wk is a non-negative integer.
 ** The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
 ** The learning rate may be scaled by a constant factor r, where r is an integer.
 
-For v0.7, the following rules apply:
-
 CLOSED:
 
-The implementation of the optimizer must match the equation specified in the "MLPerf optimizers review" document.  That document describes  which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
+The implementation of the optimizer must match the optimizer specified in the Appendex: Allowed Optimizer.  The Appendex lists which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
 
 The following model-specific exceptions are also allowed:
 
@@ -292,7 +289,7 @@ The following model-specific exceptions are also allowed:
 | |decay_start (number of updates after which the first lr decay occurs) |Arbitrary constant
 | |decay_interval (number of updates between lr decays) |Arbitrary constant
 | |warmup function |May use alt_warmup fn in reference
-| |learning_rate_warmup_steps |Arbitary constant, suggest 200
+| |learning_rate_warmup_steps |Arbitrary constant, suggest 200
 |Transformer |optimizer |Adam or Lazy Adam
 | |lr hyperparam to learning rate function |Arbitrary constant
 | |learning_rate_warmup_steps hyperparam to lr function |Arbitrary constant
@@ -363,4 +360,30 @@ Each benchmark result should be normalized by dividing the reference result for 
 == Appendix: FAQ
 1. For NCF, the test positive example must always come last if there is a tie.
 
+== Appendix: Allowed Optimizers
 
+Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
+
+|===
+| Benchmark | Algorithm | Framework | Allowed Optimizer
+
+| RN50 | SGD with Momentum & LARS | PyTorch	| ?	
+|      |                          |	TensorFlow | ?	
+|      |                          | MxNet | SGDwFASTLARS
+| Minigo| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD	
+|      |                          | PyTorch | torch.optim.SGD	
+|      |                          | TensorFlow | tf.train.MomentumOptimizer	
+| GNMT | Adam	                    | PyTorch |	apex.optimizers.FusedAdam	
+|      |                          | PyTorch | torch.optim.Adam (PyT < 1.3)	
+|      |                          | TensorFlow | tf.train.AdamOptimizer	
+| Mask-RCNN	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD	
+|      |                          | PyTorch	| torch.optim.SGD	
+|      |                          | TensorFlow | tf.train.MomentumOptimizer	
+| SSD  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD	
+|      |                          | PyTorch	| torch.optim.SGD	
+|      |                          | TensorFlow | tf.train.MomentumOptimizer	
+| Transformer	| Adam	            | PyTorch	| apex.optimizers.FusedAdam	
+|      |                          | PyTorch	| torch.optim.Adam (PyT < 1.3)	
+|      |                          | TensorFlow | tf.train.AdamOptimizer	
+|      | Lazy Adam	              | PyTorch	| torch.optim.sparse_adam	
+|      |                          | TensorFlow | tf.contrib.opt.LazyAdamOptimizer	
