@@ -145,7 +145,6 @@ The closed division models are:
 |Vision |Image classification |Resnet-50 v1.5
 | |Object detection (light weight)|SSD
 | |Object detection (heavy weight) |Mask R-CNN
-|Language |Speech recognition |Deep Speech 2
 | |Translation (recurrent) |NMT
 | |Translation (non-recurrent) |Transformer
 |Commerce |Recommendation |Neural Collaborative Filtering
