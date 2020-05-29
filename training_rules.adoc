@@ -293,6 +293,10 @@ The following model-specific exceptions are also allowed:
 | |lr hyperparam to learning rate function |Arbitrary constant
 | |learning_rate_warmup_steps hyperparam to lr function |Arbitrary constant
 
+=== Hyperparameters Borrowing
+
+During the review period as described in the Submission Rules, a submitter may replace the hyperparameters in their implementation of a benchmark with hyperparameters from another submitter's implementation of the same benchmark. By default, they may or may not replace batch size but must replace all other hyperparameters as a group. With evidence that the resulting model converges worse in terms of epochs required (taking into account batch size and precision) they may make a minimum number of additional hyperparameter changes in order to achieve comparable convergence in epochs.
+
 |===
 
 Some benchmarks may require extensions of these policies; submitters are encouraged to request extensions based on data.
