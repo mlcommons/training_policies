@@ -210,6 +210,9 @@ CLOSED: Two ways to represent the Mask R-CNN mask are permitted. One is a polygo
 
 OPEN: The closed division data representations restrictions only apply at the start of the run. Data may be represented in an arbitrary fashion during the run.
 
+=== Other Uses of Data
+
+Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes.
 
 === Training and Test Sets
 If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
