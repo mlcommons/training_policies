@@ -331,11 +331,11 @@ Additional exemptions need to be explicitly requested and approved in advance. I
 The OPEN division does not restrict mathematical equivalence.
 
 == Run Results
-A run result consists of a wall-clock timing measurement for an entire run, including model construction, any data preprocessing required to be on the clock, training, and quality testing. 
+A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
 
-The clock must start before any part of the system performs any benchmark specific work (e.g. model creation, or dataset manipulation), and may be stopped as soon as any part of the system determines target accuracy has been reached.
+Prior to starting the clock, a system may use a maximum of 20 minutes of model initialization time. Model initialization time begins when the system first begins to construct or execute the model. This maximum initialization time is intended to ensure that model initialization is not disproportionate on large systems intended to run much larger models, and may be adjusted in the future with sufficient evidence.
 
-The clock may not be paused during the run.
+The clock must start before any part of the system touches the dataset or when the maximum model initialization time is exceeded. The clock may be stopped as soon as any part of the system determines target accuracy has been reached. The clock may not be paused during the run.
 
 == Benchmark Results
 Each benchmark result is based on a set of run results. The number of results for each benchmark is based on a combination of the variance of the benchmark result, the cost of each run, and the likelihood of convergence.
