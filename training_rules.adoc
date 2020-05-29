@@ -78,7 +78,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |===
 |Area|Problem |Dataset |Quality Target
 
-|Vision |Image classification |ImageNet |75.90% classification (v0.5 was 74.9%)
+|Vision |Image classification |ImageNet |75.90% classification
 | |Object detection (light weight) |COCO |21.2% mAP
 | |Object detection (heavy weight) |COCO |0.377 Box min AP and 0.339 Mask min AP
 |Language |Translation (recurrent) |WMT English-German |21.8 Sacre BLEU
