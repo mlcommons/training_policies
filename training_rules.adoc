@@ -280,7 +280,6 @@ The following model-specific exceptions are also allowed:
 | |maximum number of samples attempted when generating a training patch for a given IoU choice
 |Arbitrary integer >= 1
 |Mask R-CNN |number of image candidates | 2000 or 1000*batch_size patches (may sample either from a pool of all examples, or individually and uniformly from each image)
-|NCF |optimizer |Adam or Lazy Adam
 | |lr |Arbitrary constant
 | |beta1 |Arbitrary constant
 | |beta2 |Arbitrary constant
@@ -356,9 +355,6 @@ Each benchmark result is based on a set of run results. The number of results fo
 Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times.
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
-
-== Appendix: FAQ
-1. For NCF, the test positive example must always come last if there is a tie.
 
 == Appendix: Allowed Optimizers
 
