@@ -70,7 +70,9 @@ Source code used for the benchmark implementations must be open-sourced under a 
 The framework and system should not detect and behave differently for benchmarks.
 
 === Pre-training is not allowed
-The implementation should not encode any information about the content of the dataset or a successful model’s state in any form.
+Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form.
+
+For benchmarks which are defined as starting from a fixed set of weights, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained.
 
 == Benchmarks
 The benchmark suite consists of the benchmarks shown in the following table.
@@ -109,6 +111,7 @@ A plain text “README.md” file that describes:
 ** Training data order
 ** Test data order
 ** Simulation environment (RL models only)
+** Steps necessary for reproducing the initial set of weights (for benchmarks which use pretrained weights)
 * Model
 ** Publication/Attribution
 ** List of layers 
@@ -238,7 +241,7 @@ OPEN: The benchmark implementation may use a different model.
 CLOSED: Each of the current frameworks has a graph that describes the operations performed during the forward propagation of training. The frameworks automatically infer and execute the corresponding back-propagation computations from this graph. Benchmark implementations must use the same graph as the reference implementation.
 
 === Weight and Bias Initialization
-CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation.
+CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation.  For a benchmark that starts from pretrained weights, the weights should be initialized either directly from the provided weights, via a conversion process to convert from the provided weights into an alternate format, or via a training procedure that is demonstrated to produce statistically identical weights as those provided.
 
 OPEN: Weights and biases must be initialized using a consistent constant or random value distribution. 
 
