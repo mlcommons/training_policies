@@ -62,7 +62,9 @@ The same system and framework must be used for a submission result set. Note tha
 The framework and system should not detect and behave differently for benchmarks.
 
 === Pre-training is not allowed
-The implementation should not encode any information about the content of the dataset or a successful model’s state in any form.
+Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form. High-level statistical information about the dataset, such as distribution of sizes, may be used.
+
+For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained. For v0.7, sets of weights used in v0.6 are allowed.
 
 == Benchmarks
 The benchmark suite consists of the benchmarks shown in the following table.
@@ -101,7 +103,7 @@ A plain text “README.md” file that describes:
 ** Training data order
 ** Test data order
 ** Simulation environment (RL models only)
-* Model
+** Steps necessary for reproducing the initial set of weights, if an initial set of non-standard weights is used. For v0.7, weights from v0.6 may be used without this information.
 ** Publication/Attribution
 ** List of layers 
 ** Weight and bias initialization
@@ -233,7 +235,7 @@ OPEN: The benchmark implementation may use a different model.
 CLOSED: Each of the current frameworks has a graph that describes the operations performed during the forward propagation of training. The frameworks automatically infer and execute the corresponding back-propagation computations from this graph. Benchmark implementations must use the same graph as the reference implementation.
 
 === Weight and Bias Initialization
-CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation.
+CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation, unless a pre-trained set of weights, such as a checkpoint or backbone, is used by the reference.
 
 OPEN: Weights and biases must be initialized using a consistent constant or random value distribution. 
 
