@@ -73,7 +73,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Vision |Image classification |ImageNet |75.90% classification
 | |Object detection (light weight) |COCO |23.0% mAP
 | |Object detection (heavy weight) |COCO |0.377 Box min AP and 0.339 Mask min AP
-|Language |Translation (recurrent) |WMT English-German |21.8 Sacre BLEU
+|Language |Translation (recurrent) |WMT English-German |24.0 Sacre BLEU
 | |Translation (non-recurrent) |WMT English-German |25.00 BLEU
 |Commerce |Recommendation |MovieLens-20M |0.635 HR@10
 |General |Reinforcement learning |Go |40.00% pro move prediction
