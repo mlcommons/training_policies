@@ -343,7 +343,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Language |Translation (recurrent) |10
 | |Translation (non-recurrent) |10
 |Commerce |Recommendation |Run 100, use first 50 that converge
-|General |Reinforcement learning |20
+|General |Reinforcement learning |10
 |===
 
 Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times.
