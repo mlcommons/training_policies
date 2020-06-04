@@ -240,7 +240,7 @@ OPEN: The benchmark implementation may use a different model.
 CLOSED: Each of the current frameworks has a graph that describes the operations performed during the forward propagation of training. The frameworks automatically infer and execute the corresponding back-propagation computations from this graph. Benchmark implementations must use the same graph as the reference implementation.
 
 === Weight and Bias Initialization
-CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation.  For a benchmark that starts from pretrained weights, the weights should be initialized either directly from the provided weights, via a conversion process to convert from the provided weights into an alternate format, or via a training procedure that is demonstrated to produce statistically identical weights as those provided.
+CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation, unless a pre-trained set of weights, such as a checkpoint or backbone, is used by the reference.
 
 OPEN: Weights and biases must be initialized using a consistent constant or random value distribution. 
 
