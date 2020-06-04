@@ -348,6 +348,13 @@ Each benchmark result is computed by dropping the fastest and slowest runs, then
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
 
+== Appendix: Benchmark Specific Rules
+
+* ResNet
+
+** ResNet may have 1000 or 1001 classes, where the 1001st is "I don't know"
+
+
 == Appendix: Allowed Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
