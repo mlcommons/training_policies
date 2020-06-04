@@ -111,8 +111,7 @@ A plain text “README.md” file that describes:
 ** Training data order
 ** Test data order
 ** Simulation environment (RL models only)
-** Steps necessary for reproducing the initial set of weights (for benchmarks which use pretrained weights)
-* Model
+** Steps necessary for reproducing the initial set of weights, if an initial set of non-standard weights is used. For v0.7, weights from v0.6 may be used without this information.
 ** Publication/Attribution
 ** List of layers 
 ** Weight and bias initialization
