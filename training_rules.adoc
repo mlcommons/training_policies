@@ -77,8 +77,9 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Object detection (heavy weight) |COCO |0.377 Box min AP and 0.339 Mask min AP
 |Language |Translation (recurrent) |WMT English-German |24.0 Sacre BLEU
 | |Translation (non-recurrent) |WMT English-German |25.00 BLEU
-|Commerce |Recommendation |MovieLens-20M |0.635 HR@10
-|General |Reinforcement learning |Go |40.00% pro move prediction
+| |NLP |Wikipedia 2020/01/01 |0.712 Mask-LM accuracy
+|Commerce |Recommendation |1TB Click Logs|0.8025 AUC
+|General |Reinforcement learning |Go |55% win rate vs. checkpoint
 |===
 
 The following benchmarks are included but delayed to the next submission cycle:
