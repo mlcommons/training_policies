@@ -70,9 +70,9 @@ Source code used for the benchmark implementations must be open-sourced under a 
 The framework and system should not detect and behave differently for benchmarks.
 
 === Pre-training is not allowed
-Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form.
+Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form. High-level statistical information about the dataset, such as distribution of sizes, may be used.
 
-For benchmarks which are defined as starting from a fixed set of weights, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained.
+For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained. For v0.7, sets of weights used in v0.6 are allowed.
 
 == Benchmarks
 The benchmark suite consists of the benchmarks shown in the following table.
