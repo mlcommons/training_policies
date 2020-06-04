@@ -209,7 +209,7 @@ If applicable, the dataset must be separated into training and test sets in the 
 === Training Data Order
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
-Future versions of the benchmark suite may specify the Closed traversal order.
+Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
 
 OPEN: the training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
