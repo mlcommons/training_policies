@@ -373,9 +373,13 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 |===
 | Benchmark | Algorithm | Framework | Allowed Optimizer
 
-| RN50 | SGD with Momentum & LARS | PyTorch	| ?	
-|      |                          |	TensorFlow | ?	
+| RN50 | LARS                     | PyTorch	| [No compliant implementation]	
+|      |                          |	TensorFlow | MLPERF_LARSOptimizer	
 |      |                          | MxNet | SGDwFASTLARS
+| RN50 | SGD with Momentum        | PyTorch	| apex.optimizers.FusedSGD	
+|      |                          |	PyTorch | torch.optim.SGD	
+|      |                          |	TensorFlow | tf.train.MomentumOptimizer	
+|      |                          | MxNet | [No compliant implementation]
 | Minigo| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD	
 |      |                          | PyTorch | torch.optim.SGD	
 |      |                          | TensorFlow | tf.train.MomentumOptimizer	
@@ -393,3 +397,8 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 |      |                          | TensorFlow | tf.train.AdamOptimizer	
 |      | Lazy Adam	              | PyTorch	| torch.optim.sparse_adam	
 |      |                          | TensorFlow | tf.contrib.opt.LazyAdamOptimizer	
+| BERT | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+|      |              	          | TensorFlow	| tf.optimizers.LAMB
+| DLRM | SGD             	        | PyTorch	| torch.optim.SGD
+|      |              	          | TensorFlow	| tf.train.MomentumOptimizer
+
