@@ -174,7 +174,7 @@ Random number generators may be initialized repeatedly in multiple processes or 
 OPEN: Any random number generation may be used.
 
 === Numerical formats
-CLOSED: The numerical formats fp64, fp32, fp16, and bfloat16 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
+CLOSED: The numerical formats fp64, fp32, fp16, and bfloat16 are pre-approved for use. The formats int8 and uint8 are pre-approved for the MiniGo benchmark. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
 
 OPEN: Any format and scaling may be used.
 
