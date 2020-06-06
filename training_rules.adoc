@@ -79,7 +79,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Translation (non-recurrent) |WMT English-German |25.00 BLEU
 | |NLP |Wikipedia 2020/01/01 |0.712 Mask-LM accuracy
 |Commerce |Recommendation |1TB Click Logs|0.8025 AUC
-|General |Reinforcement learning |Go |55% win rate vs. checkpoint
+|General |Reinforcement learning |Go |50% win rate vs. checkpoint
 |===
 
 The following benchmarks are included but delayed to the next submission cycle:
