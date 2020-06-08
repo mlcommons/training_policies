@@ -311,6 +311,20 @@ OPEN: Any loss function may be used. Do not confuse the loss function with targe
 === Quality measure
 Each run must reach a target quality level on the reference implementation quality measure. By default, the time to evaluate the quality is included in the wallclock time. However, if the reference implementation generates timestamped checkpoints and evaluates the quality after the clock has been stopped, then an implementation may either perform evaluation on-the-clock or generate timestamped checkpoints, evaluate them after the clock has been stopped, and update the clock stopped time to the timestamp of the first passing checkpoint. The checkpoint timestamp may be any time after the last weight value included in the checkpoint is updated.
 
+|===
+|Area |Problem |Model|Evaluation frequency
+
+|Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
+|       |Object detection (light weight) |SSD|Fixed at iterations=120000, 160000, 180000, 200000, 220000, 240000
+|       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
+|Language|Translation (recurrent) |NMT|Every 1 epoch 
+|        |Translation (non-recurrent) |Transformer|Every 1 epoch 
+|        |NLP |BERT| Starting at 3M samples, then every 500K samples
+|Commerce|Recommendation |DLRM|Every 20480 samples 
+|General|Reinforcement learning |Mini Go|Every 1 epoch   
+|===
+
+
 The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
 
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained. This policy is intended to simplify v0.5 and will be reconsidered.
