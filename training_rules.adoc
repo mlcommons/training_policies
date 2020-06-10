@@ -179,6 +179,9 @@ Epochs should always be numbered from 1.
 === Result rounding
 Public results should be rounded normally.
 
+=== Dead code
+Reference implementation code that does contribute to the input preprocessing, output computation, weight updates, or target accuracy evaluation, such that the reference implementation would produce consume the same inputs and produce the same weights, outputs, and target accuracy score(s) regardless of actual data value without the code in question is consired dead code and may be eliminated. For example, unused accuracy metrics may be eliminated.
+
 == Data Set
 
 === Data State at Start of Run
