@@ -315,12 +315,12 @@ Each run must reach a target quality level on the reference implementation quali
 |Area |Problem |Model|Evaluation frequency
 
 |Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
-|       |Object detection (light weight) |SSD|Fixed at iterations=120000, 160000, 180000, 200000, 220000, 240000
+|       |Object detection (light weight) |SSD|Fixed at epochs=40, 50, 55, 60, 65, 70, 75, 80
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Translation (recurrent) |NMT|Every 1 epoch 
 |        |Translation (non-recurrent) |Transformer|Every 1 epoch 
 |        |NLP |BERT| Starting at 3M samples, then every 500K samples
-|Commerce|Recommendation |DLRM|Every 20480 samples 
+|Commerce|Recommendation |DLRM|Every 102400 samples 
 |General|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
 
