@@ -352,7 +352,8 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Object detection (heavy weight) |5
 |Language |Translation (recurrent) |10
 | |Translation (non-recurrent) |10
-|Commerce |Recommendation |Run 100, use first 50 that converge
+| |NLP |10
+|Commerce |Recommendation |5
 |General |Reinforcement learning |10
 |===
 
