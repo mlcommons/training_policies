@@ -21,7 +21,8 @@ _Quality_ always refers to a model’s ability to produce “correct” outputs.
 
 A _system_ consists of a defined set of hardware resources such as processors, memories, disks, and interconnect. It also includes specific versions of all software such as operating system, compilers, libraries, and drivers that significantly influences the running time of a benchmark, excluding the ML framework.
 
-A _framework_ is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
+A _framework_ is a specific version of a software library or set of related libraries, possibly with associated 
+compiler, for training ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
 
 A _benchmark_ is an abstract problem that can be solved using ML by training a model based on a specific dataset or simulation environment to a target quality level. 
 
@@ -309,7 +310,9 @@ CLOSED: The same loss function used in the reference implementation must be used
 OPEN: Any loss function may be used. Do not confuse the loss function with target quality measure.
 
 === Quality measure
-Each run must reach a target quality level on the reference implementation quality measure. By default, the time to evaluate the quality is included in the wallclock time. However, if the reference implementation generates timestamped checkpoints and evaluates the quality after the clock has been stopped, then an implementation may either perform evaluation on-the-clock or generate timestamped checkpoints, evaluate them after the clock has been stopped, and update the clock stopped time to the timestamp of the first passing checkpoint. The checkpoint timestamp may be any time after the last weight value included in the checkpoint is updated.
+Each run must reach a target quality level on the reference implementation quality measure. By default, the time to evaluate the quality is included in the wallclock time. 
+
+If the reference implementation generates timestamped checkpoints and evaluates the quality after the clock has been stopped, then an implementation may either perform evaluation on-the-clock or generate timestamped checkpoints, evaluate them after the clock has been stopped, and update the clock stopped time to the timestamp of the first passing checkpoint. The checkpoint timestamp may be any time after the last weight value included in the checkpoint is updated. If the evaluation is performed offline, checkpoints which are known to be too early do not need to be evaluated.
 
 |===
 |Area |Problem |Model|Evaluation frequency
