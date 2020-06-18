@@ -81,7 +81,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Translation (non-recurrent) |WMT English-German |25.00 BLEU
 | |NLP |Wikipedia 2020/01/01 |0.712 Mask-LM accuracy
 |Commerce |Recommendation |1TB Click Logs|0.8025 AUC
-|General |Reinforcement learning |Go |50% win rate vs. checkpoint
+|Research |Reinforcement learning |Go |50% win rate vs. checkpoint
 |===
 
 The following benchmarks are included but delayed to the next submission cycle:
@@ -140,12 +140,13 @@ The closed division models are:
 |Area |Problem |Model
 
 |Vision |Image classification |ResNet-50 v1.5
-| |Object detection (light weight)|SSD
+| |Object detection (light weight) |SSD
 | |Object detection (heavy weight) |Mask R-CNN
-| |Translation (recurrent) |NMT
+|Language |Translation (recurrent) |NMT
 | |Translation (non-recurrent) |Transformer
-|Commerce |Recommendation |Neural Collaborative Filtering
-|General |Reinforcement learning |Mini Go (based on Alpha Go paper)
+| |NLP |BERT
+|Commerce |Recommendation |DLRM
+|Research |Reinforcement learning |Mini Go (based on Alpha Go paper)
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -323,7 +324,7 @@ Each run must reach a target quality level on the reference implementation quali
 |        |Translation (non-recurrent) |Transformer|Every 1 epoch 
 |        |NLP |BERT| Starting at 3M samples, then every 500K samples
 |Commerce|Recommendation |DLRM|Every 102400 samples 
-|General|Reinforcement learning |Mini Go|Every 1 epoch   
+|Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
 
 
@@ -368,7 +369,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Translation (non-recurrent) |10
 | |NLP |10
 |Commerce |Recommendation |5
-|General |Reinforcement learning |10
+|Research |Reinforcement learning |10
 |===
 
 Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times.
