@@ -371,7 +371,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Research |Reinforcement learning |10
 |===
 
-Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times.
+Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run.
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
 
