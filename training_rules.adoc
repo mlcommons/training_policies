@@ -253,57 +253,103 @@ OPEN: Frameworks are free to alter the graph.
 === Hyperparameters and Optimizer
 CLOSED: 
 
-For v0.5 and later, the following rules apply:
-
-By default, the hyperparameters and optimizer must be the same as the reference. Hyperparameters include regularization terms such as norms and weight decays.
-
-The following scheme for scaling learning rate schedule and adding warmup applies to all models that use SGD.
-
-* An arbitrary batch size may be chosen to allow for tailoring the application to the hardware platform’s memory hierarchy. The batch size must be constant for the entire run, with the exception of the final batch in each epoch which may be smaller to account for the remainder when the number of samples is divided by batch.
-
-* Learning rate may be changed to accommodate the change in batch size or different precision. The learning rate schedule is defined relative to the reference implementation using four parameters wb, wr, t, and r:
-** A linear warm-up period of wb batches may be added with a per batch step size wr. It is assumed that the reference implementation learning rate is a constant r0 for more than wb batches. Then the warm up learning rate for batch b is r0 - (wb - b) * wr. The term wr is constrained to be (r0 / (wb * 2^wk)) where wk is a non-negative integer.
-** The learning rate schedule may be scaled in time by multiplying the input epoch by a constant factor t and rounding down, where t is constrained to be (1 + tk/10) where tk is a positive integer.
-** The learning rate may be scaled by a constant factor r, where r is an integer.
-
-CLOSED:
+By default, the optimizer and hyperparameters must be the same as the reference. 
 
 The implementation of the optimizer must match the optimizer specified in the Appendex: Allowed Optimizer.  The Appendex lists which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
 
-The following model-specific exceptions are also allowed:
+Hyperparameters include regularization terms such as norms and weight decays.
+
+The following table lists the tunable hyperparameters for each model,optimizer combination. The value of each tunable hyperparameter must meet the listed constraint. 
+
+The MLPerf verifier scripts checks all hyperparameters except those with names marked with asterisks, which must be checked manually. If the verifier and the constraints in this table differ, the verifier (specifically, the version on the date of submission unless otherwise decided by the review committee) is the source of truth.
 
 |===
-|Model |Hyperparameter |Change allowed
+ |Model |Optimizer |Name |Constraint |Definition |Reference Code
 
-
-|ResNet |base learning rate |0.1 or 0.128
-|SSD |lr2 weight decay |Arbitrary constant
-| |maximum number of samples attempted when generating a training patch for a given IoU choice
-|Arbitrary integer >= 1
-|Mask R-CNN |number of image candidates | 2000 or 1000*batch_size patches (may sample either from a pool of all examples, or individually and uniformly from each image)
-| |lr |Arbitrary constant
-| |beta1 |Arbitrary constant
-| |beta2 |Arbitrary constant
-|GNMT |learning rate |Arbitrary constant
-| |learning rate decay function |May use alt_decay fn in reference
-| |decay_start (number of updates after which the first lr decay occurs) |Arbitrary constant
-| |decay_interval (number of updates between lr decays) |Arbitrary constant
-| |warmup function |May use alt_warmup fn in reference
-| |learning_rate_warmup_steps |Arbitrary constant, suggest 200
-|Transformer |optimizer |Adam or Lazy Adam
-| |lr hyperparam to learning rate function |Arbitrary constant
-| |learning_rate_warmup_steps hyperparam to lr function |Arbitrary constant
+|bert |lamb |global_batch_size |unconstrained |The glboal batch size for training. |--train_batch_size
+ |bert |lamb |opt_base_learning_rate |unconstrained |The base learning rate. |--learning_rate
+ |bert |lamb |opt_epsilon |unconstrained |adam epsilon |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L75[reference code]
+ |bert |lamb |opt_learning_rate_training_steps |unconstrained |Step at which your reach the lowest learning late |link:https://github.com/mlperf/training/blob/master/language_model/tensorflow/bert/run_pretraining.py#L64[reference code]
+ |bert |lamb |opt_learning_rate_warmup_steps |unconstrained |"num_warmup_steps" |link:https://github.com/mlperf/training/blob/master/language_model/tensorflow/bert/optimization.py#L34[reference code]
+ |bert |lamb |num_warmup_steps |unconstrained |Number of steps for linear warmup. |--num_warmup_steps
+ |bert |lamb |start_warmup_step |unconstrained |--start_warmup_step |--start_warmup_step
+ |bert |lamb |opt_lamb_beta_1 |unconstrained |adam beta1 |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L73[reference code]
+ |bert |lamb |opt_lamb_beta_2 |unconstrained |adam beta2 |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L74[reference code]
+ |bert |lamb |opt_lamb_weight_decay_rate |unconstrained |Weight decay |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L72[reference code]
+ |dlrm |sgd |global_batch_size |unconstrained |global batch size |
+ |dlrm |sgd |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/facebookresearch/dlrm/blob/master/dlrm_s_pytorch.py#L492[reference code]
+ |dlrm |sgd |opt_learning_rate_warmup_steps |unconstrained |Number to steps go from 0 to sgd_opt_base_learning_rate with a linear warmup |See PR (From Intel and NV, TODO Link)
+ |dlrm |sgd |lr_decay_start_steps |unconstrained |step at which you start poly decay |See PR (From Intel and NV, TODO Link)
+ |dlrm |sgd |sgd_opt_base_learning_rate |unconstrained |learning rate at the start of poly decay |See PR (From Intel and NV, TODO Link)
+ |dlrm |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of the poly decay |See PR (From Intel and NV, TODO Link)
+ |dlrm |sgd |sgd_opt_learning_rate_decay_steps |unconstrained |the step at which you reach the end learning rate |See PR (From Intel and NV, TODO Link)
+ |gnmt |adam |global_batch_size |unconstrained |global batch size |--train-batch-size
+ |gnmt |adam |opt_base_learning_rate |unconstrained |base learning rate |--lr
+ |gnmt |adam |opt_learning_rate_alt_decay_func |true or false |whether to use alternative learning rate decay function (https://github.com/mlperf/training/pull/195) |set --remain-steps to 1.0 to disable learning rate decay
+ |gnmt |adam |opt_learning_rate_decay_factor$$*$$ |fixed to reference |learning rate decay factor |--decay-factor
+ |gnmt |adam |opt_learning_rate_decay_interval |unconstrained |number of updates between lr decays |--decay-interval
+ |gnmt |adam |opt_learning_rate_decay_steps$$*$$ |fixed to reference |max number of learning rate decay steps |--decay-steps
+ |gnmt |adam |opt_learning_rate_remain_steps |unconstrained |starting iteration for learning rate decay |--remain-steps
+ |gnmt |adam |max_sequence_length |unconstrained |May either drop or clip all sequences to this length. |--max-length-train
+ |gnmt |adam |opt_learning_rate_alt_warmup_func |true or false |whether to use alternative learning rate warmup function (https://github.com/mlperf/training/pull/195) |set --warmup-steps to 0 to disable warmup
+ |gnmt |adam |opt_learning_rate_warmup_steps |unconstrained |number of learning rate warmup iterations |--warmup-steps
+ |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
+ |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
+ |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
+ |maskrcnn |sgd |opt_base_learning_rate |0.02 * K for any integer K |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L12[reference code]
+ |maskrcnn |sgd |max_image_size$$*$$ |fixed to reference |Maximum size of the longer side |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/transforms/build.py#L8[reference code]
+ |maskrcnn |sgd |min_image_size$$*$$ |fixed to reference |Maximum size of the shorter side |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/transforms/build.py#L7[reference code]
+ |maskrcnn |sgd |num_image_candidates$$*$$ |1000 or 1000 * batches per chip |tunable number of region proposals for given batch size |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/modeling/rpn/inference.py#L183[reference code]
+ |maskrcnn |sgd |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L28[reference code]
+ |maskrcnn |sgd |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L29[reference code]
+ |maskrcnn |sgd |num_image_candidates$$*$$ |(1000 or 2000) or (1000 * batches per chip) |tunable number of region proposals for given batch size |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/modeling/rpn/inference.py#L183[reference code]
+ |minigo |sgd |train_batch_size |integer > 0 |Batch size to use for training |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L47[reference code]
+ |minigo |sgd |lr_boundaries |unconstrained |The number of steps at which the learning rate will decay |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L67[reference code]
+ |minigo |sgd |lr_rates |unconstrained |The different learning rates |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L70[reference code]
+ |minigo |sgd |actual_selfplay_games_per_generation |integer >= 8192 (min_selfplay_games_per_generation) |"NOT A HYPERPARAMETER, CANNOT BE 'BORROWED' during review" Implicit (LOG ONLY) - total number of games played per epoch; many parameters can impact this, varies per iteration |N/A
+ |minigo |sgd |min_selfplay_games_per_generation$$*$$ |fixed to reference (8192) |Minimum number of games to play for each training iteration |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/ml_perf/train_loop.py#L51[reference code]
+ |resnet |lars |lars_opt_base_learning_rate |arbitrary constant |Base "plr" in the PR linked. |link:https://github.com/mlperf/training/pull/342/files#[reference code]
+ |resnet |lars |lars_opt_end_learning_rate$$*$$ |fixed to reference |end learning rate for polynomial decay, implied mathemetically from other HPs |N/A
+ |resnet |lars |lars_opt_learning_rate_decay_poly_power$$*$$ |fixed to reference |power of polynomial decay, no link needed since not tunable |N/A
+ |resnet |lars |lars_epsilon$$*$$ |Fixed to reference |epsilon in reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
+ |resnet |lars |lars_opt_learning_rate_warmup_epochs |arbitrary constant |w_epochs in PR |link:https://github.com/mlperf/training/pull/342/files#[reference code]
+ |resnet |lars |lars_opt_momentum | 0.9 for batch<32k, otherwise arbitrary constant |momentum in reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
+ |resnet |lars |lars_opt_weight_decay |(0.0001 * 2 ^ N) where N is any integer |weight_decay in  reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
+ |resnet |sgd |global_batch_size |arbitrary constant |reference --batch_size |See LARS
+ |resnet |sgd |sgd_opt_base_learning_rate |0.001 * k where is an integer  |the learning rate |See LARS
+ |resnet |sgd |sgd_opt_end_learning_rate |10^-4 |end learning rate for polynomial decay, implied mathemetically from other HPs |See LARS
+ |resnet |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of polynomial decay, no link needed since not tunable |See LARS
+ |resnet |sgd |sgd_opt_learning_rate_decay_steps |integer >= 0 |num_epochs in reference |See LARS
+ |resnet |sgd |sgd_opt_weight_decay |(0.0001 * 2 ^ N) where N is any integer |Weight decay, same as LARS. |See LARS
+ |resnet |sgd |sgd_opt_momentum |0.9 |Momentum for SGD. |See LARS
+ |resnet |sgd |model_bn_span |arbitrary constant |number of samples whose statistics a given BN layer uses to normalize a training minibatch (may be just the portion of global_batch_size per device, but also may be aggregated over several devices) |See LARS
+ |resnet |sgd |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs needed for learning rate warmup |See LARS
+ |resnet |lars |global_batch_size |unconstrained |global batch size in reference |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/image_classification/tensorflow/official/utils/arg_parsers/parsers.py#L158[reference code]
+ |resnet |lars |lars_opt_learning_rate_decay_steps |unconstrained |num_epochs in reference |link:https://github.com/mlperf/training/blob/master/image_classification/tensorflow/official/resnet/resnet_run_loop.py[reference code]
+ |resnet |lars/sgd |opt_name |"lars" or "sgd" |The optimizer that was used. |
+ |ssd |sgd |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L23[reference code]
+ |ssd |sgd |model_bn_span |integer >= 1 |number of samples whose statistics a given BN layer uses to normalize a training minibatch (may be just the portion of global_batch_size per device, but also may be aggregated over several devices) |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L335[reference code]
+ |ssd |sgd |opt_learning_rate_warmup_factor |Integer >= 0 |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L45[reference code]
+ |ssd |sgd |opt_learning_rate_warmup_steps |integer >= 1 |number of steps for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L43[reference code]
+ |ssd |sgd |opt_weight_decay |arbitrary constant |L2 weight decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L40[reference code]
+ |ssd |sgd |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L47[reference code]
+ |ssd |sgd |max_samples |1 or 50 |maximum number of samples attempted when generating a training patch for a given IoU choice |link:https://github.com/mlperf/training/pull/367/commits/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59#diff-591431110d6b55f5afe595b96253fddbR111[reference code]
+ |ssd |sgd |opt_learning_rate_decay_boundary_epochs |[40, 50] * (1 + k/10) for some integer k |Epochs at which the learning rate decays |link:https://github.com/mlperf/training/blob/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59/single_stage_detector/ssd/train.py#L48[reference code]
+ |transformer |adam / lazy |global_batch_size |arbitrary constant |global batch size |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L56[reference code]
+ |transformer |adam / lazy |opt_base_learning_rate |Arbitrary constant |base learning rate |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L39[reference code]
+ |transformer |adam / lazy |opt_learning_rate_warmup_steps |arbitrary constant |number of learning rate warmup iterations |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L41[reference code]
+ |transformer |adam / lazy |opt_adam_beta_1 |arbitrary constant |Adam Beta1 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L44[reference code]
+ |transformer |adam / lazy |opt_adam_beta_2 |arbitrary constant |Adam Beta2 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L45[reference code]
+ |transformer |adam / lazy |opt_adam_epsilon$$*$$ |fixed to reference |Adam Epsilon |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L46[reference code]
 |===
+
+OPEN: Hyperparameters and optimizer may be freely changed.
 
 === Hyperparameter Borrowing
 
 During the review period as described in the Submission Rules, a submitter may replace the hyperparameters in their implementation of a benchmark with hyperparameters from another submitter's implementation of the same benchmark. By default, they may or may not replace batch size but must replace all other hyperparameters as a group. With evidence that the resulting model converges worse in terms of epochs required (taking into account batch size and precision) they may make a minimum number of additional hyperparameter changes in order to achieve comparable convergence in epochs.
 
 Some benchmarks may require extensions of these policies; submitters are encouraged to request extensions based on data.
-
-For version 0.6, MLPerf will be moving to a batchsize-to-hyperparameter-and-optimizer table. 
-
-OPEN: Hyperparameters and optimizer may be freely changed.
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
