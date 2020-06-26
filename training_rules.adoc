@@ -317,9 +317,9 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |resnet |lars |lars_opt_weight_decay |(0.0001 * 2 ^ N) where N is any integer |weight_decay in  reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
  |resnet |lars |lars_opt_learning_rate_decay_steps |unconstrained |num_epochs in reference |link:https://github.com/mlperf/training/blob/master/image_classification/tensorflow/official/resnet/resnet_run_loop.py[reference code]
  |resnet |lars |global_batch_size |unconstrained |global batch size in reference 
+|link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/image_classification/tensorflow/official/utils/arg_parsers/parsers.py#L158[reference code]
  |resnet |lars |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
  |resnet |lars |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
-|link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/image_classification/tensorflow/official/utils/arg_parsers/parsers.py#L158[reference code]
  |resnet |sgd |global_batch_size |arbitrary constant |reference --batch_size |See LARS
  |resnet |sgd |sgd_opt_base_learning_rate |0.001 * k where is an integer  |the learning rate |See LARS
  |resnet |sgd |sgd_opt_end_learning_rate |10^-4 |end learning rate for polynomial decay, implied mathemetically from other HPs |See LARS
