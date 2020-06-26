@@ -250,16 +250,16 @@ OPEN: Frameworks are free to alter the graph.
 
 == Training Loop
 
-=== Hyperparameters and Optimizer
+=== Hyperparameters
 CLOSED: 
 
-By default, the optimizer and hyperparameters must be the same as the reference. 
+By default, the hyperparameters must be the same as the reference. 
+
+Hyperparameters include the optimizer used and values like the regularization norms and weight decays.
 
 The implementation of the optimizer must match the optimizer specified in the Appendex: Allowed Optimizer.  The Appendex lists which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
 
-Hyperparameters include regularization terms such as norms and weight decays.
-
-The following table lists the tunable hyperparameters for each model,optimizer combination. The value of each tunable hyperparameter must meet the listed constraint. 
+The following table lists the tunable hyperparameters for each allowed model,optimizer combination. The value of each tunable hyperparameter must meet the listed constraint. 
 
 The MLPerf verifier scripts checks all hyperparameters except those with names marked with asterisks, which must be checked manually. If the verifier and the constraints in this table differ, the verifier (specifically, the version on the date of submission unless otherwise decided by the review committee) is the source of truth.
 
@@ -348,8 +348,6 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 === Hyperparameter Borrowing
 
 During the review period as described in the Submission Rules, a submitter may replace the hyperparameters in their implementation of a benchmark with hyperparameters from another submitter's implementation of the same benchmark. By default, they may or may not replace batch size but must replace all other hyperparameters as a group. With evidence that the resulting model converges worse in terms of epochs required (taking into account batch size and precision) they may make a minimum number of additional hyperparameter changes in order to achieve comparable convergence in epochs.
-
-Some benchmarks may require extensions of these policies; submitters are encouraged to request extensions based on data.
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
