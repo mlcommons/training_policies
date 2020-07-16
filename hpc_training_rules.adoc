@@ -1,0 +1,78 @@
+:toc:
+:toclevels: 4
+
+:sectnums:
+
+= MLPerf HPC Training Rules
+
+Version 0.7 
+July 16, 2020
+
+Points of contact: David Kanter (dkanter@gmail.com), Steve Farrell (sfarrell@lbl.gov)
+
+== Overview
+
+All rules are taken from the MLPerf Training Rules except for those that are overridden here.
+
+The MLPerf name and logo are trademarks. In order to refer to a result using the
+MLPerf name, the result must conform to the letter and spirit of the rules
+specified in this document. The MLPerf organization reserves the right to solely
+determine if a use of its name or logo is acceptable.
+
+== Benchmarks
+
+The benchmark suite consists of the benchmarks shown in the following table.
+
+|===
+|Problem |Dataset |Quality Target
+|Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82 (could be adjusted if training times are too long)
+|Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.128
+|===
+
+== Divisions
+
+There are two divisions of the HPC benchmark suite, the Closed division and the Open division.
+
+=== Closed Division
+
+The Closed division requires using the same preprocessing, model, and training method as the reference implementation.
+
+The closed division models are:
+
+|===
+|Problem |Model
+|Climate segmentation  |https://github.com/azrael417/mlperf-deepcam
+|Cosmological parameter prediction |https://github.com/sparticlesteve/cosmoflow-benchmark
+|===
+
+== Data Set
+
+=== Data State at Start of Run
+
+Each reference implementation includes a download script or broadly available method to acquire and verify the dataset.
+
+The data at the start of the benchmark run should reside on a parallel file system that is persistent (>= 1 month, not subject to eviction by other users), can be downloaded to / accessed by the user, and can be shared among users at the facility. Any staging to node-local disk or memory or system burst buffer should be included in the benchmark time measurement.
+
+You must flush/reset the on-node caches prior to benchmarking. Due to practicality issues, you are not required to reset off-node system-level caches.
+
+We otherwise follow the training rule on consistency with the reference implementation preprocessing.
+
+== Training Loop
+
+=== Hyperparameters and Optimizer
+
+CLOSED:
+
+Allowed hyperparameter and optimizer settings will be specified in the MLPerf HPC v0.5 Hyperparameter List. https://docs.google.com/spreadsheets/d/1jxsas4RRxKoKmIYcFZcFCQ1ZLnaMLSU8B5g5ZDKQ7sE/edit?usp=sharing
+
+OPEN: Hyperparameters and optimizer may be freely changed.
+
+== Run Results
+
+We follow MLPerf Training Rule 10 with the addition that data staging to node-local storage or I/O accelerators must also be timed as described in Rule 6.1 above.
+
+You are encouraged to also report the additional metrics of the benchmark described in the MLPerf HPC v0.5 Metrics List (to be prepared).
+
+== Benchmark Results
+
+We following the specified training rules except all benchmarks are run 5 times.
