@@ -26,7 +26,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |===
 |Problem |Dataset |Quality Target
 |Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82 (could be adjusted if training times are too long)
-|Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.128
+|Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.124
 |===
 
 == Divisions
@@ -75,4 +75,10 @@ You are encouraged to also report the additional metrics of the benchmark descri
 
 == Benchmark Results
 
-We following the specified training rules except all benchmarks are run 5 times.
+We follow the MLPerf Training Rule 11 along with the following required number of runs per benchmark.
+
+|===
+|Benchmark |Number of Runs
+|DeepCAM | 5
+|CosmoFlow | 10
+|===
