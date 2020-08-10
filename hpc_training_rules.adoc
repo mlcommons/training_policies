@@ -55,7 +55,7 @@ The data at the start of the benchmark run should reside on a parallel file syst
 
 You must flush/reset the on-node caches prior to benchmarking. Due to practicality issues, you are not required to reset off-node system-level caches.
 
-We otherwise follow the training rule on consistency with the reference implementation preprocessing.
+We otherwise follow the training rule on consistency with the reference implementation preprocessing and allowance for reformatting.
 
 == Training Loop
 
