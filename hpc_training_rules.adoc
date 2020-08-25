@@ -25,7 +25,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
 |Problem |Dataset |Quality Target
-|Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82 (could be adjusted if training times are too long)
+|Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82
 |Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.124
 |===
 
