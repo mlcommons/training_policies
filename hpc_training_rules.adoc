@@ -65,6 +65,28 @@ CLOSED:
 
 Allowed hyperparameter and optimizer settings will be specified in the MLPerf HPC v0.5 Hyperparameter List. https://docs.google.com/spreadsheets/d/1jxsas4RRxKoKmIYcFZcFCQ1ZLnaMLSU8B5g5ZDKQ7sE/edit?usp=sharing
 
+|===
+ |Model |Name |Constraint |Definition |Reference Code
+ |CosmoFlow |global_batch_size |unconstrained |The global batch size for training |
+ |CosmoFlow |opt_name |"sgd" |The optimizer name |
+ |CosmoFlow |opt_base_learning_rate |unconstrained |The base learning rate |
+ |CosmoFlow |opt_learning_rate_warmup_epochs |unconstrained |the number of epochs for learning rate to warm up to base value |
+ |CosmoFlow |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |
+ |CosmoFlow |opt_learning_rate_decay_boundary_epochs |[i, j], where i, j are positive integers, i.e. two learning rate decays are allowed in training" |Epochs at which learning rate decays |
+ |CosmoFlow |opt_learning_rate_decay_factor |`0 < value < 1`, and you may use a different value for each decay |the learning rate decay factor(s) at the decay boundary epochs |
+ |DeepCAM |global_batch_size |unconstrained |the global batch size for training |
+ |DeepCAM |opt_name |AdamW or LAMB |the optimizer name |
+ |DeepCAM |opt_epsilon |1e-6 or 1e-8 |epsilon for Adam |
+ |DeepCAM |opt_base_learning_rate |unconstrained |The base learning rate |
+ |DeepCAM |opt_learning_rate_warmup_steps |unconstrained |the number of epochs for learning rate to warm up to base value |
+ |DeepCAM |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warmup |
+ |DeepCAM |opt_learning_rate_decay_steps |unconstrained |the steps at which learning rate is decayed |
+ |DeepCAM |opt_learning_rate_decay_factor |unconstrained |the learning rate decay factor |
+ |DeepCAM |opt_weight_decay |0.01 |L2 weight decay |
+ |DeepCAM |validation_frequency |100 |number of steps between model validation |
+ |DeepCAM |loss_weight_pow |-0.125 |negative loss weight |
+|===
+
 OPEN: Hyperparameters and optimizer may be freely changed.
 
 == Run Results
