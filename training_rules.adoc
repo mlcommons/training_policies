@@ -191,7 +191,7 @@ The data must then be preprocessed in a manner consistent with the reference imp
 
 Unpadding is allowed as an offline preprocessing step.  Unpadding must not change the global data ordering.
 
-Packing is allowed as an offline preprocessing step, provided (a) Packs have similar distribution to the global data distribution, and (b) convergence is not affected.  The packing algorithm and convergence proof should be submitted N months before the submisions deadline and reviewed by the submitter's working group by M months prior to submission.
+Packing is allowed as an offline preprocessing step, provided (a) Packs have similar distribution to the global data distribution, (b) convergence is not affected, and (c) randomness for packing is deterministic for a given random seed.  The packing algorithm and convergence proof should be submitted to and reviewed by the submitter's working group by N months prior to submission.
 
 You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
 
@@ -222,9 +222,9 @@ If applicable, the dataset must be separated into training and test sets in the 
 === Training Data Order
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order. Unpadding as a preprocess or on the fly is allowed, provided it does not affect order.
 
-Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
+Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.  For example, packs must attempt to have similar random distribution as the overall dataset, and minibatch generation mush choose packs with similar random properties as the reference chooses unpacked samples.
 
-Any randomness needs to be deterministic for a given seed.
+Any randomness must be deterministic for a given seed.
 
 OPEN: the training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
