@@ -189,12 +189,16 @@ Each reference implementation includes a script to download the input dataset an
 
 The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
 
+Unpadding is allowed as an offline preprocessing step.  Unpadding must not change the global data ordering.
+
+Packing is allowed as an offline preprocessing step, provided (a) Packs have similar distribution to the global data distribution, and (b) convergence is not affected.  The packing algorithm and convergence proof should be submitted N months before the submisions deadline and reviewed by the submitter's working group by M months prior to submission.
+
 You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
 
 === Preprocessing During the Run
-Only preprocessing that must be done for each run (e.g. random transformations) must be timed.
+Any preprocessing that must be done for each run (e.g. random transformations) must be timed.
 
-CLOSED: The same preprocessing steps as the reference implementation must be used. 
+CLOSED: The same preprocessing steps as the reference implementation must be used.  
 
 OPEN: Any preprocessing steps are allowed. However, each datum must be preprocessed individually in a manner that is not influenced by any other data.
 
@@ -216,9 +220,9 @@ Input encoding data, such as language vocabulary, or the set of possible labels 
 If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
 
 === Training Data Order
-CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
+CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order. Unpadding as a preprocess or on the fly is allowed, provided it does not affect order.
 
-Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
+Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.  
 
 OPEN: the training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
