@@ -59,99 +59,99 @@ Include a license at the top of new files.
 
 (Note: Technical details TBD by community.)
 
-## Requirements for a good MLPerf Training reference (work in progress)
+
+## Requirements for an MLPerf Training reference
 
 ### General
-1. Can be run without error on reference hardware (1xV100) on day of freeze
 
-2. Compute must be done in full fp32 precision everywhere
+1. Reference repository code must run without error on reference hardware (1xV100) on day of benchmark reference freeze.
 
-3. Max runtime is 7 days on 1x V100, fp32
+2. Compute must be done in full fp32 precision for any math.
 
-    a. exception from 7-day @ 1 GPU rule is possible if absolutely necessary
+3. Max runtime is 7 days on 1x V100, fp32.
+
+    a. An exception from the 7-day @ 1 GPU rule can only come from the Submitter's Working Group
 
 4. Implementation should be minimalistic
 
-    a. remove redundant files and features not relevant to the reference
+    a. Remove redundant files and features not relevant to the reference
 
-    b. minimal set of dependencies
+    b. Minimal set of dependencies
 
-    c. avoid not obvious or hacky solutions (e.g. monkey patching), code should be easy to read 
+    c. Avoid not obvious or hacky solutions (e.g. monkey patching), code should be easy to read 
     and straightforward
 
-5. command-line arguments:
+5. Command-line arguments:
 
-    a. there should be command line param for every tunable hyperparameter
+    a. There should be a command line parameter for every tunable hyperparameter
 
-    b. ideally constraints on tunable hparams should be reflected in command line params setup (e.g. hparams that must be integers take only integer command line args, not floats) to minimize risk of accidentally running illegal config
+    b. Ideally constraints on tunable hparams should be reflected in command line parameter setup (e.g. hyperparameters that must be integers take only integer command line args, not floats) to minimize risk of accidentally running an illegal config
 
-    c. there can be command line params for non-tunable parameters, but defaults should be set to the correct value
+    c. There can be command line params for non-tunable parameters, but defaults should be set to the correct value
 
-6. This document applies to new references.  Existing references should try to adhere as well, but are not required to.
+    d. Hyperparameters may also come from a JSON file, but command-line settings should take precedent over the file, or a warning should be raised.
+
+6. This document applies to ***new*** references.  Existing references should try to adhere as well, but are not required to.
 
 ### Hyperparameters & thresholds:
 
-1. list of hyperparameters which can be tuned by submitters, and tuning rules (e.g. "any positive integer", "grid of allowed values", "one of a few choices" etc.), also allowed optimizers (if more than one)
+1. There should be an explicit list of hyperparameters which can be tuned by submitters, along with tuning rules (e.g. "any positive integer", "grid of allowed values", "one of a few choices" etc.), and allowed optimizers (if more than one).   This should show up in the README and [MLPerf rules doc](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#91-hyperparameters "hyperparameter rules")
 
-2. target accuracy threshold
-
-3. eventually list of tunable parameters, accuracy threshold etc. should end up in the MLPerf rules doc
+2. The target accuracy threshold needs to be explicit in the README and [MLPerf rules doc](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#3-benchmarks "benchmark table").
 
 ### Environment
 
-1. docker container, based on official upstream docker container, ideally using the latest public upstream container if you're preparing a new reference model
+1. The code should be in a docker container, based on the official upstream docker container
 
-2. all dependencies should be frozen, with version specified in requirements.txt or in Dockerfile
+    a. Use the latest public upstream container if you are preparing a new reference model
 
-3. proposal: reference docker image could be uploaded to dockerhub (under mlperf account) to improve reproducibility
+2. All dependencies should be frozen, with version specified in requirements.txt or in the Dockerfile
+
+3. Proposal: reference docker image could be uploaded to dockerhub (under mlperf account) to improve reproducibility
 
 ### Implementation features
 
-1. MLPerf-compliant RNG seeding adheres to [RNG rules](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#51-random-numbers)
+1. MLPerf-compliant RNG seeding must adhere to [RNG rules](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#51-random-numbers "training rules doc")
 
-2. Gradient Accumulation (to emulate large batch training on a few GPUs) basic experiments should be performed to verify that gradient accumulation closely emulates large-batch training
+2. Gradient Accumulation (to emulate large batch training on a few GPUs) basic experiments should be performed to verify that gradient accumulation closely emulates large-batch training.
 
-3. Support for single-node multi-GPU training is optional.
+3. Support for single-node multi-GPU training is optional, but encouraged.
 
-    a. each GPU should get its own process (to reduce overheads) and data parallel is preferred over model parallel (or other techniques)
+    a. Each GPU should get its own process (to reduce overheads) and data parallel is preferred over model parallel (or other techniques)
 
-    b. reference may support multi-gpu validation, but this step needs to be implemented carefully (e.g. batch norm statistics should be all-reduced across workers to make sure that all replicas are evaluating the same model)
+    b. The reference may support multi-gpu validation, but this step needs to be implemented carefully (e.g. batch norm statistics should be all-reduced across workers to make sure that all replicas are evaluating the same model)
 
-4. Support for MLPerf logging
+4. Support for MLPerf logging is required.
 
-    a. at least initial support, final list of logged hyperparameters depends on what would be modifiable by submitters
+    a. Initial support, at least, should be ready by reference freeze time.  The final list of logged hyperparameters depends on what would be modifiable by submitters
 
-    b. when the final list of tunable hyperparameters is ready:
+    b. When the final list of tunable hyperparameters is ready, the final implementation of reference MLPerf logging should be made available.  This likely also require changes to the compliance checker to enforce legal values of hyperparameters
 
-        i. final implementation of reference MLPerf logging
+5. Execution should be **deterministic** if possible, following rules established in the [convergence document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60 "google doc").
 
-        ii. changes to compliance checker to enforce legal values of hyperparameters
+6. Support for multi-node training is optional, but encouraged.  This support does not have to be documented in the public README.
 
-5. Deterministic execution (if possible), following rules established in the [convergence document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60)
-
-6. Optional support for multi-node training can exist in code, but doesn't have to be documented in public README
-
-7. Optional support for mixed precision training w/ AMP
+7. Support for mixed precision training w/ [AMP](https://developer.nvidia.com/automatic-mixed-precision) is optional.
 
 ### Data
 
-1. justification for setting target accuracy:
+1. Justification for setting target accuracy must be provided.
 
-    a. training to target should be reasonably stable, many random seeds should reach the target with similar number of steps/epochs
+    a. Training to target should be reasonably stable.  Many random seeds should reach the target with similar number of steps/epochs
 
-    b. target should be as close to SOTA as possible
+    b. Target should be as close to state-of-the-art as possible
 
-2. Results from a stability tests with reference hyperparameters and proposed target accuracy on a few (~10 - ~100) random seeds, all seeds should reach target accuracy, steps-to-convergence variance should be as low as possible
+2. Given a proposed target accuracy on a few (around 10 - 100) random seeds, all seeds should reach target accuracy. Steps-to-convergence variance should be as low as possible
 
-3. Convergence curves as specified by [Bounded Convergence Document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60)
+3. Convergence curves as specified by [Bounded Convergence Document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60 "google doc") must be reviewed by the Submitter's Working Group.
 
 ### Scripts
 
-1. run_and_time.sh script - to execute the benchmark
+1. `run_and_time.sh` script - to execute the benchmark
 
-2. download_dataset.sh script - to download dataset and do the initial data preprocessing
+2. `download_dataset.sh` script - to download dataset and do the initial data preprocessing
 
-3. verify_dataset.sh script - to verify correctness of preprocessed data, usually checks md5 sums
+3. `verify_dataset.sh` script - to verify correctness of preprocessed data, usually checks md5 sums
 
 4. if training starts from pretrained checkpoint (or backbone):
 
