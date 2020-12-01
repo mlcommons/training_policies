@@ -83,29 +83,31 @@ Include a license at the top of new files.
 
 5. Command-line arguments:
 
-    a. There should be a command line parameter for every tunable hyperparameter.
+    a. There must be a command line parameter for every tunable hyperparameter.
 
-    b. Ideally constraints on tunable hparams should be reflected in command line parameter setup (e.g. hyperparameters that must be integers take only integer command line args, not floats) to minimize risk of accidentally running an illegal config.
+    b. Constraints on tunable hyperparameters must be reflected in command line parameter setup (e.g. hyperparameters that must be integers take only integer command line args, not floats) to minimize risk of accidentally running an illegal config.
 
-    c. There can be command line params for non-tunable parameters, but defaults should be set to the correct value.
+    c. There may be command line params for non-tunable parameters, but those parameters must be set to the correct default value when not set with the command line.
 
-    d. Hyperparameters may also come from a JSON file, but command-line settings should take precedent over the file, or a warning should be raised.
+    d. Hyperparameters may also come from a JSON file, but command line settings take precedent over the file, or a warning could be raised.
 
-6. This document applies to ***new*** references.  Existing references should try to adhere as well, but are not required to.
+6. This document applies to ***new*** references, in v1.0 and after.  Existing references from v0.7 and earlier should try to adhere as well, but are not required to.
+
+    a. For example, Mini-Go was a v0.7 benchmark so it does not need to adhere to the new gradient accumulation requirement.
 
 ### Hyperparameters & thresholds:
 
-1. There should be an explicit list of hyperparameters which can be tuned by submitters, along with tuning rules (e.g. "any positive integer", "grid of allowed values", "one of a few choices" etc.), and allowed optimizers (if more than one).   This should show up in the README and [MLPerf rules doc](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#91-hyperparameters "hyperparameter rules").
+1. There must be an explicit list of hyperparameters which can be tuned by submitters, along with tuning rules (e.g. "any positive integer", "grid of allowed values", "one of a few choices" etc.), and allowed optimizers (if more than one).   This should show up in the README and [MLPerf rules doc](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#91-hyperparameters "hyperparameter rules").
 
 2. The target accuracy threshold needs to be explicit in the README and [MLPerf rules doc](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#3-benchmarks "benchmark table").
 
 ### Environment
 
-1. The code should be in a docker container, based on the official upstream docker container.
+1. The code must be in a docker container, based on the official upstream docker container.
 
     a. Use the latest public upstream container if you are preparing a new reference model.
 
-2. All dependencies should be frozen, with version specified in requirements.txt or in the Dockerfile.
+2. All dependencies must be frozen, with version specified in requirements.txt or in the Dockerfile.
 
 3. Proposal: reference docker image could be uploaded to dockerhub (under mlperf account) to improve reproducibility.
 
@@ -113,7 +115,11 @@ Include a license at the top of new files.
 
 1. MLPerf-compliant RNG seeding must adhere to [RNG rules](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#51-random-numbers "training rules doc").
 
-2. Gradient Accumulation (to emulate large batch training on a few GPUs) basic experiments should be performed to verify that gradient accumulation closely emulates large-batch training.
+2. Gradient Accumulation (to emulate large batch training on a few GPUs) 
+
+    a. Basic experiments must be performed to verify that gradient accumulation closely emulates large-batch training.
+
+    b. Benchmarks that were established before v1.0, such as Mini-Go, are exempt from this.
 
 3. Support for single-node multi-GPU training is optional, but encouraged.
 
@@ -123,9 +129,9 @@ Include a license at the top of new files.
 
 4. Support for MLPerf logging is required.
 
-    a. Initial support, at least, should be ready by reference freeze time.  The final list of logged hyperparameters depends on what would be modifiable by submitters.
+    a. Initial support, at least, must be ready by reference freeze time.  The final list of logged hyperparameters depends on what would be modifiable by submitters.
 
-    b. When the final list of tunable hyperparameters is ready, the final implementation of reference MLPerf logging should be made available.  This likely also require changes to the compliance checker to enforce legal values of hyperparameters.
+    b. When the final list of tunable hyperparameters is ready, the final implementation of reference MLPerf logging must be made available.  This likely also require changes to the compliance checker to enforce legal values of hyperparameters.
 
 5. Execution should be deterministic if possible, following rules established in the [convergence document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60 "google doc").
 
@@ -137,11 +143,11 @@ Include a license at the top of new files.
 
 1. Justification for setting target accuracy must be provided.
 
-    a. Training to target should be reasonably stable.  Many random seeds should reach the target with similar number of steps/epochs
+    a. Training to target must be reasonably stable.  Many random seeds should reach the target with similar number of steps/epochs
 
     b. Target should be as close to state-of-the-art as possible
 
-2. Given a proposed target accuracy on a few (around 10 - 100) random seeds, all seeds should reach target accuracy. Steps-to-convergence variance should be as low as possible
+2. Given a proposed target accuracy on a few (around 10 - 100) random seeds, all seeds must reach target accuracy. Steps-to-convergence variance should be as low as possible
 
 3. Convergence curves as specified by [Bounded Convergence Document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60 "google doc") must be reviewed by the Submitter's Working Group.
 
@@ -157,16 +163,16 @@ Include a license at the top of new files.
 
     a. script to download pretrained checkpoint (or backbone)
 
-    b. scripts to convert pretrained checkpoint (or backbone) to other popular frameworks should be available
+    b. scripts to convert pretrained checkpoint (or backbone) to other popular frameworks must be available
 
 ### README
 
 1. brief description of problem, requirements, environment, preprocessing steps, training data, model, optimizer and target metric (description of the metric, target value, evaluation frequency, size of eval dataset).  See [this](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#3-benchmarks) section from the rules
 
 2. Three summaries are expected.  
-    a. Section 1 of the readme should be a very high level description of the task, for a reader with zero background of machine learning.  
+    a. Section 1, Summary, of the readme should be a very high level description of the task, for a reader with zero background of machine learning.  
 
     b. Following the high level description in section 1 should be a description for technical press, who have some machine learning context, so would be interested in more details.  
     
-    c. Section 4 should describe the problem to a machine learning practitioner, and also include a link to the paper describing that network.
+    c. Section 4, Model, should describe the problem to a machine learning practitioner, and also include a link to the paper describing that network.
 
