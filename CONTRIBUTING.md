@@ -78,7 +78,7 @@ Include a license at the top of new files.
 
     b. Minimal set of dependencies
 
-    c. Avoid not obvious or hacky solutions (e.g. monkey patching), code should be easy to read 
+    c. Avoid not obvious or hacky solutions (e.g. monkey patching), code should be easy to read
     and straightforward
 
 5. Command-line arguments:
@@ -115,7 +115,7 @@ Include a license at the top of new files.
 
 1. MLPerf-compliant RNG seeding must adhere to [RNG rules](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#51-random-numbers "training rules doc").
 
-2. Gradient Accumulation (to emulate large batch training on a few GPUs) 
+2. Gradient Accumulation (to emulate large batch training on a few GPUs)
 
     a. Basic experiments must be performed to verify that gradient accumulation closely emulates large-batch training.
 
@@ -151,6 +151,8 @@ Include a license at the top of new files.
 
 3. Convergence curves as specified by [Bounded Convergence Document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60 "google doc") must be reviewed by the Submitter's Working Group.
 
+4. Any datasets or checkpoints needed to run the benchmark must be provided so others can run the reference for the life of that benchmark until it is retired, plus 1 year after the last usage.
+
 ### Scripts
 
 1. `run_and_time.sh` script - to execute the benchmark
@@ -173,6 +175,5 @@ Include a license at the top of new files.
     a. Section 1, Summary, of the readme should be a very high level description of the task, for a reader with zero background of machine learning.  
 
     b. Following the high level description in section 1 should be a description for technical press, who have some machine learning context, so would be interested in more details.  
-    
-    c. Section 4, Model, should describe the problem to a machine learning practitioner, and also include a link to the paper describing that network.
 
+    c. Section 4, Model, should describe the problem to a machine learning practitioner, and also include a link to the paper describing that network.
