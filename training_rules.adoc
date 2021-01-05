@@ -137,16 +137,16 @@ The Closed division requires using the same preprocessing, model, and training m
 The closed division models are:
 
 |===
-|Area |Problem |Model
+|Area |Problem |Model |Optimizer
 
-|Vision |Image classification |ResNet-50 v1.5
-| |Object detection (light weight) |SSD
-| |Object detection (heavy weight) |Mask R-CNN
-|Language |Translation (recurrent) |NMT
-| |Translation (non-recurrent) |Transformer
-| |NLP |BERT
-|Commerce |Recommendation |DLRM
-|Research |Reinforcement learning |Mini Go (based on Alpha Go paper)
+|Vision |Image classification |ResNet-50 v1.5 |LARS or SGD with Momentum
+| |Object detection (light weight) |SSD |SGD with Momentum
+| |Object detection (heavy weight) |Mask R-CNN |SGD with Momentum
+|Language |Translation (recurrent) |NMT |Adam
+| |Translation (non-recurrent) |Transformer |Adam or Lazy Adam
+| |NLP |BERT |LAMB
+|Commerce |Recommendation |DLRM|SGD
+|Research |Reinforcement learning |Mini Go (based on Alpha Go paper)|SGD with Momentum
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -426,44 +426,33 @@ Each benchmark result should be normalized by dividing the reference result for 
 
 == Appendix: Benchmark Specific Rules
 
-* ResNet
+* Image Classification
 
-** ResNet may have 1000 or 1001 classes, where the 1001st is "I don't know"
+** The model may have 1000 or 1001 classes, where the 1001st is "I don't know"
 
 
-== Appendix: Allowed Optimizers
+== Appendix: Allowed Closed Division Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
+TODO: locate the document and provide working link
 
 |===
-| Benchmark | Algorithm | Framework | Allowed Optimizer
+| Algorithm          | Framework  | Allowed Optimizer
 
-| RN50 | LARS                     | PyTorch	| [No compliant implementation]	
-|      |                          |	TensorFlow | MLPERF_LARSOptimizer	
-|      |                          | MxNet | SGDwFASTLARS
-| RN50 | SGD with Momentum        | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          |	PyTorch | torch.optim.SGD	
-|      |                          |	TensorFlow | tf.train.MomentumOptimizer	
-|      |                          | MxNet | [No compliant implementation]
-| Minigo| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD	
-|      |                          | PyTorch | torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| GNMT | Adam	                    | PyTorch |	apex.optimizers.FusedAdam	
-|      |                          | PyTorch | torch.optim.Adam (PyT < 1.3)	
-|      |                          | TensorFlow | tf.train.AdamOptimizer	
-| Mask-RCNN	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          | PyTorch	| torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| SSD  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          | PyTorch	| torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| Transformer	| Adam	            | PyTorch	| apex.optimizers.FusedAdam	
-|      |                          | PyTorch	| torch.optim.Adam (PyT < 1.3)	
-|      |                          | TensorFlow | tf.train.AdamOptimizer	
-|      | Lazy Adam	              | PyTorch	| torch.optim.sparse_adam	
-|      |                          | TensorFlow | tf.contrib.opt.LazyAdamOptimizer	
-| BERT | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
-|      |              	          | TensorFlow	| tf.optimizers.LAMB
-| DLRM | SGD             	        | PyTorch	| torch.optim.SGD
-|      |              	          | TensorFlow	| tf.train.MomentumOptimizer
-
+| LARS               | PyTorch    | [No compliant implementation]
+|                    | TensorFlow | MLPERF_LARSOptimizer
+|                    | MxNet      | SGDwFASTLARS
+| SGD with Momentum  | PyTorch    | apex.optimizers.FusedSGD
+|                    | PyTorch    | torch.optim.SGD
+|                    | TensorFlow | tf.train.MomentumOptimizer
+|                    | MxNet      | [No compliant implementation]
+| Adam               | PyTorch    | apex.optimizers.FusedAdam
+|                    | PyTorch    | torch.optim.Adam (PyT < 1.3) 
+|                    | TensorFlow | tf.train.AdamOptimizer 
+| Lazy Adam          | PyTorch    | torch.optim.sparse_adam 
+|                    | TensorFlow | tf.contrib.opt.LazyAdamOptimizer 
+| LAMB               | PyTorch    | apex.optimizers.FusedLAMB
+|                    | TensorFlow | tf.optimizers.LAMB
+| SGD (DLRM)         |            | TODO: Is this different from SGD with Momentum?  Why no apex.optimzers.FusedSGD?
+|                    | PyTorch    | torch.optim.SGD
+|                    | TensorFlow | tf.train.MomentumOptimizer
