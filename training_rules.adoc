@@ -10,7 +10,7 @@ May 2nd, 2018
 == Overview
 This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware.
 
-There are seperate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
+There are separate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
 
@@ -189,9 +189,9 @@ Each reference implementation includes a script to download the input dataset an
 
 The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data.
 
-Unpadding is allowed as an offline preprocessing step.  Unpadding must not change the global data ordering.
+Unpadding is allowed as an offline preprocessing step.  Unpadding must not change the global data ordering.  The unpadded data set must still follow the rules as the original data set.  For example, globally sorting the padded data set is not allowed, so globally sorting the unpadded data set is also not allowed.
 
-Packing is allowed as an offline preprocessing step, provided (a) Packs have similar distribution to the global data distribution, (b) convergence is not affected, and (c) randomness for packing is deterministic for a given random seed.  The packing algorithm and convergence proof should be submitted to and reviewed by the submitter's working group by N months prior to submission.
+Packing is allowed as an offline preprocessing step, provided (a) Packs have similar distribution to the global data distribution (for example, you cannot have all the shortest sequences in a pack, since that would be similar to sorting), (b) convergence is not affected, (c) randomness for packing is deterministic for a given random seed, and (d) hyperparameter borrowing is still possible, meaning that same set of hyperparameters should converge similarly with or without packing.  The packing algorithm and convergence proof should be submitted to and reviewed by the submitter's working group by N (N=2?) months prior to submission.
 
 You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.
 
