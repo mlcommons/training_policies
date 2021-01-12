@@ -352,7 +352,12 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 
 === Hyperparameter Borrowing
 
-During the review period as described in the Submission Rules, a submitter may replace the hyperparameters in their implementation of a benchmark with hyperparameters from another submitter's implementation of the same benchmark. By default, they may or may not replace batch size but must replace all other hyperparameters as a group. With evidence that the resulting model converges worse in terms of epochs required (taking into account batch size and precision) they may make a minimum number of additional hyperparameter changes in order to achieve comparable convergence in epochs.
+Submitters are expected to use their best efforts to submit with optimal hyperparameters for their system. The intent of Hyperparameter Borrowing is to allow a submitter to update their submission to reflect what they would have submitted had they known about more optimal hyperparameters before submitting, without knowing any other info (ie the performance of other submissions).
+
+During the review period as described in the Submission Rules, a submitter may replace the hyperparameters in their implementation of a benchmark with hyperparameters from another submitter’s implementation of the same benchmark. By default, they may or may not replace batch size but must replace all other hyperparameters as a group. With evidence that the resulting model converges worse in terms of epochs required compared to the other submitter’s implementation (taking into account batch size and precision) they may make a minimum number of additional hyperparameter changes in order to achieve comparable convergence in epochs to the other submitter’s implementation. The additional changes to the hyperparameters must be reviewed and approved by the submitter working group.
+
+A resubmission of a benchmark with borrowed hyperparameters must use matching software (as a full set from original submission), system and system configuration (accelerators, NICs etc) as the original submission. The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result. In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
+
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
@@ -396,6 +401,10 @@ The CLOSED division allows limited exemptions to mathematical equivalence betwee
 Additional exemptions need to be explicitly requested and approved in advance. In general, exemptions may be approved for techniques that are common industry practice, introduce small differences that would be difficult to engineer around relative to their significance, and do not substantially decrease the required computation. Over time, MLPerf should seek to help the industry converge on standards and remove exemptions.
 
 The OPEN division does not restrict mathematical equivalence.
+
+== Software Borrowing ==
+
+If a system software (framework, runtime, library, container, etc.) provider submits using software version that was released fewer than 14 days prior to the submission deadline, then other submitters using the same software are allowed to resubmit after updating their system software before the resubmission deadline during review period. Software borrowing applies only to system software, only to the version used by the software provider’s submission, and explicitly does not cover benchmark implementations. Benchmark implementations should be borrowed as a whole only if the software provider’s submission introduces new APIs.
 
 == Run Results
 A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
