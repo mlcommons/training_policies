@@ -172,7 +172,7 @@ Random number generators may be initialized repeatedly in multiple processes or 
 OPEN: Any random number generation may be used.
 
 === Numerical formats
-CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
+CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
 
 OPEN: Any format and scaling may be used.
 
