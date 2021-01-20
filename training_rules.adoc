@@ -464,6 +464,8 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 |      |                          | TensorFlow | tf.contrib.opt.LazyAdamOptimizer	
 | BERT | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
+| RNN-T | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+|      |              	          | TensorFlow	| tf.optimizers.LAMB
 | DLRM | SGD             	        | PyTorch	| torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 
