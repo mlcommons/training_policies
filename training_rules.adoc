@@ -356,6 +356,12 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |unet3d |sgd |opt_learning_rate_decay_steps |unconstrained |epochs at which the learning rate decays |reference --lr_decay_epochs
  |unet3d |sgd |opt_learning_rate_decay_factor |unconstrained |factor used for learning rate decay |reference --lr_decay_factor
  |unet3d |sgd |opt_weight_decay |unconstrained |L2 weight decay |reference --weight_decay
+ |unet3d |sgd |training_oversampling |fixed to reference |training oversampling |reference --oversampling
+ |unet3d |sgd |training_input_shape |fixed to reference |training input shape |reference --input_shape
+ |unet3d |sgd |evaluation_overlap |fixed to reference |evaluation sliding window overlap |reference --overlap
+ |unet3d |sgd |evaluation_input_shape |fixed to reference |evaluation input shape |reference --val_input_shape
+ |unet3d |sgd |data_train_samples |fixed to reference |number of training samples | N/A
+ |unet3d |sgd |data_eval_samples |fixed to reference |number of evaluation samples | N/A
 |===
 
 OPEN: Hyperparameters and optimizer may be freely changed.
