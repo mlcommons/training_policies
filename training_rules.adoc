@@ -72,16 +72,16 @@ For benchmarks which are defined as starting from a fixed set of weights, such a
 The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
-|Area|Problem |Dataset |Quality Target
+|Area|Problem |Dataset
 
-|Vision |Image classification |ImageNet |75.90% classification
-| |Object detection (light weight) |COCO |23.0% mAP
-| |Object detection (heavy weight) |COCO |0.377 Box min AP and 0.339 Mask min AP
-|Language |Translation (recurrent) |WMT English-German |24.0 Sacre BLEU
-| |Translation (non-recurrent) |WMT English-German |25.00 BLEU
-| |NLP |Wikipedia 2020/01/01 |0.712 Mask-LM accuracy
-|Commerce |Recommendation |1TB Click Logs|0.8025 AUC
-|Research |Reinforcement learning |Go |50% win rate vs. checkpoint
+|Vision |Image classification |ImageNet
+| |Object detection (light weight) |COCO
+| |Object detection (heavy weight) |COCO
+|Language |Translation (recurrent) |WMT English-German
+| |Translation (non-recurrent) |WMT English-German
+| |NLP |Wikipedia 2020/01/01
+|Commerce |Recommendation |1TB Click Logs
+|Research |Reinforcement learning |Go
 |===
 
 The following benchmarks are included but delayed to the next submission cycle:
@@ -132,21 +132,21 @@ A “run_and_time” script that executes the benchmark and reports the wall-clo
 There are two divisions of the benchmark suite, the Closed division and the Open division. 
 
 === Closed Division
-The Closed division requires using the same preprocessing, model, and training method as the reference implementation.
+The Closed division requires using the same preprocessing, model, training method, and quality target as the reference implementation.
 
-The closed division models are:
+The closed division models and quality targets are:
 
 |===
-|Area |Problem |Model
+|Area |Problem |Model |Target
 
-|Vision |Image classification |ResNet-50 v1.5
-| |Object detection (light weight) |SSD
-| |Object detection (heavy weight) |Mask R-CNN
-|Language |Translation (recurrent) |NMT
-| |Translation (non-recurrent) |Transformer
-| |NLP |BERT
-|Commerce |Recommendation |DLRM
-|Research |Reinforcement learning |Mini Go (based on Alpha Go paper)
+|Vision |Image classification |ResNet-50 v1.5 |75.90% classification
+| |Object detection (light weight) |SSD |23.0% mAP
+| |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
+|Language |Translation (recurrent) |NMT |24.0 Sacre BLEU
+| |Translation (non-recurrent) |Transformer |25.00 BLEU
+| |NLP |BERT |0.712 Mask-LM accuracy
+|Commerce |Recommendation |DLRM |0.8025 AUC
+|Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -362,6 +362,8 @@ OPEN: Any loss function may be used. Do not confuse the loss function with targe
 === Quality measure
 Each run must reach a target quality level on the reference implementation quality measure. By default, the time to evaluate the quality is included in the wallclock time. However, if the reference implementation generates timestamped checkpoints and evaluates the quality after the clock has been stopped, then an implementation may either perform evaluation on-the-clock or generate timestamped checkpoints, evaluate them after the clock has been stopped, and update the clock stopped time to the timestamp of the first passing checkpoint. The checkpoint timestamp may be any time after the last weight value included in the checkpoint is updated.
 
+CLOSED: The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
+
 |===
 |Area |Problem |Model|Evaluation frequency
 
@@ -375,8 +377,7 @@ Each run must reach a target quality level on the reference implementation quali
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
 
-
-The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
+OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
 
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained.
 
