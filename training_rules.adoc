@@ -332,6 +332,34 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |resnet |sgd |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
  |resnet |sgd |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
  |resnet |lars/sgd |opt_name |"lars" or "sgd" |The optimizer that was used. |
+ |rnnt |lamb |global_batch_size                       |unconstrained |reference --batch_size       |
+ |rnnt |lamb |opt_name                                |"lamb"        |The optimizer that was used. |
+ |rnnt |lamb |opt_base_learning_rate                  |unconstrained |TODO |
+ |rnnt |lamb |opt_lamb_epsilon                        |1e-9          |TODO |
+ |rnnt |lamb |opt_lamb_learning_rate_poly_decay_power |unconstrained |TODO |
+ |rnnt |lamb |opt_lamb_learning_rate_hold_epochs      |unconstrained |TODO |
+ |rnnt |lamb |opt_learning_rate_warmup_epochs         |unconstrained |TODO |
+ |rnnt |lamb |opt_weight_decay                        |1e-3          |TODO |
+ |rnnt |lamb |opt_lamb_beta_1                         |unconstrained |TODO |
+ |rnnt |lamb |opt_lamb_beta_2                         |unconstrained |TODO |
+ |rnnt |lamb |opt_gradient_clip_norm                  |None          |TODO |
+ |rnnt |lamb |opt_gradient_accumulation_steps         |unconstrained |TODO |
+ |rnnt |lamb |opt_learning_rate_alt_decay_func        |True          |TODO |
+ |rnnt |lamb |opt_learning_rate_alt_warmup_func       |True          |TODO |
+ |rnnt |lamb |opt_lamb_learning_rate_min              |1e-5          |TODO |
+ |rnnt |lamb |train_samples                           |unconstrained |TODO |
+ |rnnt |lamb |eval_samples                            |2703          |TODO |
+ |rnnt |lamb |data_train_max_duration                 |unconstrained |TODO |
+ |rnnt |lamb |data_train_num_buckets                  |6             |TODO |
+ |rnnt |lamb |data_train_speed_perturbation_min       |0.85          |TODO |
+ |rnnt |lamb |data_train_speed_perturbation_max       |1.15          |TODO |
+ |rnnt |lamb |data_spec_augment_freq_n                |2             |TODO |
+ |rnnt |lamb |data_spec_augment_freq_max              |0             |TODO |
+ |rnnt |lamb |data_spec_augment_freq_min              |20            |TODO |
+ |rnnt |lamb |data_spec_augment_time_n                |10            |TODO |
+ |rnnt |lamb |data_spec_augment_time_min              |0             |TODO |
+ |rnnt |lamb |data_spec_augment_time_max              |0.03          |TODO |
+ |rnnt |lamb |model_eval_ema_factor                   |unconstrained |TODO |
 |ssd |sgd |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L23[reference code]
  |ssd |sgd |model_bn_span |integer >= 1 |number of samples whose statistics a given BN layer uses to normalize a training minibatch (may be just the portion of global_batch_size per device, but also may be aggregated over several devices) |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L335[reference code]
  |ssd |sgd |opt_learning_rate_warmup_factor |Integer >= 0 |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L45[reference code]
