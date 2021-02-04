@@ -152,7 +152,7 @@ The closed division models and quality targets are:
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
 
 === Open Division
-The Open division allows using arbitrary preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
+The Open division allows using arbitrary training data, preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
 
 Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Image Classification Open benchmark, the system achieved a result of 7.2.”
 
@@ -185,9 +185,9 @@ Public results should be rounded normally.
 == Data Set
 
 === Data State at Start of Run
-Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. 
+CLOSED: Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
 
-The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
+OPEN: Any public dataset may be used for training the model, however the evaluation data must be drawn from the benchmark dataset in a manner consistent with the reference.
 
 You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
 
@@ -196,7 +196,7 @@ Only preprocessing that must be done for each run (e.g. random transformations) 
 
 CLOSED: The same preprocessing steps as the reference implementation must be used. 
 
-OPEN: Any preprocessing steps are allowed. However, each datum must be preprocessed individually in a manner that is not influenced by any other data.
+OPEN: Any preprocessing steps are allowed for training data. However, each datum must be preprocessed individually in a manner that is not influenced by any other data. The evaluation data must be preprocessed in a manner consistent with reference.
 
 === Data Representation
 
@@ -213,14 +213,16 @@ OPEN: The closed division data representations restrictions only apply at the st
 Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes.
 
 === Training and Test Sets
-If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
+CLOSED: If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
+
+OPEN: If applicable, the test dataset must be extracted in the same manner as the reference implementation. The training data set may not contain data that appears in the test set.
 
 === Training Data Order
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
 
-OPEN: the training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
+OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
 CLOSED: The implementation must use the same RL algorithm and simulator or game as the reference implementation, with the same parameters. 
