@@ -377,7 +377,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
 
-OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the final quality as measured by the closed quality measure.
+OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
 
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained.
 
