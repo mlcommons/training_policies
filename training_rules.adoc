@@ -332,34 +332,34 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |resnet |sgd |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
  |resnet |sgd |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
  |resnet |lars/sgd |opt_name |"lars" or "sgd" |The optimizer that was used. |
- |rnnt |lamb |global_batch_size                       |unconstrained |reference --batch_size       |
- |rnnt |lamb |opt_name                                |"lamb"        |The optimizer that was used. |
- |rnnt |lamb |opt_base_learning_rate                  |unconstrained |TODO |
- |rnnt |lamb |opt_lamb_epsilon                        |1e-9          |TODO |
- |rnnt |lamb |opt_lamb_learning_rate_poly_decay_power |unconstrained |TODO |
- |rnnt |lamb |opt_lamb_learning_rate_hold_epochs      |unconstrained |TODO |
- |rnnt |lamb |opt_learning_rate_warmup_epochs         |unconstrained |TODO |
- |rnnt |lamb |opt_weight_decay                        |1e-3          |TODO |
- |rnnt |lamb |opt_lamb_beta_1                         |unconstrained |TODO |
- |rnnt |lamb |opt_lamb_beta_2                         |unconstrained |TODO |
- |rnnt |lamb |opt_gradient_clip_norm                  |None          |TODO |
- |rnnt |lamb |opt_gradient_accumulation_steps         |unconstrained |TODO |
- |rnnt |lamb |opt_learning_rate_alt_decay_func        |True          |TODO |
- |rnnt |lamb |opt_learning_rate_alt_warmup_func       |True          |TODO |
- |rnnt |lamb |opt_lamb_learning_rate_min              |1e-5          |TODO |
- |rnnt |lamb |train_samples                           |unconstrained |TODO |
- |rnnt |lamb |eval_samples                            |2703          |TODO |
- |rnnt |lamb |data_train_max_duration                 |unconstrained |TODO |
- |rnnt |lamb |data_train_num_buckets                  |6             |TODO |
- |rnnt |lamb |data_train_speed_perturbation_min       |0.85          |TODO |
- |rnnt |lamb |data_train_speed_perturbation_max       |1.15          |TODO |
- |rnnt |lamb |data_spec_augment_freq_n                |2             |TODO |
- |rnnt |lamb |data_spec_augment_freq_max              |0             |TODO |
- |rnnt |lamb |data_spec_augment_freq_min              |20            |TODO |
- |rnnt |lamb |data_spec_augment_time_n                |10            |TODO |
- |rnnt |lamb |data_spec_augment_time_min              |0             |TODO |
- |rnnt |lamb |data_spec_augment_time_max              |0.03          |TODO |
- |rnnt |lamb |model_eval_ema_factor                   |unconstrained |TODO |
+ |rnnt |lamb |global_batch_size                       |unconstrained |reference --batch_size       |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L270-L271[reference code]
+ |rnnt |lamb |opt_name                                |"lamb"        |The optimizer that was used. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L357[reference code]
+ |rnnt |lamb |opt_base_learning_rate                  |unconstrained |base learning rate, this should be the learning rate after warm up and before decay  |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L358[reference code]
+ |rnnt |lamb |opt_lamb_epsilon                        |1e-9          |LAMB epsilon |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L359[reference code]
+ |rnnt |lamb |opt_lamb_learning_rate_poly_decay_power |unconstrained |Exponential decay rate |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L360[reference code]
+ |rnnt |lamb |opt_lamb_learning_rate_hold_epochs      |unconstrained |Number of epochs when LR schedule keeps the base learning rate value |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L362[reference code]
+ |rnnt |lamb |opt_learning_rate_warmup_epochs         |unconstrained |Number of epochs when LR linearly increases from 0 to base learning rate |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L361[reference code]
+ |rnnt |lamb |opt_weight_decay                        |1e-3          |L2 weight decay |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L372[reference code]
+ |rnnt |lamb |opt_lamb_beta_1                         |unconstrained |LAMB beta 1 |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L363[reference code]
+ |rnnt |lamb |opt_lamb_beta_2                         |unconstrained |LAMB beta 2 |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L364[reference code]
+ |rnnt |lamb |opt_gradient_clip_norm                  |None          |Gradients are clipped above this norm threshold. None means gradients are never clipped. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L365[reference code]
+ |rnnt |lamb |opt_gradient_accumulation_steps         |unconstrained |Numer of fwd/bwd steps between optimizer step. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L222[reference code]
+ |rnnt |lamb |opt_learning_rate_alt_decay_func        |True          |whether to use alternative learning rate decay function |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/common/optimizers.py#L20-L49[reference code]
+ |rnnt |lamb |opt_learning_rate_alt_warmup_func       |True          |whether to use alternative learning rate warmup function |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L367[reference code]
+ |rnnt |lamb |opt_lamb_learning_rate_min              |1e-5          |LR schedule doesn't set LR values below this threshold |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L368[reference code]
+ |rnnt |lamb |train_samples                           |unconstrained |Number of training samples after filtering out samples longer than data_train_max_duration |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L337[reference code]
+ |rnnt |lamb |eval_samples                            |2703          |Number of evaluation samples |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L338[reference code]
+ |rnnt |lamb |data_train_max_duration                 |unconstrained |Samples longer than this number of seconds are not included to training dataset |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L252-L253[reference code]
+ |rnnt |lamb |data_train_num_buckets                  |6             |Training dataset is split to this number of buckets |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L293[reference code]
+ |rnnt |lamb |data_train_speed_perturbation_min       |0.85          |Input audio is resampled to a random rample rate not less than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L256-L257[reference code]
+ |rnnt |lamb |data_train_speed_perturbation_max       |1.15          |Input audio is resampled to a random rample rate not greater than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L254-L255[reference code]
+ |rnnt |lamb |data_spec_augment_freq_n                |2             |Number of masks for frequency bands |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L258-L259[reference code]
+ |rnnt |lamb |data_spec_augment_freq_min              |0             |Minimum number of frequencies in a single mask |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L260-L261[reference code]
+ |rnnt |lamb |data_spec_augment_freq_max              |20            |Maximum number of frequencies in a single mask |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L262-L263[reference code]
+ |rnnt |lamb |data_spec_augment_time_n                |10            |Number of masks for time band  |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L264-L265[reference code]
+ |rnnt |lamb |data_spec_augment_time_min              |0             |Minimum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L266-L267[reference code]
+ |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L268-L269[reference code]
+ |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L395[reference code]
 |ssd |sgd |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L23[reference code]
  |ssd |sgd |model_bn_span |integer >= 1 |number of samples whose statistics a given BN layer uses to normalize a training minibatch (may be just the portion of global_batch_size per device, but also may be aggregated over several devices) |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L335[reference code]
  |ssd |sgd |opt_learning_rate_warmup_factor |Integer >= 0 |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L45[reference code]
