@@ -72,17 +72,16 @@ For benchmarks which are defined as starting from a fixed set of weights, such a
 The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
-|Area|Problem |Dataset |Quality Target
+|Area|Problem |Dataset
 
-|Vision |Image classification |ImageNet |75.90% classification
-| |Image segmentation (medical) |KiTS19 |0.91 Mean DICE score
-| |Object detection (light weight) |COCO |23.0% mAP
-| |Object detection (heavy weight) |COCO |0.377 Box min AP and 0.339 Mask min AP
-|Language |Translation (recurrent) |WMT English-German |24.0 Sacre BLEU
-| |Translation (non-recurrent) |WMT English-German |25.00 BLEU
-| |NLP |Wikipedia 2020/01/01 |0.712 Mask-LM accuracy
-|Commerce |Recommendation |1TB Click Logs|0.8025 AUC
-|Research |Reinforcement learning |Go |50% win rate vs. checkpoint
+|Vision |Image classification |ImageNet
+| |Object detection (light weight) |COCO
+| |Object detection (heavy weight) |COCO
+|Language |Translation (recurrent) |WMT English-German
+| |Translation (non-recurrent) |WMT English-German
+| |NLP |Wikipedia 2020/01/01
+|Commerce |Recommendation |1TB Click Logs
+|Research |Reinforcement learning |Go
 |===
 
 The following benchmarks are included but delayed to the next submission cycle:
@@ -133,28 +132,27 @@ A “run_and_time” script that executes the benchmark and reports the wall-clo
 There are two divisions of the benchmark suite, the Closed division and the Open division. 
 
 === Closed Division
-The Closed division requires using the same preprocessing, model, and training method as the reference implementation.
+The Closed division requires using the same preprocessing, model, training method, and quality target as the reference implementation.
 
-The closed division models are:
+The closed division models and quality targets are:
 
 |===
-|Area |Problem |Model
+|Area |Problem |Model |Target
 
-|Vision |Image classification |ResNet-50 v1.5
-| |Image segmentation (medical) |U-Net3D
-| |Object detection (light weight) |SSD
-| |Object detection (heavy weight) |Mask R-CNN
-|Language |Translation (recurrent) |NMT
-| |Translation (non-recurrent) |Transformer
-| |NLP |BERT
-|Commerce |Recommendation |DLRM
-|Research |Reinforcement learning |Mini Go (based on Alpha Go paper)
+|Vision |Image classification |ResNet-50 v1.5 |75.90% classification
+| |Object detection (light weight) |SSD |23.0% mAP
+| |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
+|Language |Translation (recurrent) |NMT |24.0 Sacre BLEU
+| |Translation (non-recurrent) |Transformer |25.00 BLEU
+| |NLP |BERT |0.712 Mask-LM accuracy
+|Commerce |Recommendation |DLRM |0.8025 AUC
+|Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
 
 === Open Division
-The Open division allows using arbitrary preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
+The Open division allows using arbitrary training data, preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
 
 Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Image Classification Open benchmark, the system achieved a result of 7.2.”
 
@@ -187,9 +185,9 @@ Public results should be rounded normally.
 == Data Set
 
 === Data State at Start of Run
-Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. 
+CLOSED: Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
 
-The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
+OPEN: Any public dataset may be used for training the model, however the evaluation data must be drawn from the benchmark dataset in a manner consistent with the reference.
 
 You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
 
@@ -198,7 +196,7 @@ Only preprocessing that must be done for each run (e.g. random transformations) 
 
 CLOSED: The same preprocessing steps as the reference implementation must be used. 
 
-OPEN: Any preprocessing steps are allowed. However, each datum must be preprocessed individually in a manner that is not influenced by any other data.
+OPEN: Any preprocessing steps are allowed for training data. However, each datum must be preprocessed individually in a manner that is not influenced by any other data. The evaluation data must be preprocessed in a manner consistent with reference.
 
 === Data Representation
 
@@ -215,14 +213,16 @@ OPEN: The closed division data representations restrictions only apply at the st
 Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes.
 
 === Training and Test Sets
-If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
+CLOSED: If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
+
+OPEN: If applicable, the test dataset must be extracted in the same manner as the reference implementation. The training data set may not contain data that appears in the test set.
 
 === Training Data Order
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
 
-OPEN: the training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
+OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
 CLOSED: The implementation must use the same RL algorithm and simulator or game as the reference implementation, with the same parameters. 
@@ -348,20 +348,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |transformer |adam / lazy |opt_adam_beta_1 |arbitrary constant |Adam Beta1 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L44[reference code]
  |transformer |adam / lazy |opt_adam_beta_2 |arbitrary constant |Adam Beta2 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L45[reference code]
  |transformer |adam / lazy |opt_adam_epsilon$$*$$ |fixed to reference |Adam Epsilon |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L46[reference code]
-|unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
- |unet3d |sgd |opt_base_learning_rate |unconstrained |base learning rate |reference --learning_rate
- |unet3d |sgd |opt_momentum |unconstrained |SGD momentum |reference --momentum
- |unet3d |sgd |opt_learning_rate_warmup_steps |unconstrained |number of epochs needed for learning rate warmup|reference --lr_warmup_epochs
- |unet3d |sgd |opt_initial_learning_rate |unconstrained |initial learning rate (for LR warm up) |reference --init_learning_rate
- |unet3d |sgd |opt_learning_rate_decay_steps |unconstrained |epochs at which the learning rate decays |reference --lr_decay_epochs
- |unet3d |sgd |opt_learning_rate_decay_factor |unconstrained |factor used for learning rate decay |reference --lr_decay_factor
- |unet3d |sgd |opt_weight_decay |unconstrained |L2 weight decay |reference --weight_decay
- |unet3d |sgd |training_oversampling |fixed to reference |training oversampling |reference --oversampling
- |unet3d |sgd |training_input_shape |fixed to reference |training input shape |reference --input_shape
- |unet3d |sgd |evaluation_overlap |fixed to reference |evaluation sliding window overlap |reference --overlap
- |unet3d |sgd |evaluation_input_shape |fixed to reference |evaluation input shape |reference --val_input_shape
- |unet3d |sgd |data_train_samples |fixed to reference |number of training samples | N/A
- |unet3d |sgd |data_eval_samples |fixed to reference |number of evaluation samples | N/A
 |===
 
 OPEN: Hyperparameters and optimizer may be freely changed.
@@ -378,11 +364,12 @@ OPEN: Any loss function may be used. Do not confuse the loss function with targe
 === Quality measure
 Each run must reach a target quality level on the reference implementation quality measure. By default, the time to evaluate the quality is included in the wallclock time. However, if the reference implementation generates timestamped checkpoints and evaluates the quality after the clock has been stopped, then an implementation may either perform evaluation on-the-clock or generate timestamped checkpoints, evaluate them after the clock has been stopped, and update the clock stopped time to the timestamp of the first passing checkpoint. The checkpoint timestamp may be any time after the last weight value included in the checkpoint is updated.
 
+CLOSED: The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
+
 |===
 |Area |Problem |Model|Evaluation frequency
 
 |Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
-|       |Image segmentation (medical) |U-Net3D | Starting at 1000 epochs, then every 20 epochs
 |       |Object detection (light weight) |SSD|Fixed at epochs=40, 50, 55, 60, 65, 70, 75, 80
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Translation (recurrent) |NMT|Every 1 epoch 
@@ -392,8 +379,7 @@ Each run must reach a target quality level on the reference implementation quali
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
 
-
-The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
+OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
 
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained.
 
@@ -428,7 +414,6 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Area|Problem |Number of Runs
 
 |Vision |Image classification |5
-| |Image segmentation (medical) | TBA
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
 |Language |Translation (recurrent) |10
@@ -484,6 +469,4 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
 | DLRM | SGD             	        | PyTorch	| torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
-| UNET3D | SGD with Momentum      | PyTorch	    | torch.optim.SGD
-|      |              	          | TensorFlow	| tf.train.MomentumOptimizer
-|      |              	          | MXNet	    | mx.optimizer.NAG
+
