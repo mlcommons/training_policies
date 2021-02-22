@@ -431,7 +431,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Area|Problem |Number of Runs
 
 |Vision |Image classification |5
-| |Image segmentation (medical) | 40
+| |Image segmentation (medical) | 20
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
 |Language |Translation (recurrent) |10
