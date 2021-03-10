@@ -65,6 +65,8 @@ Include a license at the top of new files.
  ### General
 
  1. Reference repository code must run without error on reference hardware (1xV100) on day of benchmark reference freeze.
+ 
+     a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
  2. Compute must be done in full fp32 precision for any math.
 
