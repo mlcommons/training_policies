@@ -4,8 +4,8 @@
 :sectnums:
 
 = MLPerf Training Rules
-Version 0.7 
-May 2nd, 2018
+Version 1.0
+March 25, 2021
 
 == Overview
 This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
@@ -146,7 +146,7 @@ The closed division models and quality targets are:
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 |Language |Translation (recurrent) |NMT |24.0 Sacre BLEU
 | |Translation (non-recurrent) |Transformer |25.00 BLEU
-| |NLP |BERT |0.712 Mask-LM accuracy
+| |NLP |BERT |0.720 Mask-LM accuracy
 |Commerce |Recommendation |DLRM |0.8025 AUC
 |Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
 |===
@@ -175,6 +175,8 @@ OPEN: Any random number generation may be used.
 
 === Numerical formats
 CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
+
+Reference Convergence Points must be obtained using FP32 precision, or FP32 emulation with explanation of the methodology for emulation.
 
 OPEN: Any format and scaling may be used.
 
@@ -420,7 +422,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Translation (recurrent) |NMT|Every 1 epoch 
 |        |Translation (non-recurrent) |Transformer|Every 1 epoch 
-|        |NLP |BERT| Starting at 3M samples, then every 500K samples
+|        |NLP |BERT| eval_start=1M, eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000)
 |Commerce|Recommendation |DLRM|Every 102400 samples 
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
@@ -521,4 +523,20 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 | UNET3D | SGD with Momentum      | PyTorch	    | torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
+|===
+
+== Appendix: v1.0 Specific Rules
+
+This section contains rules specific to the v1.0 round of MLPerf Training.  These do not apply to future rounds, unless explicitly ratified as rules for those rounds, or unless these rules are promoted to official rules in previous sections of this document.
+
+=== MaskRCNN backbone
+
+For v1.0 only, Mask-RCNN submitters may use the non-reference backbone located https://drive.google.com/drive/folders/1lGU_pP2Pr2k578DslciwE4AlOKm6dKCK?usp=sharing[here] with the understanding that it converges similarly to the reference backbone.  If the non-reference backbone is shown to converge differently than the reference backbone at any scale on any submitted hyperparameter set, all uses of that backbone for any submitter are to be re-run with the reference backbone to have their submission published.  For future rounds, the expectation is that all submitters will use the reference backbone, which will fixed at reference code freeze time.
+
+=== BERT clip-normalization order
+
+For v1.0 only, BERT submissions may use either clip-norm-before-reduce or clip-norm-after-reduce.  However, for at scale BERT submissions, submitters are disallowed from using clip-norm-after-reduce to enable overlap of communication and math optimizations.  For future rounds, the expectation is that we move to clip-norm-after-reduce since the math is more accurate.
+
+
+
 
