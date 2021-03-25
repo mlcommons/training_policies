@@ -422,7 +422,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Translation (recurrent) |NMT|Every 1 epoch 
 |        |Translation (non-recurrent) |Transformer|Every 1 epoch 
-|        |NLP |BERT| eval_start=1M, eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000)
+|        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |Commerce|Recommendation |DLRM|Every 102400 samples 
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
