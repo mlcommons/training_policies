@@ -535,7 +535,7 @@ For v1.0 only, Mask-RCNN submitters may use the non-reference backbone located h
 
 === BERT clip-normalization order
 
-For v1.0 only, BERT submissions may use either clip-norm-before-reduce or clip-norm-after-reduce.  However, for at scale BERT submissions, submitters are disallowed from using clip-norm-after-reduce to enable overlap of communication and math.  For future rounds, the expectation is that we move to clip-norm-after-reduce since the math is more accurate.  If a submitter plans to use clip-norm-after-reduce for v1.0, they must notify the committee before the submission deadline, and be prepared to show code in their submission proving that they do not do overlap as a result of clip-norm-after-reduce.
+For v1.0 only, BERT submissions may use either clip-norm-before-reduce or clip-norm-after-reduce.  However, for at scale BERT submissions, submitters are disallowed from using clip-norm-after-reduce to enable overlap of communication and math.  For future rounds, the expectation is that we move to clip-norm-after-reduce since the math is more correct and matches industry standards.  If a submitter plans to use clip-norm-after-reduce for v1.0, they must notify the committee before the submission deadline, and be prepared to show code in their submission proving that they do not do overlap as a result of clip-norm-after-reduce.
 
 
 
