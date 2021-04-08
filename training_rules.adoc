@@ -259,6 +259,11 @@ CLOSED:
 
 By default, the hyperparameters must be the same as the reference. 
 
+Hyperparameters by default must be as constrained as possible for the benchmark to be fair and focused on system performance, not algorithmic tricks.
+Changes to hyperparameters are allowed when both:
+1. the proposed hyperparameter change has demonstrated to reduce/improve samples to convergence on the reference (on some portion of the batch size range, if not the whole range), AND
+2. the proposed hyperparameter change has reasonable evidence of industry adoption.
+
 Hyperparameters include the optimizer used and values like the regularization norms and weight decays.
 
 The implementation of the optimizer must match the optimizer specified in the Appendex: Allowed Optimizer.  The Appendex lists which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
