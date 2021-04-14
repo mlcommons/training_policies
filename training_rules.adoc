@@ -78,8 +78,6 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Image segmentation (medical) |KiTS19
 | |Object detection (light weight) |COCO
 | |Object detection (heavy weight) |COCO
-|Language |Translation (recurrent) |WMT English-German
-| |Translation (non-recurrent) |WMT English-German
 | |NLP |Wikipedia 2020/01/01
 |Commerce |Recommendation |1TB Click Logs
 |Research |Reinforcement learning |Go
@@ -443,8 +441,6 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Image segmentation (medical) | 20
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
-|Language |Translation (recurrent) |10
-| |Translation (non-recurrent) |10
 | |NLP |10
 | |Speech recognition (recurrent) |10
 |Commerce |Recommendation |5
