@@ -535,7 +535,13 @@ For v1.0 only, Mask-RCNN submitters may use the non-reference backbone located h
 
 === BERT clip-normalization order
 
-For v1.0 only, BERT submissions may use either clip-norm-before-reduce or clip-norm-after-reduce.  However, for at scale BERT submissions, submitters are disallowed from using clip-norm-after-reduce to enable overlap of communication and math.  For future rounds, the expectation is that we move to clip-norm-after-reduce since the math is more correct and matches industry standards.  If a submitter plans to use clip-norm-after-reduce for v1.0, they must notify the committee before the submission deadline, and be prepared to show code in their submission proving that they do not do overlap as a result of clip-norm-after-reduce.
+For v1.0 only, BERT submissions may implement clip-norm either before or after inter-accelerator all-reduce. For future rounds, the expectation is that submissions must use clip-norm-after-reduce, to be consistent with most commonly used public BERT model repos.
+For performance consistency of at scale BERT submissions for v1.0, submitters are disallowed from using clip-norm-after-reduce to enable additional overlap of communication and math. If a submitter plans to use clip-norm-after-reduce for v1.0, they must notify the committee before the submission deadline, and be prepared to show code in their submission proving that they do not do overlap as a result of clip-norm-after-reduce.
+
+=== Compile time
+
+For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 30 minutes.  This is to enable new submitters to submit who were close to the 20 minute limit.  The 20 minute number was chosen empirically for rounds prior to v1.0.  For v1.1 and beyond, the training working group should make a data driven decision on what compile time is reasonable for real user applications.
+
 
 
 
