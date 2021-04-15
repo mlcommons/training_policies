@@ -78,19 +78,10 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Image segmentation (medical) |KiTS19
 | |Object detection (light weight) |COCO
 | |Object detection (heavy weight) |COCO
-|Language |Translation (recurrent) |WMT English-German
-| |Translation (non-recurrent) |WMT English-German
+|Language |Speech recognition |LibriSpeech
 | |NLP |Wikipedia 2020/01/01
 |Commerce |Recommendation |1TB Click Logs
 |Research |Reinforcement learning |Go
-|===
-
-The following benchmarks are included but delayed to the next submission cycle:
-
-|===
-|Area|Problem |Dataset |Quality Target
-
-|Language |Speech recognition |LibriSpeech-clean+other |TBD
 |===
 
 The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
@@ -144,8 +135,7 @@ The closed division models and quality targets are:
 | |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score
 | |Object detection (light weight) |SSD |23.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
-|Language |Translation (recurrent) |NMT |24.0 Sacre BLEU
-| |Translation (non-recurrent) |Transformer |25.00 BLEU
+|Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.712 Mask-LM accuracy
 |Commerce |Recommendation |DLRM |0.8025 AUC
 |Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
@@ -287,16 +277,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |dlrm |sgd |sgd_opt_base_learning_rate |unconstrained |learning rate at the start of poly decay |See PR (From Intel and NV, TODO Link)
  |dlrm |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of the poly decay |See PR (From Intel and NV, TODO Link)
  |dlrm |sgd |sgd_opt_learning_rate_decay_steps |unconstrained |the step at which you reach the end learning rate |See PR (From Intel and NV, TODO Link)
- |gnmt |adam |global_batch_size |unconstrained |global batch size |--train-batch-size
- |gnmt |adam |opt_base_learning_rate |unconstrained |base learning rate |--lr
- |gnmt |adam |opt_learning_rate_alt_decay_func |true or false |whether to use alternative learning rate decay function (https://github.com/mlperf/training/pull/195) |set --remain-steps to 1.0 to disable learning rate decay
- |gnmt |adam |opt_learning_rate_decay_factor$$*$$ |fixed to reference |learning rate decay factor |--decay-factor
- |gnmt |adam |opt_learning_rate_decay_interval |unconstrained |number of updates between lr decays |--decay-interval
- |gnmt |adam |opt_learning_rate_decay_steps$$*$$ |fixed to reference |max number of learning rate decay steps |--decay-steps
- |gnmt |adam |opt_learning_rate_remain_steps |unconstrained |starting iteration for learning rate decay |--remain-steps
- |gnmt |adam |max_sequence_length |unconstrained |May either drop or clip all sequences to this length. |--max-length-train
- |gnmt |adam |opt_learning_rate_alt_warmup_func |true or false |whether to use alternative learning rate warmup function (https://github.com/mlperf/training/pull/195) |set --warmup-steps to 0 to disable warmup
- |gnmt |adam |opt_learning_rate_warmup_steps |unconstrained |number of learning rate warmup iterations |--warmup-steps
  |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
@@ -373,12 +353,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |ssd |sgd |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L47[reference code]
  |ssd |sgd |max_samples |1 or 50 |maximum number of samples attempted when generating a training patch for a given IoU choice |link:https://github.com/mlperf/training/pull/367/commits/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59#diff-591431110d6b55f5afe595b96253fddbR111[reference code]
  |ssd |sgd |opt_learning_rate_decay_boundary_epochs |[40, 50] * (1 + k/10) for some integer k |Epochs at which the learning rate decays |link:https://github.com/mlperf/training/blob/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59/single_stage_detector/ssd/train.py#L48[reference code]
- |transformer |adam / lazy |global_batch_size |arbitrary constant |global batch size |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L56[reference code]
- |transformer |adam / lazy |opt_base_learning_rate |Arbitrary constant |base learning rate |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L39[reference code]
- |transformer |adam / lazy |opt_learning_rate_warmup_steps |arbitrary constant |number of learning rate warmup iterations |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L41[reference code]
- |transformer |adam / lazy |opt_adam_beta_1 |arbitrary constant |Adam Beta1 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L44[reference code]
- |transformer |adam / lazy |opt_adam_beta_2 |arbitrary constant |Adam Beta2 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L45[reference code]
- |transformer |adam / lazy |opt_adam_epsilon$$*$$ |fixed to reference |Adam Epsilon |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L46[reference code]
 |unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
  |unet3d |sgd |opt_base_learning_rate |unconstrained |base learning rate |reference --learning_rate
  |unet3d |sgd |opt_momentum |unconstrained |SGD momentum |reference --momentum
@@ -418,8 +392,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Image segmentation (medical) |U-Net3D | Starting at 1000 epochs, then every 20 epochs
 |       |Object detection (light weight) |SSD|Fixed at epochs=40, 50, 55, 60, 65, 70, 75, 80
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
-|Language|Translation (recurrent) |NMT|Every 1 epoch 
-|        |Translation (non-recurrent) |Transformer|Every 1 epoch 
+|Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| Starting at 3M samples, then every 500K samples
 |Commerce|Recommendation |DLRM|Every 102400 samples 
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
@@ -463,8 +436,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Image segmentation (medical) | 20
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
-|Language |Translation (recurrent) |10
-| |Translation (non-recurrent) |10
+|Language |Speech recognition |10
 | |NLP |10
 | |Speech recognition (recurrent) |10
 |Commerce |Recommendation |5
