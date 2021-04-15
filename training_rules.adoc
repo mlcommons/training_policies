@@ -479,18 +479,12 @@ Each benchmark result should be normalized by dividing the reference result for 
 
 Reference Convergence Points are used to ensure that the convergence of the submission does not deviate from the convergence of the reference. We are interested in avoiding cases where the submission convergence is faster than the reference. Reference implementation convergence sets a lower bound on epoch convergence that a valid submission should not beat. From a statistical standpoint if the submission mean epochs to converge is significantly lower than the reference mean epochs to converge, then submission convergence points belong to a different population than the reference convergence points, and thus the submission should not be accepted. Compliance to reference convergence points is validated as follows
 
-* Reference implementations provide at least 2N epoch convergence numbers, where N is the number of submission runs needed for each benchmark. Since convergence is affected by batch size (larger batch size means slower convergence), reference implementations should provide convergence data for a few different batch sizes.
-
+* Reference implementations provide at least 2N epoch convergence numbers, where N is the number of submission runs needed for each benchmark. Since convergence is affected by batch size (larger batch size means slower convergence), reference implementations provide convergence data for a few different batch sizes.
 * Using the mean and standard deviation of the reference convergence we apply a 1-sided student t-test with p-value=0.05 to find the maximum acceptable speedup for submission convergence.
-
 * At submission time, the submission is matched to an RCP based on the submission batch size.
-
 ** If there is an RCP for that batch size then mean epochs to converge of the submission is extracted from submission logs. If this does not violate the maximum acceptable speedup condition when compared to the reference then the submission is accepted, otherwise it may be rejected.
-
 ** If there is no RCP for that batch size but there are RCPs for smaller and larger batch sizes an interpolated RCP is created, and the mean epochs to converge is compared agains the interpolated RCP just like in the previous case
-
 ** If the submission batch size is larger than the batch size of any RCP the submitter must provide the missing RCPs by running the reference implementation with their batch size.
-
 ** If the submission batch size is smaller that the batch size of any RCP AND the convergence test against the RCP with the minimum batch size fails, then again the submitter must provide the missing RCPs by running the reference implementation with their batch size.
 
 Please refer to the ralted Appedix for some examples that shed more light to the RCP process.
@@ -499,11 +493,8 @@ Please refer to the ralted Appedix for some examples that shed more light to the
 === RCP Rules and Guidelines
 
 Submitters are encouraged to run the RCP checker script prior to their submission to make sure they do not violate RCP limits.
-
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to go through but at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
-
 If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. If not the submission will not be accepted. All missing RCPs are due at submission time.
-
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it go through by using --rcp-bypass and then be ready to defend it during the review process.
 
 To extract submission convergence points, logs should report epochs as follows. Notice that for this round no RCP checks will be made for Minigo.
@@ -566,8 +557,9 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 | UNET3D | SGD with Momentum      | PyTorch	    | torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
+===
 
-=== Appendix: RCP Examples
+== Appendix: RCP Examples
 
 The RCP checking process is best illustrated with the following examples:
 
