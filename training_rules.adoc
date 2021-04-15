@@ -487,7 +487,7 @@ Reference Convergence Points are used to ensure that the convergence of the subm
 ** If the submission batch size is larger than the batch size of any RCP the submitter must provide the missing RCPs by running the reference implementation with their batch size.
 ** If the submission batch size is smaller that the batch size of any RCP AND the convergence test against the RCP with the minimum batch size fails, then again the submitter must provide the missing RCPs by running the reference implementation with their batch size.
 
-Please refer to the ralted Appendix for examples that shed light to the RCP process.
+Please refer to the related Appendix for examples that shed light to the RCP process.
 
 
 === RCP Rules and Guidelines
@@ -496,7 +496,7 @@ Submitters are encouraged to run the RCP checker script prior to their submissio
 
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to go through but at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
-If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. If not the submission will not be accepted. All missing RCPs are due at submission time.
+If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. If not, the submission will not be accepted. All missing RCPs are due at submission time.
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it go through by using --rcp-bypass and then be ready to defend it during the review process.
 
