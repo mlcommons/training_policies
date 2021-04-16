@@ -436,9 +436,8 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Image segmentation (medical) | 20
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
-|Language |Speech recognition |10
-| |NLP |10
-| |Speech recognition (recurrent) |10
+|Language |NLP |10
+| |Speech recognition |10
 |Commerce |Recommendation |5
 |Research |Reinforcement learning |10
 |===
