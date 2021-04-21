@@ -460,7 +460,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Area|Problem |Number of Runs
 
 |Vision |Image classification |5
-| |Image segmentation (medical) | 20
+| |Image segmentation (medical) | 40
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
 |Language |Translation (recurrent) |10
@@ -471,7 +471,9 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Research |Reinforcement learning |10
 |===
 
-Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run.
+Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run. 
+
+In the case of UNET3D, due to large variance, 40 runs are required. Out of the 40 runs, the 4 fastest and 4 slowest are dropped. There can be maximum of 4 non-converging runs. A run is classified as non-converged if the target quality metric is not reached within `CEILING(10000*168/samples_in_epoch)` epochs.
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
 
