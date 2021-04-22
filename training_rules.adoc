@@ -72,24 +72,16 @@ For benchmarks which are defined as starting from a fixed set of weights, such a
 The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
-|Area|Problem |Dataset |Quality Target
+|Area|Problem |Dataset
 
-|Vision |Image classification |ImageNet |75.90% classification
-| |Object detection (light weight) |COCO |23.0% mAP
-| |Object detection (heavy weight) |COCO |0.377 Box min AP and 0.339 Mask min AP
-|Language |Translation (recurrent) |WMT English-German |24.0 Sacre BLEU
-| |Translation (non-recurrent) |WMT English-German |25.00 BLEU
-| |NLP |Wikipedia 2020/01/01 |0.712 Mask-LM accuracy
-|Commerce |Recommendation |1TB Click Logs|0.8025 AUC
-|Research |Reinforcement learning |Go |50% win rate vs. checkpoint
-|===
-
-The following benchmarks are included but delayed to the next submission cycle:
-
-|===
-|Area|Problem |Dataset |Quality Target
-
-|Language |Speech recognition |LibriSpeech-clean+other |TBD
+|Vision |Image classification |ImageNet
+| |Image segmentation (medical) |KiTS19
+| |Object detection (light weight) |COCO
+| |Object detection (heavy weight) |COCO
+|Language |Speech recognition |LibriSpeech
+| |NLP |Wikipedia 2020/01/01
+|Commerce |Recommendation |1TB Click Logs
+|Research |Reinforcement learning |Go
 |===
 
 The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
@@ -132,27 +124,27 @@ A “run_and_time” script that executes the benchmark and reports the wall-clo
 There are two divisions of the benchmark suite, the Closed division and the Open division. 
 
 === Closed Division
-The Closed division requires using the same preprocessing, model, and training method as the reference implementation.
+The Closed division requires using the same preprocessing, model, training method, and quality target as the reference implementation.
 
-The closed division models are:
+The closed division models and quality targets are:
 
 |===
-|Area |Problem |Model |Optimizer
+|Area |Problem |Model |Target
 
-|Vision |Image classification |ResNet-50 v1.5 |LARS or SGD with Momentum
-| |Object detection (light weight) |SSD |SGD with Momentum
-| |Object detection (heavy weight) |Mask R-CNN |SGD with Momentum
-|Language |Translation (recurrent) |NMT |Adam
-| |Translation (non-recurrent) |Transformer |Adam or Lazy Adam
-| |NLP |BERT |LAMB
-|Commerce |Recommendation |DLRM|SGD
-|Research |Reinforcement learning |Mini Go (based on Alpha Go paper)|SGD with Momentum
+|Vision |Image classification |ResNet-50 v1.5 |75.90% classification
+| |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score
+| |Object detection (light weight) |SSD |23.0% mAP
+| |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
+|Language | Speech recognition | RNN-T | 0.058 Word Error Rate
+| |NLP |BERT |0.712 Mask-LM accuracy
+|Commerce |Recommendation |DLRM |0.8025 AUC
+|Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
 
 === Open Division
-The Open division allows using arbitrary preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
+The Open division allows using arbitrary training data, preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
 
 Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Image Classification Open benchmark, the system achieved a result of 7.2.”
 
@@ -172,7 +164,7 @@ Random number generators may be initialized repeatedly in multiple processes or 
 OPEN: Any random number generation may be used.
 
 === Numerical formats
-CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
+CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
 
 OPEN: Any format and scaling may be used.
 
@@ -185,9 +177,9 @@ Public results should be rounded normally.
 == Data Set
 
 === Data State at Start of Run
-Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. 
+CLOSED: Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
 
-The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
+OPEN: Any public dataset may be used for training the model, however the evaluation data must be drawn from the benchmark dataset in a manner consistent with the reference.
 
 You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
 
@@ -196,7 +188,7 @@ Only preprocessing that must be done for each run (e.g. random transformations) 
 
 CLOSED: The same preprocessing steps as the reference implementation must be used. 
 
-OPEN: Any preprocessing steps are allowed. However, each datum must be preprocessed individually in a manner that is not influenced by any other data.
+OPEN: Any preprocessing steps are allowed for training data. However, each datum must be preprocessed individually in a manner that is not influenced by any other data. The evaluation data must be preprocessed in a manner consistent with reference.
 
 === Data Representation
 
@@ -213,14 +205,18 @@ OPEN: The closed division data representations restrictions only apply at the st
 Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes.
 
 === Training and Test Sets
-If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
+CLOSED: If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
+
+OPEN: If applicable, the test dataset must be extracted in the same manner as the reference implementation. The training data set may not contain data that appears in the test set.
 
 === Training Data Order
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
 
-OPEN: the training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
+For DLRM the submissions are allowed to use a preshuffled dataset and are not obligated to shuffle the data once more during training. However, the reference implementation uses both preshuffled data and an approximate "batch shuffle" performed on-the-fly. Reference runs should also use a different seed in each run, so that the order of the training batches in each reference run is different. Even though the submissions are allowed to not shuffle the data on-the-fly, they are obligated to match the convergence behavior of the reference which does perform on-the-fly "batch-shuffle". Using a preshuffled dataset with a hand-crafted, advantageous data ordering is disallowed.
+
+OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
 CLOSED: The implementation must use the same RL algorithm and simulator or game as the reference implementation, with the same parameters. 
@@ -283,16 +279,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |dlrm |sgd |sgd_opt_base_learning_rate |unconstrained |learning rate at the start of poly decay |See PR (From Intel and NV, TODO Link)
  |dlrm |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of the poly decay |See PR (From Intel and NV, TODO Link)
  |dlrm |sgd |sgd_opt_learning_rate_decay_steps |unconstrained |the step at which you reach the end learning rate |See PR (From Intel and NV, TODO Link)
- |gnmt |adam |global_batch_size |unconstrained |global batch size |--train-batch-size
- |gnmt |adam |opt_base_learning_rate |unconstrained |base learning rate |--lr
- |gnmt |adam |opt_learning_rate_alt_decay_func |true or false |whether to use alternative learning rate decay function (https://github.com/mlperf/training/pull/195) |set --remain-steps to 1.0 to disable learning rate decay
- |gnmt |adam |opt_learning_rate_decay_factor$$*$$ |fixed to reference |learning rate decay factor |--decay-factor
- |gnmt |adam |opt_learning_rate_decay_interval |unconstrained |number of updates between lr decays |--decay-interval
- |gnmt |adam |opt_learning_rate_decay_steps$$*$$ |fixed to reference |max number of learning rate decay steps |--decay-steps
- |gnmt |adam |opt_learning_rate_remain_steps |unconstrained |starting iteration for learning rate decay |--remain-steps
- |gnmt |adam |max_sequence_length |unconstrained |May either drop or clip all sequences to this length. |--max-length-train
- |gnmt |adam |opt_learning_rate_alt_warmup_func |true or false |whether to use alternative learning rate warmup function (https://github.com/mlperf/training/pull/195) |set --warmup-steps to 0 to disable warmup
- |gnmt |adam |opt_learning_rate_warmup_steps |unconstrained |number of learning rate warmup iterations |--warmup-steps
  |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
@@ -332,6 +318,35 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |resnet |sgd |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
  |resnet |sgd |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
  |resnet |lars/sgd |opt_name |"lars" or "sgd" |The optimizer that was used. |
+ |rnnt |lamb |global_batch_size                       |unconstrained |reference --batch_size       |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L270-L271[reference code]
+ |rnnt |lamb |opt_name                                |"lamb"        |The optimizer that was used. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L357[reference code]
+ |rnnt |lamb |opt_base_learning_rate                  |unconstrained |base learning rate, this should be the learning rate after warm up and before decay  |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L358[reference code]
+ |rnnt |lamb |opt_lamb_epsilon                        |1e-9          |LAMB epsilon |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L359[reference code]
+ |rnnt |lamb |opt_lamb_learning_rate_decay_poly_power |unconstrained |Exponential decay rate |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L360[reference code]
+ |rnnt |lamb |opt_lamb_learning_rate_hold_epochs      |unconstrained |Number of epochs when LR schedule keeps the base learning rate value |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L362[reference code]
+ |rnnt |lamb |opt_learning_rate_warmup_epochs         |unconstrained |Number of epochs when LR linearly increases from 0 to base learning rate |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L361[reference code]
+ |rnnt |lamb |opt_weight_decay                        |1e-3          |L2 weight decay |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L372[reference code]
+ |rnnt |lamb |opt_lamb_beta_1                         |unconstrained |LAMB beta 1 |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L363[reference code]
+ |rnnt |lamb |opt_lamb_beta_2                         |unconstrained |LAMB beta 2 |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L364[reference code]
+ |rnnt |lamb |opt_gradient_clip_norm                  |1 or inf      |Gradients are clipped above this norm threshold. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L365[reference code]
+ |rnnt |lamb |opt_gradient_accumulation_steps         |unconstrained |Numer of fwd/bwd steps between optimizer step. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L222[reference code]
+ |rnnt |lamb |opt_learning_rate_alt_decay_func        |True          |whether to use alternative learning rate decay function |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/common/optimizers.py#L20-L49[reference code]
+ |rnnt |lamb |opt_learning_rate_alt_warmup_func       |True          |whether to use alternative learning rate warmup function |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L367[reference code]
+ |rnnt |lamb |opt_lamb_learning_rate_min              |1e-5          |LR schedule doesn't set LR values below this threshold |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L368[reference code]
+ |rnnt |lamb |train_samples                           |unconstrained |Number of training samples after filtering out samples longer than data_train_max_duration |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L337[reference code]
+ |rnnt |lamb |eval_samples                            |2703          |Number of evaluation samples |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L338[reference code]
+ |rnnt |lamb |data_train_max_duration                 |unconstrained |Samples longer than this number of seconds are not included to training dataset |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L252-L253[reference code]
+ |rnnt |lamb |data_train_num_buckets                  |6             |Training dataset is split to this number of buckets |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L293[reference code]
+ |rnnt |lamb |data_train_speed_perturbation_min       |0.85          |Input audio is resampled to a random rample rate not less than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L256-L257[reference code]
+ |rnnt |lamb |data_train_speed_perturbation_max       |1.15          |Input audio is resampled to a random rample rate not greater than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L254-L255[reference code]
+ |rnnt |lamb |data_spec_augment_freq_n                |2             |Number of masks for frequency bands |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L258-L259[reference code]
+ |rnnt |lamb |data_spec_augment_freq_min              |0             |Minimum number of frequencies in a single mask |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L260-L261[reference code]
+ |rnnt |lamb |data_spec_augment_freq_max              |20            |Maximum number of frequencies in a single mask |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L262-L263[reference code]
+ |rnnt |lamb |data_spec_augment_time_n                |10            |Number of masks for time band  |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L264-L265[reference code]
+ |rnnt |lamb |data_spec_augment_time_min              |0             |Minimum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L266-L267[reference code]
+ |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L268-L269[reference code]
+ |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L395[reference code]
+ |rnnt |lamb |model_weights_initialization_scale      |unconstrained |After random initialization of weight and bias tensors, all are scaled with this factorAfter random initialization of weight and bias tensors, all are scaled with this factor |See link:https://github.com/mwawrzos/training/blob/2126999a1ffff542064bb3208650a1e673920dcf/rnn_speech_recognition/pytorch/train.py#L342[reference code]
 |ssd |sgd |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L23[reference code]
  |ssd |sgd |model_bn_span |integer >= 1 |number of samples whose statistics a given BN layer uses to normalize a training minibatch (may be just the portion of global_batch_size per device, but also may be aggregated over several devices) |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L335[reference code]
  |ssd |sgd |opt_learning_rate_warmup_factor |Integer >= 0 |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L45[reference code]
@@ -340,19 +355,34 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |ssd |sgd |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L47[reference code]
  |ssd |sgd |max_samples |1 or 50 |maximum number of samples attempted when generating a training patch for a given IoU choice |link:https://github.com/mlperf/training/pull/367/commits/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59#diff-591431110d6b55f5afe595b96253fddbR111[reference code]
  |ssd |sgd |opt_learning_rate_decay_boundary_epochs |[40, 50] * (1 + k/10) for some integer k |Epochs at which the learning rate decays |link:https://github.com/mlperf/training/blob/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59/single_stage_detector/ssd/train.py#L48[reference code]
- |transformer |adam / lazy |global_batch_size |arbitrary constant |global batch size |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L56[reference code]
- |transformer |adam / lazy |opt_base_learning_rate |Arbitrary constant |base learning rate |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L39[reference code]
- |transformer |adam / lazy |opt_learning_rate_warmup_steps |arbitrary constant |number of learning rate warmup iterations |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L41[reference code]
- |transformer |adam / lazy |opt_adam_beta_1 |arbitrary constant |Adam Beta1 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L44[reference code]
- |transformer |adam / lazy |opt_adam_beta_2 |arbitrary constant |Adam Beta2 |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L45[reference code]
- |transformer |adam / lazy |opt_adam_epsilon$$*$$ |fixed to reference |Adam Epsilon |link:https://github.com/mlperf/training/blob/436ba2fdac96ccf646dd64f2ecfb3cc9b479bcbf/translation/tensorflow/transformer/model/model_params.py#L46[reference code]
+|unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
+ |unet3d |sgd |opt_base_learning_rate |unconstrained |base learning rate |reference --learning_rate
+ |unet3d |sgd |opt_momentum |unconstrained |SGD momentum |reference --momentum
+ |unet3d |sgd |opt_learning_rate_warmup_steps |unconstrained |number of epochs needed for learning rate warmup|reference --lr_warmup_epochs
+ |unet3d |sgd |opt_initial_learning_rate |unconstrained |initial learning rate (for LR warm up) |reference --init_learning_rate
+ |unet3d |sgd |opt_learning_rate_decay_steps |unconstrained |epochs at which the learning rate decays |reference --lr_decay_epochs
+ |unet3d |sgd |opt_learning_rate_decay_factor |unconstrained |factor used for learning rate decay |reference --lr_decay_factor
+ |unet3d |sgd |opt_weight_decay |unconstrained |L2 weight decay |reference --weight_decay
+ |unet3d |sgd |training_oversampling |fixed to reference |training oversampling |reference --oversampling
+ |unet3d |sgd |training_input_shape |fixed to reference |training input shape |reference --input_shape
+ |unet3d |sgd |evaluation_overlap |fixed to reference |evaluation sliding window overlap |reference --overlap
+ |unet3d |sgd |evaluation_input_shape |fixed to reference |evaluation input shape |reference --val_input_shape
+ |unet3d |sgd |data_train_samples |fixed to reference |number of training samples | N/A
+ |unet3d |sgd |data_eval_samples |fixed to reference |number of evaluation samples | N/A
 |===
 
 OPEN: Hyperparameters and optimizer may be freely changed.
 
 === Hyperparameter Borrowing
 
-During the review period as described in the Submission Rules, a submitter may replace the hyperparameters in their implementation of a benchmark with hyperparameters from another submitter's implementation of the same benchmark. By default, they may or may not replace batch size but must replace all other hyperparameters as a group. With evidence that the resulting model converges worse in terms of epochs required (taking into account batch size and precision) they may make a minimum number of additional hyperparameter changes in order to achieve comparable convergence in epochs.
+Submitters are expected to use their best efforts to submit with optimal hyperparameters for their system.  The intent of Hyperparameter Borrowing is to allow a submitter to update their submission to reflect what they would have submitted had they known about more optimal hyperparameters before submitting, without knowing any other info (ie the performance of other submissions).
+
+During the review period as described in the Submission Rules, a submitter may replace the hyperparameters, once per benchmark entry, in their implementation of a benchmark with hyperparameters from another submitter's implementation of the same benchmark. By default, they may change batch size (local batch size, global batch size, batchnorm span), but must replace all other hyperparameters as a group.
+
+With evidence that the resulting model, using the same batch size as the other submitter's implementation, converges worse in terms of epochs required, the submitter may make a minimum number of additional hyperparameter changes for the purpose of improving convergence and achieving comparable, but not better, convergence in epochs compared to the other submitter's implementation, but preserving any difference in convergence that may exist due to precision choices. In this situation, the other submitter's implementation is considered the reference, and the new submitter must match the convergence behavior of the other submitter in a similar way as we compare any submission to the reference.
+
+A resubmission of a benchmark with borrowed hyperparameters must use the same software (with the exceptions listed in the Software Adoption section of this document), system and system configuration (accelerators, NICs etc) as the original submission.  The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result.  In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
+
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
@@ -362,21 +392,22 @@ OPEN: Any loss function may be used. Do not confuse the loss function with targe
 === Quality measure
 Each run must reach a target quality level on the reference implementation quality measure. By default, the time to evaluate the quality is included in the wallclock time. However, if the reference implementation generates timestamped checkpoints and evaluates the quality after the clock has been stopped, then an implementation may either perform evaluation on-the-clock or generate timestamped checkpoints, evaluate them after the clock has been stopped, and update the clock stopped time to the timestamp of the first passing checkpoint. The checkpoint timestamp may be any time after the last weight value included in the checkpoint is updated.
 
+CLOSED: The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
+
 |===
 |Area |Problem |Model|Evaluation frequency
 
 |Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
+|       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`.
 |       |Object detection (light weight) |SSD|Fixed at epochs=40, 50, 55, 60, 65, 70, 75, 80
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
-|Language|Translation (recurrent) |NMT|Every 1 epoch 
-|        |Translation (non-recurrent) |Transformer|Every 1 epoch 
+|Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| Starting at 3M samples, then every 500K samples
 |Commerce|Recommendation |DLRM|Every 102400 samples 
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
 
-
-The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
+OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
 
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained.
 
@@ -397,6 +428,10 @@ Additional exemptions need to be explicitly requested and approved in advance. I
 
 The OPEN division does not restrict mathematical equivalence.
 
+== Software Adoption ==
+
+For a given round of MLPerf, the "canonical version" of a software component shall be defined as the public version as of 14 days before submission. If the software is open source, the canonical version shall be the one compiled with the default compilation options. If a system software provider submits with a component whose version is other than the canonical version, then other submitters using the same component are allowed to update their submission to use that version.  Those other submitters must resubmit with the updated system software before the resubmission deadline during the review period. Software adoption applies only to system software, only to the version used by the software provider’s submission, and explicitly does not cover benchmark implementations. Benchmark implementations should be borrowed as a whole only if the software provider’s submission introduces new APIs.
+
 == Run Results
 A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
 
@@ -411,16 +446,18 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Area|Problem |Number of Runs
 
 |Vision |Image classification |5
+| |Image segmentation (medical) | 40
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
-|Language |Translation (recurrent) |10
-| |Translation (non-recurrent) |10
-| |NLP |10
+|Language |NLP |10
+| |Speech recognition |10
 |Commerce |Recommendation |5
 |Research |Reinforcement learning |10
 |===
 
-Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run.
+Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run. 
+
+In the case of UNET3D, due to large variance, 40 runs are required. Out of the 40 runs, the 4 fastest and 4 slowest are dropped. There can be maximum of 4 non-converging runs. A run is classified as non-converged if the target quality metric is not reached within `CEILING(10000*168/samples_in_epoch)` epochs.
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
 
@@ -437,22 +474,30 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 TODO: locate the document and provide working link
 
 |===
-| Algorithm          | Framework  | Allowed Optimizer
+| Benchmark | Algorithm | Framework | Allowed Optimizer
 
-| LARS               | PyTorch    | [No compliant implementation]
-|                    | TensorFlow | MLPERF_LARSOptimizer
-|                    | MxNet      | SGDwFASTLARS
-| SGD with Momentum  | PyTorch    | apex.optimizers.FusedSGD
-|                    | PyTorch    | torch.optim.SGD
-|                    | TensorFlow | tf.train.MomentumOptimizer
-|                    | MxNet      | [No compliant implementation]
-| Adam               | PyTorch    | apex.optimizers.FusedAdam
-|                    | PyTorch    | torch.optim.Adam (PyT < 1.3) 
-|                    | TensorFlow | tf.train.AdamOptimizer 
-| Lazy Adam          | PyTorch    | torch.optim.sparse_adam 
-|                    | TensorFlow | tf.contrib.opt.LazyAdamOptimizer 
-| LAMB               | PyTorch    | apex.optimizers.FusedLAMB
-|                    | TensorFlow | tf.optimizers.LAMB
-| SGD (DLRM)         |            | TODO: Is this different from SGD with Momentum?  Why no apex.optimzers.FusedSGD?
-|                    | PyTorch    | torch.optim.SGD
-|                    | TensorFlow | tf.train.MomentumOptimizer
+| Image classification | LARS                     | PyTorch	| [No compliant implementation]
+|      |                          |	TensorFlow | MLPERF_LARSOptimizer
+|      |                          | MxNet | SGDwFASTLARS
+| Image classification | SGD with Momentum        | PyTorch	| apex.optimizers.FusedSGD
+|      |                          |	PyTorch | torch.optim.SGD
+|      |                          |	TensorFlow | tf.train.MomentumOptimizer
+|      |                          | MxNet | [No compliant implementation]
+| Reinforcement learning| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD
+|      |                          | PyTorch | torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| Object detection (heavy weight)	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD
+|      |                          | PyTorch	| torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| Object detection (light weight)  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD
+|      |                          | PyTorch	| torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| NLP | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+|      |              	          | TensorFlow	| tf.optimizers.LAMB
+| Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+|      |              	          | TensorFlow	| tf.optimizers.LAMB
+| Recommendation | SGD             	        | PyTorch	| torch.optim.SGD
+|      |              	          | TensorFlow	| tf.train.MomentumOptimizer
+| Image segmentation (medical) | SGD with Momentum      | PyTorch	    | torch.optim.SGD
+|      |              	          | TensorFlow	| tf.train.MomentumOptimizer
+|      |              	          | MXNet	    | mx.optimizer.NAG
