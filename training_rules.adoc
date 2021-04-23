@@ -510,7 +510,7 @@ To extract submission convergence points, logs should report epochs as follows. 
 | SSD | Epoch 
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
-| UNET3D | Eval sample 
+| UNET3D | Epoch
 | Minigo | N/A 
 |===
 
