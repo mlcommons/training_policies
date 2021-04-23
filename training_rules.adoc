@@ -510,7 +510,7 @@ This section contains rules specific to the v1.0 round of MLPerf Training.  Thes
 
 === MaskRCNN backbone
 
-For v1.0 only, Mask-RCNN submitters may use the non-reference backbone located https://drive.google.com/drive/folders/1lGU_pP2Pr2k578DslciwE4AlOKm6dKCK?usp=sharing[here] with the understanding that it converges similarly to the reference backbone.  If the non-reference backbone is shown to converge differently than the reference backbone at any scale on any submitted hyperparameter set, all uses of that backbone for any submitter are to be re-run with the reference backbone to have their submission published.  For future rounds, the expectation is that all submitters will use the reference backbone, which will fixed at reference code freeze time.
+For v1.0 only, Mask-RCNN submitters may use the non-reference backbone located https://drive.google.com/drive/folders/1lGU_pP2Pr2k578DslciwE4AlOKm6dKCK?usp=sharing[here] with the understanding that it converges similarly to the reference backbone.  If the non-reference backbone is shown to converge faster than the reference backbone at any scale on any submitted hyperparameter set, all uses of that backbone for any submitter are to be re-run with the reference backbone to have their submission published.  For future rounds, the expectation is that all submitters will use the reference backbone, which will fixed at reference code freeze time.
 
 === BERT clip-normalization order
 
