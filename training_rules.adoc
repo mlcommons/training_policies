@@ -504,43 +504,43 @@ To extract submission convergence points, logs should report epochs as follows. 
 
 == Appendix: Benchmark Specific Rules
 
-* ResNet
+* Image Classification
 
-** ResNet may have 1000 or 1001 classes, where the 1001st is "I don't know"
+** The model may have 1000 or 1001 classes, where the 1001st is "I don't know"
 
-== Appendix: Allowed Optimizers
+== Appendix: Allowed Closed Division Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
+TODO: locate the document and provide working link
 
 |===
 | Benchmark | Algorithm | Framework | Allowed Optimizer
 
-| RN50 | LARS                     | PyTorch	| [No compliant implementation]	
-|      |                          |	TensorFlow | MLPERF_LARSOptimizer	
+| Image classification | LARS                     | PyTorch	| [No compliant implementation]
+|      |                          |	TensorFlow | MLPERF_LARSOptimizer
 |      |                          | MxNet | SGDwFASTLARS
-| RN50 | SGD with Momentum        | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          |	PyTorch | torch.optim.SGD	
-|      |                          |	TensorFlow | tf.train.MomentumOptimizer	
+| Image classification | SGD with Momentum        | PyTorch	| apex.optimizers.FusedSGD
+|      |                          |	PyTorch | torch.optim.SGD
+|      |                          |	TensorFlow | tf.train.MomentumOptimizer
 |      |                          | MxNet | [No compliant implementation]
-| Minigo| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD	
-|      |                          | PyTorch | torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| Mask-RCNN	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          | PyTorch	| torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| SSD  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          | PyTorch	| torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| BERT | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+| Reinforcement learning| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD
+|      |                          | PyTorch | torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| Object detection (heavy weight)	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD
+|      |                          | PyTorch	| torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| Object detection (light weight)  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD
+|      |                          | PyTorch	| torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| NLP | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
-| RNN-T | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+| Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
-| DLRM | SGD             	        | PyTorch	| torch.optim.SGD
+| Recommendation | SGD             	        | PyTorch	| torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
-| UNET3D | SGD with Momentum      | PyTorch	    | torch.optim.SGD
+| Image segmentation (medical) | SGD with Momentum      | PyTorch	    | torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
-|===
 
 == Appendix: v1.0 Specific Rules
 
