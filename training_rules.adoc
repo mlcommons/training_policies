@@ -4,8 +4,8 @@
 :sectnums:
 
 = MLPerf Training Rules
-Version 0.7 
-May 2nd, 2018
+Version 1.0
+March 25, 2021
 
 == Overview
 This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
@@ -136,7 +136,7 @@ The closed division models and quality targets are:
 | |Object detection (light weight) |SSD |23.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
-| |NLP |BERT |0.712 Mask-LM accuracy
+| |NLP |BERT |0.720 Mask-LM accuracy
 |Commerce |Recommendation |DLRM |0.8025 AUC
 |Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
 |===
@@ -165,6 +165,8 @@ OPEN: Any random number generation may be used.
 
 === Numerical formats
 CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
+
+Reference Convergence Points must be obtained using FP32 precision, or FP32 emulation with explanation of the methodology for emulation.
 
 OPEN: Any format and scaling may be used.
 
@@ -402,7 +404,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Object detection (light weight) |SSD|Fixed at epochs=40, 50, 55, 60, 65, 70, 75, 80
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Speech recognition |RNN-T|Every 1 epoch
-|        |NLP |BERT| Starting at 3M samples, then every 500K samples
+|        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |Commerce|Recommendation |DLRM|Every 102400 samples 
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
@@ -539,6 +541,27 @@ Analysis to support this can be found in the document "MLPerf Optimizer Review" 
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
 |===
+
+== Appendix: v1.0 Specific Rules
+
+This section contains rules specific to the v1.0 round of MLPerf Training.  These do not apply to future rounds, unless explicitly ratified as rules for those rounds, or unless these rules are promoted to official rules in previous sections of this document.
+
+=== MaskRCNN backbone
+
+For v1.0 only, Mask-RCNN submitters may use the non-reference backbone located https://drive.google.com/drive/folders/1lGU_pP2Pr2k578DslciwE4AlOKm6dKCK?usp=sharing[here] with the understanding that it converges similarly to the reference backbone.  If the non-reference backbone is shown to converge faster than the reference backbone at any scale on any submitted hyperparameter set, all uses of that backbone for any submitter are to be re-run with the reference backbone to have their submission published.  For future rounds, the expectation is that all submitters will use the reference backbone, which will fixed at reference code freeze time.
+
+=== BERT clip-normalization order
+
+For v1.0 only, BERT submissions may implement clip-norm either before or after inter-accelerator all-reduce. For future rounds, the expectation is that submissions must use clip-norm-after-reduce, to be consistent with most commonly used public BERT model repos.
+
+For performance consistency of at scale BERT submissions for v1.0, submitters are disallowed from using clip-norm-after-reduce to enable additional overlap of communication and math. If a submitter plans to use clip-norm-after-reduce for v1.0, they must notify the committee before the submission deadline, and be prepared to show code in their submission proving that they do not do overlap as a result of clip-norm-after-reduce.
+
+Furthermore, for simplicity, the RCPs for this round will use clip-norm-before-reduce.  In theory, this could allow clip-norm-after-reduce submissions that converge faster than they should, but still not faster than clip-norm-before-reduce, but the Training Working Group feels that this is ok risk for v1.0, in interest of simplifying the RCPs for v1.0.
+
+=== Compile time
+
+For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 30 minutes.  This is to enable new submitters to submit who were close to the 20 minute limit.  The 20 minute number was chosen empirically for rounds prior to v1.0.  For v1.1 and beyond, the training working group should make a data driven decision on what compile time is reasonable for real user applications.
+
 
 == Appendix: RCP Examples
 
