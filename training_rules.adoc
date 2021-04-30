@@ -216,8 +216,6 @@ CLOSED: the training and test data must be traversed in the same conceptual orde
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
 
-For DLRM the submissions are allowed to use a preshuffled dataset and are not obligated to shuffle the data once more during training. However, the reference implementation uses both preshuffled data and an approximate "batch shuffle" performed on-the-fly. Reference runs should also use a different seed in each run, so that the order of the training batches in each reference run is different. Even though the submissions are allowed to not shuffle the data on-the-fly, they are obligated to match the convergence behavior of the reference which does perform on-the-fly "batch-shuffle". Using a preshuffled dataset with a hand-crafted, advantageous data ordering is disallowed.
-
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
