@@ -161,7 +161,7 @@ Random number generators may be seeded from the following sources:
 
 Random number generators may be initialized repeatedly in multiple processes or threads. For a single run, the same seed may be shared across multiple processes or threads.
 
-It is recommanded to log the seeds. If seeds are logged, they need to satisfy the following requirements:
+It is recommended to log the seeds. If seeds are logged, they need to satisfy the following requirements:
 
 . The only way to log seeds is through https://github.com/mlcommons/logging/tree/master/mlperf_logging/mllog[`mllog`]. Any seed logged via any other method is discarded.
 . All seeds must be valid integer (convertible via https://docs.python.org/3/library/functions.html#int[`int()`]).
