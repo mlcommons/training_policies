@@ -8,9 +8,9 @@ Version 1.0
 March 25, 2021
 
 == Overview
-This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware.
+This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
 
-There are separate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
+There are seperate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
 
@@ -25,13 +25,13 @@ A _system_ consists of a defined set of hardware resources such as processors, m
 
 A _framework_ is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
 
-A _benchmark_ is an abstract problem that can be solved using ML by training a model based on a specific dataset or simulation environment to a target quality level.
+A _benchmark_ is an abstract problem that can be solved using ML by training a model based on a specific dataset or simulation environment to a target quality level. 
 
 A _suite_ is a specific set of benchmarks.
 
 A _division_ is a set of rules for implementing benchmarks from a suite to produce a class of comparable results.
 
-A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization.
+A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization. 
 
 A _benchmark implementation_ is an implementation of a benchmark in a particular framework by a user under the rules of a specific division.
 
@@ -49,7 +49,7 @@ A _submission result set_ is a one benchmark result for each benchmark implement
 
 A _submission_ is a submission implementation set and a corresponding submission result set.
 
-A _custom summary result_ is the weighted geometric mean of an arbitrary set of results from a specific submission. MLPerf endorses this methodology for computing custom summary results but does not endorse any official summary result.
+A _custom summary result_ is the weighted geometric mean of an arbitrary set of results from a specific submission. MLPerf endorses this methodology for computing custom summary results but does not endorse any official summary result. 
 
 == General rules
 The following rules apply to all benchmark implementations.
@@ -90,7 +90,7 @@ Code that implements the model in a framework.
 
 A plain text “README.md” file that describes:
 
-* Problem
+* Problem 
 ** Dataset/Environment
 ** Publication/Attribution
 ** Data preprocessing
@@ -100,7 +100,7 @@ A plain text “README.md” file that describes:
 ** Simulation environment (RL models only)
 ** Steps necessary for reproducing the initial set of weights, if an initial set of non-standard weights is used. For v0.7, weights from v0.6 may be used without this information.
 ** Publication/Attribution
-** List of layers
+** List of layers 
 ** Weight and bias initialization
 ** Loss function
 ** Optimizer
@@ -121,7 +121,7 @@ A “verify_dataset” script that verifies the dataset against the checksum.
 A “run_and_time” script that executes the benchmark and reports the wall-clock time.
 
 == Divisions
-There are two divisions of the benchmark suite, the Closed division and the Open division.
+There are two divisions of the benchmark suite, the Closed division and the Open division. 
 
 === Closed Division
 The Closed division requires using the same preprocessing, model, training method, and quality target as the reference implementation.
@@ -148,10 +148,10 @@ The Open division allows using arbitrary training data, preprocessing, model, an
 
 Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Image Classification Open benchmark, the system achieved a result of 7.2.”
 
-== Basics
+== Basics 
 
 === Random numbers
-CLOSED: Random numbers must be generated using stock random number generators.
+CLOSED: Random numbers must be generated using stock random number generators. 
 
 Random number generators may be seeded from the following sources:
 
@@ -179,17 +179,16 @@ Public results should be rounded normally.
 == Data Set
 
 === Data State at Start of Run
-CLOSED: Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run. Examples of transformations permitted currently include random transformations or compression of the dataset by removing zero tokens. Other transformations require prior approval by the committee. The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
+CLOSED: Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
 
 OPEN: Any public dataset may be used for training the model, however the evaluation data must be drawn from the benchmark dataset in a manner consistent with the reference.
 
-Unpadding or packing are both allowed as offline preprocessing steps. When choosing packing: It is permitted to reorder and compress the dataset. However, the packing algorithm must preserve overall random ordering. (b) Randomness for packing should be deterministic for a given random seed. (c) The packing algorithm and convergence proof should be submitted to and reviewed by the relevant working group 1 month before submission.
+You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
 
-You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.
 === Preprocessing During the Run
-Any preprocessing that must be done for each run (e.g. random transformations) must be timed.
+Only preprocessing that must be done for each run (e.g. random transformations) must be timed.
 
-CLOSED: The same preprocessing steps as the reference implementation must be used.
+CLOSED: The same preprocessing steps as the reference implementation must be used. 
 
 OPEN: Any preprocessing steps are allowed for training data. However, each datum must be preprocessed individually in a manner that is not influenced by any other data. The evaluation data must be preprocessed in a manner consistent with reference.
 
@@ -197,9 +196,9 @@ OPEN: Any preprocessing steps are allowed for training data. However, each datum
 
 CLOSED: Images must have the same size as in the reference implementation. Mathematically equivalent padding of images is allowed.
 
-CLOSED: For benchmarks with sequence inputs, you may choose a length N and either truncate all examples to length N or throw out all examples which exceed length N. This must be done uniformly for all examples. This may only be done on the training set and not the evaluation set.
+CLOSED: For benchmarks with sequence inputs, you may choose a length N and either truncate all examples to length N or throw out all examples which exceed length N. This must be done uniformly for all examples. This may only be done on the training set and not the evaluation set. 
 
-CLOSED: Two ways to represent the Mask R-CNN mask are permitted. One is a polygon and the other is a scalable bitmask.
+CLOSED: Two ways to represent the Mask R-CNN mask are permitted. One is a polygon and the other is a scalable bitmask. 
 
 OPEN: The closed division data representations restrictions only apply at the start of the run. Data may be represented in an arbitrary fashion during the run.
 
@@ -213,7 +212,7 @@ CLOSED: If applicable, the dataset must be separated into training and test sets
 OPEN: If applicable, the test dataset must be extracted in the same manner as the reference implementation. The training data set may not contain data that appears in the test set.
 
 === Training Data Order
-CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order. Padding and unpadding as a preprocess or on the fly are allowed.
+CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
 
@@ -222,7 +221,7 @@ For DLRM the submissions are allowed to use a preshuffled dataset and are not ob
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
-CLOSED: The implementation must use the same RL algorithm and simulator or game as the reference implementation, with the same parameters.
+CLOSED: The implementation must use the same RL algorithm and simulator or game as the reference implementation, with the same parameters. 
 
 OPEN: The implementation may use a different RL algorithm but must use the same simulator or game with the same parameters. If the reference implementation generates all data online, the Open division implementation must also generate all data online.
 
@@ -231,7 +230,7 @@ It is allowed and encouraged to parallelize and otherwise optimize (e.g. by impl
 == Model
 CLOSED: The benchmark implementation must use the same model as the reference implementation, as defined by the remainder of this section.
 
-OPEN: The benchmark implementation may use a different model.
+OPEN: The benchmark implementation may use a different model. 
 
 === Graph Definition
 
@@ -240,25 +239,25 @@ CLOSED: Each of the current frameworks has a graph that describes the operations
 === Weight and Bias Initialization
 CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation, unless a pre-trained set of weights, such as a checkpoint or backbone, is used by the reference.
 
-OPEN: Weights and biases must be initialized using a consistent constant or random value distribution.
+OPEN: Weights and biases must be initialized using a consistent constant or random value distribution. 
 
 === Graph Execution
-CLOSED: Frameworks are free to optimize the non-weight parts of the computation graph provided that the changes are mathematically equivalent. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, loop-invariant code motion, and recomputation of node state are entirely allowed.
+CLOSED: Frameworks are free to optimize the non-weight parts of the computation graph provided that the changes are mathematically equivalent. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, loop-invariant code motion, and recomputation of node state are entirely allowed. 
 
 OPEN: Frameworks are free to alter the graph.
 
 == Training Loop
 
 === Hyperparameters
-CLOSED:
+CLOSED: 
 
-By default, the hyperparameters must be the same as the reference.
+By default, the hyperparameters must be the same as the reference. 
 
 Hyperparameters include the optimizer used and values like the regularization norms and weight decays.
 
 The implementation of the optimizer must match the optimizer specified in the Appendex: Allowed Optimizer.  The Appendex lists which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
 
-The following table lists the tunable hyperparameters for each allowed model,optimizer combination. The value of each tunable hyperparameter must meet the listed constraint.
+The following table lists the tunable hyperparameters for each allowed model,optimizer combination. The value of each tunable hyperparameter must meet the listed constraint. 
 
 The MLPerf verifier scripts checks all hyperparameters except those with names marked with asterisks. If a hyperparameter is marked with one asterisk, it must be checked manually. If a hyperparameter is marked with two asterisks, it is also not logged and it must be checked manually in the code.  If the verifier and the constraints in this table differ, the verifier (specifically, the version on the date of submission unless otherwise decided by the review committee) is the source of truth.
 
@@ -305,7 +304,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |resnet |lars |lars_opt_momentum | 0.9 for batch<32k, otherwise arbitrary constant |momentum in reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
  |resnet |lars |lars_opt_weight_decay |(0.0001 * 2 ^ N) where N is any integer |weight_decay in  reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
  |resnet |lars |lars_opt_learning_rate_decay_steps |unconstrained |num_epochs in reference |link:https://github.com/mlperf/training/blob/master/image_classification/tensorflow/official/resnet/resnet_run_loop.py[reference code]
- |resnet |lars |global_batch_size |unconstrained |global batch size in reference
+ |resnet |lars |global_batch_size |unconstrained |global batch size in reference 
 |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/image_classification/tensorflow/official/utils/arg_parsers/parsers.py#L158[reference code]
  |resnet |lars |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
  |resnet |lars |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
@@ -387,7 +386,7 @@ With evidence that the resulting model, using the same batch size as the other s
 A resubmission of a benchmark with borrowed hyperparameters must use the same software (with the exceptions listed in the Software Adoption section of this document), system and system configuration (accelerators, NICs etc) as the original submission.  The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result.  In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
 
 
-=== Loss function
+=== Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
 
 OPEN: Any loss function may be used. Do not confuse the loss function with target quality measure.
