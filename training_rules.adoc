@@ -161,6 +161,19 @@ Random number generators may be seeded from the following sources:
 
 Random number generators may be initialized repeatedly in multiple processes or threads. For a single run, the same seed may be shared across multiple processes or threads.
 
+It is recommended to log the seeds. If seeds are logged, they need to satisfy the following requirements:
+
+. The only way to log seeds is through https://github.com/mlcommons/logging/tree/master/mlperf_logging/mllog[`mllog`]. Any seed logged via any other method is discarded.
+. All seeds must be valid integer (convertible via https://docs.python.org/3/library/functions.html#int[`int()`]).
+. If any run logs at least one seed, we expect all runs to log at least one seed.
+. If one run logs one seed on a certain line in a certain source file, no other run can log the same seed on the same line in the same source file.
+
+Unsatisfying any of the above requirements will result in check failures reported by the package checker.
+
+If any run logs more than one seed, a warning is raised by the package checker. This is a reminder to submitters for rethinking if using multiple seeds per run is really necessary.
+
+If the submission is not seeded, seed logging is not required. However, if the source files (after being converted to lowercase characters) contain the keyword `seed`, a warning is raised by the package checker. What files are considered as source files are defined https://github.com/mlcommons/logging/blob/master/mlperf_logging/package_checker/seed_checker.py#L13[here]. This is a reminder to submitters for double-checking if the submission is indeed seeded or not.
+
 OPEN: Any random number generation may be used.
 
 === Numerical formats
