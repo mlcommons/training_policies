@@ -539,6 +539,7 @@ TODO: locate the document and provide working link
 | Image segmentation (medical) | SGD with Momentum      | PyTorch	    | torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
+|===
 
 == Appendix: v1.0 Specific Rules
 
