@@ -76,16 +76,20 @@ Allowed hyperparameter and optimizer settings will be specified in the MLPerf HP
  |CosmoFlow |opt_learning_rate_decay_boundary_epochs |[i, j], where i, j are positive integers, i.e. two learning rate decays are allowed in training" |Epochs at which learning rate decays |link:https://github.com/sparticlesteve/cosmoflow-benchmark/blob/57c2454a28e415ca7df0135f016297763f6e4946/configs/cosmo.yaml#L51[config]
  |CosmoFlow |opt_learning_rate_decay_factor |`0 < value < 1`, and you may use a different value for each decay |the learning rate decay factor(s) at the decay boundary epochs |link:https://github.com/sparticlesteve/cosmoflow-benchmark/blob/57c2454a28e415ca7df0135f016297763f6e4946/configs/cosmo.yaml#L51[config]
  |DeepCAM |global_batch_size |unconstrained |the global batch size for training |`--local_batch_size` times number of workers
- |DeepCAM |opt_name |AdamW or LAMB |the optimizer name |`--optimizer`
- |DeepCAM |opt_epsilon |1e-6 or 1e-8 |epsilon for Adam |`--adam_eps`
- |DeepCAM |opt_base_learning_rate |unconstrained |the base learning rate |`--start_lr` times warmup factor
- |DeepCAM |opt_learning_rate_warmup_steps |unconstrained |the number of epochs for learning rate to warm up to base value |`--lr_warmup_steps`
- |DeepCAM |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warmup |`--lr_warmup_factor`
- |DeepCAM |opt_learning_rate_decay_steps |unconstrained |the steps at which learning rate is decayed |milestones in `--lr_schedule type="multistep",milestones="3000 10000",decay_rate="0.1"`
- |DeepCAM |opt_learning_rate_decay_factor |unconstrained |the learning rate decay factor |decay_rate in `--lr_schedule type="multistep",milestones="15000 25000",decay_rate="0.1"`
- |DeepCAM |opt_weight_decay |0.01 |L2 weight decay |`--weight_decay`
- |DeepCAM |validation_frequency |100 |number of steps between model validation |`--validation_frequency`
- |DeepCAM |loss_weight_pow |-0.125 |negative loss weight |`--loss_weight_pow`
+ |DeepCAM |batchnorm_group_size | `value >= 1` | Determines how many ranks participate in the batchnorm | `--batchnorm_group_size`
+ |DeepCAM |opt_name |Adam, AdamW, or LAMB |the optimizer name |`--optimizer`
+ |DeepCAM |opt_eps |1e-6 |epsilon for Adam |`--adam_eps`
+ |DeepCAM |opt_betas |unconstrained |Momentum terms for Adam-type optimizers |`--optimizer_betas`
+ |DeepCAM |opt_weight_decay |`value >= 0` |L2 weight regularization |`--weight_decay`
+ |DeepCAM |opt_lr |unconstrained |the base learning rate |`--start_lr` times warmup factor
+ |DeepCAM |scheduler_lr_warmup_steps | `value >= 0` |the number of epochs for learning rate to warm up to base value |`--lr_warmup_steps`
+ |DeepCAM |scheduler_lr_warmup_factor | `value >= 1` |When warmup is used, the target learning_rate will be lr_warmup_factor * start_lr |`--lr_warmup_factor`
+ |DeepCAM |scheduler_type |multistep or cosine_annealing |Specifies the learning rate schedule |`--lr_schedule`
+ |DeepCAM |scheduler_milestones |unconstrained |If multistep, the steps at which learning rate is decayed |milestones in `--lr_schedule type="multistep",milestones="3000 10000",decay_rate="0.1"`
+ |DeepCAM |scheduler_decay_rate |unconstrained |If multistep, the learning rate decay factor |decay_rate in `--lr_schedule type="multistep",milestones="15000 25000",decay_rate="0.1"`
+ |DeepCAM |scheduler_t_max |`value >= 0` |For cosine_annealing, period length in steps |`--lr_schedule`
+ |DeepCAM |scheduler_eta_min |`value >= 0` |For cosine_annealing, sets the minimal LR |`--lr_schedule`
+ |DeepCAM |gradient_accumulation_frequency |`value >= 1` |Specifies the number of gradient accumulation steps before a weight update is performed |`--gradient_accumulation_frequency`
 |===
 
 OPEN: Hyperparameters and optimizer may be freely changed.
