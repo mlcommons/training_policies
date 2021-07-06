@@ -27,6 +27,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Problem |Dataset |Quality Target
 |Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82
 |Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.124
+|Modeling catalysts |Open Catalyst 2020 (OC20) S2EF 2M training split, ID validation set| Forces mean absolute error 0.036
 |===
 
 == Divisions
@@ -43,6 +44,7 @@ The closed division models are:
 |Problem |Model
 |Climate segmentation  |https://github.com/azrael417/mlperf-deepcam
 |Cosmological parameter prediction |https://github.com/sparticlesteve/cosmoflow-benchmark
+|Modeling catalysts |https://github.com/sparticlesteve/ocp/tree/mlperf-hpc-reference
 |===
 
 == Data Set
@@ -86,6 +88,13 @@ Allowed hyperparameter and optimizer settings will be specified in the MLPerf HP
  |DeepCAM |opt_weight_decay |0.01 |L2 weight decay |`--weight_decay`
  |DeepCAM |validation_frequency |100 |number of steps between model validation |`--validation_frequency`
  |DeepCAM |loss_weight_pow |-0.125 |negative loss weight |`--loss_weight_pow`
+ |OpenCatalyst |global_batch_size |`value >= 1` |the global batch size |`batch_size` times number of GPUs
+ |OpenCatalyst |opt_name |AdamW |the optimizer name |config setting `optim` `name`
+ |OpenCatalyst |opt_base_learning_rate |`value > 0` |the base learning rate |config setting `lr_initial`
+ |OpenCatalyst |opt_learning_rate_warmup_steps |`value >= 0` |the number of steps for learning rate to warm up to base value |`warmup_steps`
+ |OpenCatalyst |opt_learning_rate_warmup_factor |`0 <= value <= 1` |the factor applied to the learning rate at the start of warmup |`warmup_factor`
+ |OpenCatalyst |opt_learning_rate_decay_boundary_steps |list of positive integers |`lr_milestones`
+ |OpenCatalyst |opt_learning_rate_decay_factor |`0 <= value <= 1` |the factor applied to decay the learning rate at each decay boundary step |`lr_gamma`
 |===
 
 OPEN: Hyperparameters and optimizer may be freely changed.
@@ -104,4 +113,5 @@ We follow the MLPerf Training Rule 11 along with the following required number o
 |Benchmark |Number of Runs
 |DeepCAM | 5
 |CosmoFlow | 10
+|OpenCatalyst | 5
 |===
