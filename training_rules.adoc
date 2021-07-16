@@ -432,6 +432,7 @@ The OPEN division does not restrict mathematical equivalence.
 
 For a given round of MLPerf, the "canonical version" of a software component shall be defined as the public version as of 14 days before submission. If the software is open source, the canonical version shall be the one compiled with the default compilation options. If a system software provider submits with a component whose version is other than the canonical version, then other submitters using the same component are allowed to update their submission to use that version.  Those other submitters must resubmit with the updated system software before the resubmission deadline during the review period. Software adoption applies only to system software, only to the version used by the software provider’s submission, and explicitly does not cover benchmark implementations. Benchmark implementations should be borrowed as a whole only if the software provider’s submission introduces new APIs.
 
+[#section-run-results]
 == Run Results
 A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
 

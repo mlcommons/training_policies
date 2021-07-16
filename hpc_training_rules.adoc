@@ -92,16 +92,50 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 
 == Run Results
 
-We follow MLPerf Training Rule 10 with the addition that data staging to node-local storage or I/O accelerators must also be timed as described in Rule 6.1 above.
+MLPerf Training submissions consists of the following three metrics. Metrics 1 and 2 are considered mandatory for a complete submission whereas metric 3 is considered optional:
 
-You are encouraged to also report the additional metrics of the benchmark described in the MLPerf HPC v0.5 Metrics List (to be prepared).
+
+=== Strong Scaling (Time to Convergence)
+This is a *mandatory* metric: see MLPerf Training xref:training_rules.adoc#section-run-results[Rule 11] for reference. The same rules apply here.
+
+=== Data staging
+This is a *mandatory* metric: staging of data from remote distributed storage to node-local storage or I/O accelerators must be timed as described in <<Data State at Start of Run>> above.
+
+=== Weak Scaling (Throughput)
+This is an *optional* metric. It was designed to test the training capacity of a system.
+
+Measurement: the submitter picks a number of independent training instances K and machine scale S. This scale can be defined as:
+* number of nodes
+* number of accelerators (e.g. GPU)
+* number of canonical compute units for a given system
+
+We will use the term compute unit as a generic term. Note that S can be different from those used for submitting metric 1. 
+Ideally S is the scale of the full system but this is not required.  
+
+Each training instance will cover S/K compute units. The submitter trains these K instances to convergence. 
+
+We define a Time-To-Train-all (TTTa) number by computing the difference between the end time of the instance which needs longest time to converge and the start time of the instance which starts up fastest. Mathematically this can be expressed as 
+
+----
+TTTa = max(run_stop) - min(run_start) where the max/min are taken over all instances K. 
+----
+
+Reporting: the submitter reports the the tuple (K, TTTa). 
+
+Restrictions: 
+
+* The submitter *must not report this score on it's own*. It has to be reported in conjunction with the scores from <<Strong Scaling (Time to Convergence)>> and <<Data staging>>.
+* this score *does not allow for extrapolation*. All K training instances have to be run to convergence at chosen scale S.
+
+
 
 == Benchmark Results
 
 We follow the MLPerf Training Rule 11 along with the following required number of runs per benchmark.
+Note that since run-to-run variability is already captured by spatial multiplexing in case of metric 3, the number of required runs can be reduced. More precisely, the submitter has to obey the following rule:
 
 |===
-|Benchmark |Number of Runs
-|DeepCAM | 5
-|CosmoFlow | 10
+|Benchmark |Number of Runs (Metric 1, 2) | Instance Count x Number of Runs (Metric 3)
+|DeepCAM | 5 | >=5
+|CosmoFlow | 10 | >=10
 |===
