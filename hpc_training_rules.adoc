@@ -104,29 +104,35 @@ This is a *mandatory* metric: staging of data from remote distributed storage to
 === Weak Scaling (Throughput)
 This is an *optional* metric. It was designed to test the training capacity of a system.
 
-Measurement: the submitter picks a number of independent training instances K and machine scale S. This scale can be defined as:
-* number of nodes
-* number of accelerators (e.g. GPU)
-* number of canonical compute units for a given system
+Measurement: we will define 3 important parameters first. 
 
-We will use the term compute unit as a generic term. Note that S can be different from those used for submitting metric 1. 
-Ideally S is the scale of the full system but this is not required.  
+* number of models M: number of model instances which are going to be trained in this benchmark.
+* instance scale S: each individual model instance will be trained at this scale. 
+* total utilized scale T: the total scale used for running this benchmark. For example, if all M models are trained concurrently, then T=M*S. More generally we can write that S<=T<=M*S if (some of) the models are trained sequentially.
 
-Each training instance will cover S/K compute units. The submitter trains these K instances to convergence. 
+Notes:
+* All three numbers M,S,T are chosen by the submitter. This allows the submnitter to accomodate his submission to available machine resources, i.e. compute capacity and compute time.
+* S and T should be in units of compute resources, e.g. nodes, GPUs or other accelerators. This choice should be aligned with the HPC system description. For example, if the systems descriptions table lists number GPUs to define the scale of the system, then S should be specified in numbers of GPUs.
+* S and T can be chosen independently of the submission for metric 1 (strong scaling). We encourage to choose T as large as possible, ideally full system scale, but this is not required.
+
+The submitter then trains M models on the resource partitioning (S,T) as defined above to convergence. 
 
 We define a Time-To-Train-all (TTTa) number by computing the difference between the end time of the instance which needs longest time to converge and the start time of the instance which starts up fastest. Mathematically this can be expressed as 
 
 ----
-TTTa = max(run_stop) - min(run_start) where the max/min are taken over all instances K. 
+TTTa = max(run_stop) - min(run_start) where the max/min are taken over all instances M. 
 ----
 
-Reporting: the submitter reports the the tuple (K, TTTa). 
+Note: the submitter is allowed to prune this number by removing results from individual training instances. As long as the minimum number of models rule is satisfied (see section <<Benchmark Results>> below), the submission is valid. He then uses a modified number of models M'<=M and computes TTTa over the reduced set. This allows the submitter to remove occasional outliers or stragglers which would otherwise reduce the score disproportionally.
+
+Reporting: the submitter reports the the tuple (T, S, M', TTTa).
+It is required to submit a separate MLLOG file for each of the training instances, so that reviewers can verify the quoted numbers. 
+It is not allowed to merge logging files for individual instances.
 
 Restrictions: 
 
 * The submitter *must not report this score on it's own*. It has to be reported in conjunction with the scores from <<Strong Scaling (Time to Convergence)>> and <<Data staging>>.
-* this score *does not allow for extrapolation*. All K training instances have to be run to convergence at chosen scale S.
-
+* this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
 
 
 == Benchmark Results
