@@ -111,7 +111,8 @@ Measurement: we will define 3 important parameters first.
 * total utilized scale T: the total scale used for running this benchmark. For example, if all M models are trained concurrently, then T=M*S. More generally we can write that S<=T<=M*S if (some of) the models are trained sequentially.
 
 Notes:
-* All three numbers M,S,T are chosen by the submitter. This allows the submnitter to accomodate his submission to available machine resources, i.e. compute capacity and compute time.
+
+* All three numbers M,S,T are chosen by the submitter. This allows the submitter to accomodate their submission to available machine resources, i.e. compute capacity and compute time.
 * S and T should be in units of compute resources, e.g. nodes, GPUs or other accelerators. This choice should be aligned with the HPC system description. For example, if the systems descriptions table lists number GPUs to define the scale of the system, then S should be specified in numbers of GPUs.
 * S and T can be chosen independently of the submission for metric 1 (strong scaling). We encourage to choose T as large as possible, ideally full system scale, but this is not required.
 
@@ -123,7 +124,7 @@ We define a Time-To-Train-all (TTTa) number by computing the difference between 
 TTTa = max(run_stop) - min(run_start) where the max/min are taken over all instances M. 
 ----
 
-Note: the submitter is allowed to prune this number by removing results from individual training instances. As long as the minimum number of models rule is satisfied (see section <<Benchmark Results>> below), the submission is valid. He then uses a modified number of models M'<=M and computes TTTa over the reduced set. This allows the submitter to remove occasional outliers or stragglers which would otherwise reduce the score disproportionally.
+Note: the submitter is allowed to prune this number by removing results from individual training instances. As long as the minimum number of models rule is satisfied (see section <<Benchmark Results>> below), the submission is valid. They then use a modified number of models M'<=M and computes TTTa over the reduced set. This allows the submitter to remove occasional outliers or stragglers which would otherwise reduce the score disproportionally.
 
 Reporting: the submitter reports the the tuple (T, S, M', TTTa).
 It is required to submit a separate MLLOG file for each of the training instances, so that reviewers can verify the quoted numbers. 
