@@ -92,8 +92,7 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 
 == Run Results
 
-In addition to timing data staging to node-local storage or I/O accelerators as described in <<Data State at Start of Run>> above, MLPerf HPC submissions consist of the following two metrics: metrics 1 is considered mandatory for a complete submission whereas metric 2 is considered optional:
-
+MLPerf HPC submissions consist of the following two metrics: metrics 1 is considered mandatory for a complete submission whereas metric 2 is considered optional:
 
 === Strong Scaling (Time to Convergence)
 This is a *mandatory* metric: see MLPerf Training xref:training_rules.adoc#section-run-results[Rule 11] for reference. The same rules apply here.
@@ -129,7 +128,7 @@ It is not allowed to merge logging files for individual instances.
 
 Restrictions: 
 
-* The submitter *must not report this score on it's own*. It has to be reported in conjunction with the scores from <<Strong Scaling (Time to Convergence)>> and <<Data staging>>.
+* The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Strong Scaling (Time to Convergence)>> from the same benchmark.
 * this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
 
 
