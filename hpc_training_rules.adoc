@@ -63,7 +63,7 @@ We otherwise follow the training rule on consistency with the reference implemen
 
 CLOSED:
 
-Allowed hyperparameter and optimizer settings will be specified in the MLPerf HPC v0.5 Hyperparameter List. https://docs.google.com/spreadsheets/d/1jxsas4RRxKoKmIYcFZcFCQ1ZLnaMLSU8B5g5ZDKQ7sE/edit?usp=sharing
+Allowed hyperparameter and optimizer settings are specified here.
 
 |===
  |Model |Name |Constraint |Definition |Reference Code
