@@ -65,7 +65,7 @@ We otherwise follow the training rule on consistency with the reference implemen
 
 CLOSED:
 
-Allowed hyperparameter and optimizer settings will be specified in the MLPerf HPC v0.5 Hyperparameter List. https://docs.google.com/spreadsheets/d/1jxsas4RRxKoKmIYcFZcFCQ1ZLnaMLSU8B5g5ZDKQ7sE/edit?usp=sharing
+Allowed hyperparameter and optimizer settings are specified here. For anything not explicitly mentioned here, submissions must match the behavior and settings of the reference implementations.
 
 |===
  |Model |Name |Constraint |Definition |Reference Code
@@ -75,8 +75,10 @@ Allowed hyperparameter and optimizer settings will be specified in the MLPerf HP
  |CosmoFlow |opt_base_learning_rate |unconstrained |The base learning rate |`base_lr` times scaling factor, e.g. `global_batch_size/base_batch_size` if scaling="linear". link:https://github.com/sparticlesteve/cosmoflow-benchmark/blob/57c2454a28e415ca7df0135f016297763f6e4946/configs/cosmo.yaml#L38[Config]
  |CosmoFlow |opt_learning_rate_warmup_epochs |unconstrained |the number of epochs for learning rate to warm up to base value |link:https://github.com/sparticlesteve/cosmoflow-benchmark/blob/57c2454a28e415ca7df0135f016297763f6e4946/configs/cosmo.yaml#L47[config]
  |CosmoFlow |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |scaled learning rate / `base_lr`
- |CosmoFlow |opt_learning_rate_decay_boundary_epochs |[i, j], where i, j are positive integers, i.e. two learning rate decays are allowed in training" |Epochs at which learning rate decays |link:https://github.com/sparticlesteve/cosmoflow-benchmark/blob/57c2454a28e415ca7df0135f016297763f6e4946/configs/cosmo.yaml#L51[config]
+ |CosmoFlow |opt_learning_rate_decay_boundary_epochs |list of positive integers |Epochs at which learning rate decays |link:https://github.com/sparticlesteve/cosmoflow-benchmark/blob/57c2454a28e415ca7df0135f016297763f6e4946/configs/cosmo.yaml#L51[config]
  |CosmoFlow |opt_learning_rate_decay_factor |`0 < value < 1`, and you may use a different value for each decay |the learning rate decay factor(s) at the decay boundary epochs |link:https://github.com/sparticlesteve/cosmoflow-benchmark/blob/57c2454a28e415ca7df0135f016297763f6e4946/configs/cosmo.yaml#L51[config]
+ |CosmoFlow |dropout |`0 <= value < 1` |Dropout regularization probability for the dense layers |`dropout` setting in config
+ |CosmoFlow |opt_weight_decay | `value >= 0` | L2 regularization parameter for the dense layers |`l2` setting in config
  |DeepCAM |global_batch_size |unconstrained |the global batch size for training |`--local_batch_size` times number of workers
  |DeepCAM |opt_name |AdamW or LAMB |the optimizer name |`--optimizer`
  |DeepCAM |opt_epsilon |1e-6 or 1e-8 |epsilon for Adam |`--adam_eps`
@@ -101,17 +103,54 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 
 == Run Results
 
-We follow MLPerf Training Rule 10 with the addition that data staging to node-local storage or I/O accelerators must also be timed as described in Rule 6.1 above.
+MLPerf HPC submissions consist of the following two metrics: metrics 1 is considered mandatory for a complete submission whereas metric 2 is considered optional:
 
-You are encouraged to also report the additional metrics of the benchmark described in the MLPerf HPC v0.5 Metrics List (to be prepared).
+=== Strong Scaling (Time to Convergence)
+This is a *mandatory* metric: see MLPerf Training xref:training_rules.adoc#section-run-results[Rule 11] for reference. The same rules apply here.
+
+=== Weak Scaling (Throughput)
+This is an *optional* metric. It was designed to test the training capacity of a system.
+
+Measurement: we will define 3 important parameters first. 
+
+* number of models M: number of model instances which are going to be trained in this benchmark.
+* instance scale S: each individual model instance will be trained at this scale. 
+* total utilized scale T: the total scale used for running this benchmark. For example, if all M models are trained concurrently, then T=M*S. More generally we can write that S<=T<=M*S if (some of) the models are trained sequentially.
+
+Notes:
+
+* All three numbers M,S,T are chosen by the submitter. This allows the submitter to accomodate their submission to available machine resources, i.e. compute capacity and compute time.
+* S and T should be in units of compute resources, e.g. nodes, GPUs or other accelerators. This choice should be aligned with the HPC system description. For example, if the systems descriptions table lists number GPUs to define the scale of the system, then S should be specified in numbers of GPUs.
+* S and T can be chosen independently of the submission for metric 1 (strong scaling). We encourage to choose T as large as possible, ideally full system scale, but this is not required.
+
+The submitter then trains M models on the resource partitioning (S,T) as defined above to convergence. 
+
+We define a Time-To-Train-all (TTTa) number by computing the difference between the end time of the instance which needs longest time to converge and the start time of the instance which starts up fastest. Mathematically this can be expressed as 
+
+----
+TTTa = max(run_stop) - min(run_start) where the max/min are taken over all instances M. 
+----
+
+Note: the submitter is allowed to prune this number by removing results from individual training instances. As long as the minimum number of models rule is satisfied (see section <<Benchmark Results>> below), the submission is valid. They then use a modified number of models M'<=M and computes TTTa over the reduced set. This allows the submitter to remove occasional outliers or stragglers which would otherwise reduce the score disproportionally.
+
+Reporting: the submitter reports the the tuple (T, S, M', TTTa).
+It is required to submit a separate MLLOG file for each of the training instances, so that reviewers can verify the quoted numbers. 
+It is not allowed to merge logging files for individual instances.
+
+Restrictions: 
+
+* The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Strong Scaling (Time to Convergence)>> from the same benchmark.
+* this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
+
 
 == Benchmark Results
 
 We follow the MLPerf Training Rule 11 along with the following required number of runs per benchmark.
+Note that since run-to-run variability is already captured by spatial multiplexing in case of metric 3, we use the adjusted requirement that the number of trained instances has to be at least equal to the number of runs for metric 1 and 2.
 
 |===
-|Benchmark |Number of Runs
-|DeepCAM | 5
-|CosmoFlow | 10
-|OpenCatalyst | 5
+|Benchmark |Number of Runs (Metric 1, 2) | M' (Metric 3)
+|DeepCAM | 5 | >=5
+|CosmoFlow | 10 | >=10
+|OpenCatalyst | 5 | >=5
 |===
