@@ -462,6 +462,16 @@ In the case of UNET3D, due to large variance, 40 runs are required. Out of the 4
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
 
+=== Scoring
+
+An MLPerf submission score is intended to represent the median expected result across a large number of runs. 
+
+To reduce statistical variance and the potential to cherry pick results, each benchmark submission is composed of a set of N independent runs, with N chosen based on the observed variation of the benchmark, as described in the table above.
+
+Running multiple iterations of N independent runs with the goal of validating that the submission is close to a median result is encouraged but not required.  Running multiple iterations of N runs to try find the lowest one is against the spirit of MLPerf and is prohibited – see Section 2.1, “Strive to be fair”.  Results that appear to be too far away from a median result may be rejected. 
+
+As a more computationally efficient method of validating that a submission is close to the median result, it is also allowed to run M>N independent runs as a group and to designate N consecutive runs from the group as the runs to be used for scoring, provided that the submitter chooses the N consecutive runs that are closest to the median result.  For the purposes of calculating the median, sets of N consecutive runs that would create an invalid benchmark result should be included in the median calculation as "infinite" scores.  If the median set would be an invalid benchmark result, the entire result is invalid.  Submitting the full run set (vs just the N runs used for scoring) as a reference is optional, but may be required in the future.
+
 == Reference Convergence Points (RCPs)
 
 Reference Convergence Points are used to ensure that the convergence of the submission does not deviate from the convergence of the reference. We are interested in avoiding cases where the submission convergence is faster than the reference. Reference implementation convergence sets a lower bound on epoch convergence that a valid submission should not beat. From a statistical standpoint if the submission mean epochs to converge is significantly lower than the reference mean epochs to converge, then submission convergence points belong to a different population than the reference convergence points, and thus the submission should not be accepted. Compliance to reference convergence points is validated as follows
