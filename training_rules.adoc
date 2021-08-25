@@ -444,7 +444,7 @@ The clock must start before any part of the system touches the dataset or when t
 Each benchmark result is based on a set of run results. The number of results for each benchmark is based on a combination of the variance of the benchmark result, the cost of each run, and the likelihood of convergence.
 
 |===
-|Area|Problem |Number of Runs
+|Area|Problem |Minimum Number of Runs
 
 |Vision |Image classification |5
 | |Image segmentation (medical) | 40
