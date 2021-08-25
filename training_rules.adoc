@@ -562,6 +562,17 @@ Furthermore, for simplicity, the RCPs for this round will use clip-norm-before-r
 
 For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 30 minutes.  This is to enable new submitters to submit who were close to the 20 minute limit.  The 20 minute number was chosen empirically for rounds prior to v1.0.  For v1.1 and beyond, the training working group should make a data driven decision on what compile time is reasonable for real user applications.
 
+== Appendix: v1.1 Specific Rules
+
+This section contains rules specific to the v1.1 round of MLPerf Training.  These do not apply to future rounds, unless explicitly ratified as rules for those rounds, or unless these rules are promoted to official rules in previous sections of this document.
+
+=== BERT clip-normalization order
+
+For v1.0 only, BERT submissions may implement clip-norm either before or after inter-accelerator all-reduce. For future rounds, the expectation is that submissions must use clip-norm-after-reduce, to be consistent with most commonly used public BERT model repos.  This exception from v1.0 was extended to v1.1 because of the tight schedule between rounds.
+
+=== Preview Category
+
+For v1.1, we changed the policy documentation to say that a Preview submission needs to be available at the next submission after 140 days, not 180 days like it was before.  However, this does not apply to Preview submissions from v1.0, which will still follow the 180 day policy.  For v1.1 Preview submissions and beyond, the 140 day rule will apply.  This is not necessarily an "exception," but we are listing it here as a special case for the record.
 
 == Appendix: RCP Examples
 
