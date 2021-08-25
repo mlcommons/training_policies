@@ -55,7 +55,7 @@ Each reference implementation includes a download script or broadly available me
 
 The data at the start of the benchmark run should reside on a parallel file system that is persistent (>= 1 month, not subject to eviction by other users), can be downloaded to / accessed by the user, and can be shared among users at the facility. Any staging to node-local disk or memory or system burst buffer should be included in the benchmark time measurement.
 
-You must flush/reset the on-node caches prior to benchmarking. Due to practicality issues, you are not required to reset off-node system-level caches.
+You must flush/reset the on-node caches prior to running each instance of the benchmark. Due to practicality issues, you are not required to reset off-node system-level caches.
 
 We otherwise follow the training rule on consistency with the reference implementation preprocessing and allowance for reformatting.
 
