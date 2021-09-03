@@ -10,7 +10,7 @@ March 25, 2021
 == Overview
 This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
 
-There are seperate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
+There are separate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
 
@@ -215,6 +215,7 @@ OPEN: If applicable, the test dataset must be extracted in the same manner as th
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
+(Un)padding or (un)packing are both allowed as offline or online preprocessing steps, including removal or addition of zero tokens. When packing, It is permitted to reorder and compress the dataset. However, the overall data traversal order, taking into account any packing, must still be as a random as the reference application. For instance: It is allowed to (a) pack items into groups offline then to randomly reorder the groups each run or to (b) randomly order the items then pack them into groups as traversed online provided that in both cases the groups are much smaller than the overall dataset. It is not allowed to sort for packing and use the same sorted order for every run.
 
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
