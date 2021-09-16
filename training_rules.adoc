@@ -4,8 +4,8 @@
 :sectnums:
 
 = MLPerf Training Rules
-Version 0.7 
-May 2nd, 2018
+Version 1.0
+March 25, 2021
 
 == Overview
 This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
@@ -136,7 +136,7 @@ The closed division models and quality targets are:
 | |Object detection (light weight) |SSD |23.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
-| |NLP |BERT |0.712 Mask-LM accuracy
+| |NLP |BERT |0.720 Mask-LM accuracy
 |Commerce |Recommendation |DLRM |0.8025 AUC
 |Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
 |===
@@ -165,6 +165,8 @@ OPEN: Any random number generation may be used.
 
 === Numerical formats
 CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
+
+Reference Convergence Points must be obtained using FP32 precision, or FP32 emulation with explanation of the methodology for emulation.
 
 OPEN: Any format and scaling may be used.
 
@@ -213,8 +215,6 @@ OPEN: If applicable, the test dataset must be extracted in the same manner as th
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once.
-
-For DLRM the submissions are allowed to use a preshuffled dataset and are not obligated to shuffle the data once more during training. However, the reference implementation uses both preshuffled data and an approximate "batch shuffle" performed on-the-fly. Reference runs should also use a different seed in each run, so that the order of the training batches in each reference run is different. Even though the submissions are allowed to not shuffle the data on-the-fly, they are obligated to match the convergence behavior of the reference which does perform on-the-fly "batch-shuffle". Using a preshuffled dataset with a hand-crafted, advantageous data ordering is disallowed.
 
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
@@ -336,7 +336,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |rnnt |lamb |train_samples                           |unconstrained |Number of training samples after filtering out samples longer than data_train_max_duration |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L337[reference code]
  |rnnt |lamb |eval_samples                            |2703          |Number of evaluation samples |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L338[reference code]
  |rnnt |lamb |data_train_max_duration                 |unconstrained |Samples longer than this number of seconds are not included to training dataset |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L252-L253[reference code]
- |rnnt |lamb |data_train_num_buckets                  |6             |Training dataset is split to this number of buckets |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L293[reference code]
+ |rnnt |lamb |data_train_num_buckets                  |unconstrained |Training dataset is split to this number of buckets |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L293[reference code]
  |rnnt |lamb |data_train_speed_perturbation_min       |0.85          |Input audio is resampled to a random rample rate not less than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L256-L257[reference code]
  |rnnt |lamb |data_train_speed_perturbation_max       |1.15          |Input audio is resampled to a random rample rate not greater than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L254-L255[reference code]
  |rnnt |lamb |data_spec_augment_freq_n                |2             |Number of masks for frequency bands |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L258-L259[reference code]
@@ -392,7 +392,7 @@ OPEN: Any loss function may be used. Do not confuse the loss function with targe
 === Quality measure
 Each run must reach a target quality level on the reference implementation quality measure. By default, the time to evaluate the quality is included in the wallclock time. However, if the reference implementation generates timestamped checkpoints and evaluates the quality after the clock has been stopped, then an implementation may either perform evaluation on-the-clock or generate timestamped checkpoints, evaluate them after the clock has been stopped, and update the clock stopped time to the timestamp of the first passing checkpoint. The checkpoint timestamp may be any time after the last weight value included in the checkpoint is updated.
 
-CLOSED: The same quality measure as the reference implementation must be used. The quality measure must be evaluated at least as frequently (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
+CLOSED: The same quality measure as the reference implementation must be used. The quality measure must be evaluated at the same frequency (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Where applicable, the required evaluation point may be rounded up to the nearest batch size. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
 
 |===
 |Area |Problem |Model|Evaluation frequency
@@ -402,7 +402,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Object detection (light weight) |SSD|Fixed at epochs=40, 50, 55, 60, 65, 70, 75, 80
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Speech recognition |RNN-T|Every 1 epoch
-|        |NLP |BERT| Starting at 3M samples, then every 500K samples
+|        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |Commerce|Recommendation |DLRM|Every 102400 samples 
 |Research|Reinforcement learning |Mini Go|Every 1 epoch   
 |===
@@ -432,6 +432,7 @@ The OPEN division does not restrict mathematical equivalence.
 
 For a given round of MLPerf, the "canonical version" of a software component shall be defined as the public version as of 14 days before submission. If the software is open source, the canonical version shall be the one compiled with the default compilation options. If a system software provider submits with a component whose version is other than the canonical version, then other submitters using the same component are allowed to update their submission to use that version.  Those other submitters must resubmit with the updated system software before the resubmission deadline during the review period. Software adoption applies only to system software, only to the version used by the software provider’s submission, and explicitly does not cover benchmark implementations. Benchmark implementations should be borrowed as a whole only if the software provider’s submission introduces new APIs.
 
+[#section-run-results]
 == Run Results
 A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
 
@@ -443,7 +444,7 @@ The clock must start before any part of the system touches the dataset or when t
 Each benchmark result is based on a set of run results. The number of results for each benchmark is based on a combination of the variance of the benchmark result, the cost of each run, and the likelihood of convergence.
 
 |===
-|Area|Problem |Number of Runs
+|Area|Problem |Minimum Number of Runs
 
 |Vision |Image classification |5
 | |Image segmentation (medical) | 40
@@ -460,6 +461,18 @@ Each benchmark result is computed by dropping the fastest and slowest runs, then
 In the case of UNET3D, due to large variance, 40 runs are required. Out of the 40 runs, the 4 fastest and 4 slowest are dropped. There can be maximum of 4 non-converging runs. A run is classified as non-converged if the target quality metric is not reached within `CEILING(10000*168/samples_in_epoch)` epochs.
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
+
+=== Scoring
+
+An MLPerf submission score is intended to represent the median expected result across a large number of runs. 
+
+To reduce statistical variance and the potential to cherry pick results, each benchmark submission is composed of a set of N independent runs, with N chosen based on the observed variation of the benchmark, as described in the table above.
+
+Running multiple iterations of N independent runs with the goal of validating that the submission is close to a median result is encouraged but not required.  Running multiple iterations of N runs to try find the lowest one is against the spirit of MLPerf and is prohibited – see Section 2.1, “Strive to be fair”.  Results that appear to be too far away from a median result may be rejected. 
+
+As a more computationally efficient method of validating that a submission is close to the median result, it is also allowed to run M>N independent runs as a group and to designate N consecutive runs from the group as the runs to be used for scoring, provided that the submitter chooses the N consecutive runs that are closest to the median result.  For the purposes of calculating the median, sets of N consecutive runs that would create an invalid benchmark result should be included in the median calculation as "infinite" scores.  If the median set would be an invalid benchmark result, the entire result is invalid.  Submitting the full run set (vs just the N runs used for scoring) as a reference is optional, but may be required in the future.  For purposes of this scoring, "consecutive" is defined as an objective and deterministic method, such as submission timestamps.  Submitters are not allowed to pick different orderings to improve their score.  Runs may go in parallel on the submitter's compute resources, as long as there is a way to objectively and deterministically sort the runs, for example by timestamp.
+
+An example could be for a benchmark with N=5 runs, a submitter could ahead of time pick M=10, launch 10 runs on their compute resources, sort the 10 runs by their launch time stamp, then take a sliding window of 5 consecutive runs over those 10 runs.  That sliding window would create 6 possible sets of 5 runs.  Each of those 6 sets would be olympically scored, and the set with the median runtime would be submitted as that submitter's score.  Any failed runs within those 10 runs would count as infinity time and need to be included in the olympic scoring (could be thrown away as the slowest score).  It is recommended that a submitter keep the logs for all M runs, because the review committee may ask for the submitter to share the M logs during the review period.
 
 == Reference Convergence Points (RCPs)
 
@@ -502,43 +515,76 @@ To extract submission convergence points, logs should report epochs as follows. 
 
 == Appendix: Benchmark Specific Rules
 
-* ResNet
+* Image Classification
 
-** ResNet may have 1000 or 1001 classes, where the 1001st is "I don't know"
+** The model may have 1000 or 1001 classes, where the 1001st is "I don't know"
 
-== Appendix: Allowed Optimizers
+== Appendix: Allowed Closed Division Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
+TODO: locate the document and provide working link
 
 |===
 | Benchmark | Algorithm | Framework | Allowed Optimizer
 
-| RN50 | LARS                     | PyTorch	| [No compliant implementation]	
-|      |                          |	TensorFlow | MLPERF_LARSOptimizer	
+| Image classification | LARS                     | PyTorch	| [No compliant implementation]
+|      |                          |	TensorFlow | MLPERF_LARSOptimizer
 |      |                          | MxNet | SGDwFASTLARS
-| RN50 | SGD with Momentum        | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          |	PyTorch | torch.optim.SGD	
-|      |                          |	TensorFlow | tf.train.MomentumOptimizer	
+| Image classification | SGD with Momentum        | PyTorch	| apex.optimizers.FusedSGD
+|      |                          |	PyTorch | torch.optim.SGD
+|      |                          |	TensorFlow | tf.train.MomentumOptimizer
 |      |                          | MxNet | [No compliant implementation]
-| Minigo| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD	
-|      |                          | PyTorch | torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| Mask-RCNN	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          | PyTorch	| torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| SSD  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD	
-|      |                          | PyTorch	| torch.optim.SGD	
-|      |                          | TensorFlow | tf.train.MomentumOptimizer	
-| BERT | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+| Reinforcement learning| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD
+|      |                          | PyTorch | torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| Object detection (heavy weight)	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD
+|      |                          | PyTorch	| torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| Object detection (light weight)  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD
+|      |                          | PyTorch	| torch.optim.SGD
+|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| NLP | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
-| RNN-T | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
+| Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
-| DLRM | SGD             	        | PyTorch	| torch.optim.SGD
+| Recommendation | SGD             	        | PyTorch	| torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
-| UNET3D | SGD with Momentum      | PyTorch	    | torch.optim.SGD
+| Image segmentation (medical) | SGD with Momentum      | PyTorch	    | torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
 |===
+
+== Appendix: v1.0 Specific Rules
+
+This section contains rules specific to the v1.0 round of MLPerf Training.  These do not apply to future rounds, unless explicitly ratified as rules for those rounds, or unless these rules are promoted to official rules in previous sections of this document.
+
+=== MaskRCNN backbone
+
+For v1.0 only, Mask-RCNN submitters may use the non-reference backbone located https://drive.google.com/drive/folders/1lGU_pP2Pr2k578DslciwE4AlOKm6dKCK?usp=sharing[here] with the understanding that it converges similarly to the reference backbone.  If the non-reference backbone is shown to converge faster than the reference backbone at any scale on any submitted hyperparameter set, all uses of that backbone for any submitter are to be re-run with the reference backbone to have their submission published.  For future rounds, the expectation is that all submitters will use the reference backbone, which will fixed at reference code freeze time.
+
+=== BERT clip-normalization order
+
+For v1.0 only, BERT submissions may implement clip-norm either before or after inter-accelerator all-reduce. For future rounds, the expectation is that submissions must use clip-norm-after-reduce, to be consistent with most commonly used public BERT model repos.
+
+For performance consistency of at scale BERT submissions for v1.0, submitters are disallowed from using clip-norm-after-reduce to enable additional overlap of communication and math. If a submitter plans to use clip-norm-after-reduce for v1.0, they must notify the committee before the submission deadline, and be prepared to show code in their submission proving that they do not do overlap as a result of clip-norm-after-reduce.
+
+Furthermore, for simplicity, the RCPs for this round will use clip-norm-before-reduce.  In theory, this could allow clip-norm-after-reduce submissions that converge faster than they should, but still not faster than clip-norm-before-reduce, but the Training Working Group feels that this is ok risk for v1.0, in interest of simplifying the RCPs for v1.0.
+
+=== Compile time
+
+For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 30 minutes.  This is to enable new submitters to submit who were close to the 20 minute limit.  The 20 minute number was chosen empirically for rounds prior to v1.0.  For v1.1 and beyond, the training working group should make a data driven decision on what compile time is reasonable for real user applications.
+
+== Appendix: v1.1 Specific Rules
+
+This section contains rules specific to the v1.1 round of MLPerf Training.  These do not apply to future rounds, unless explicitly ratified as rules for those rounds, or unless these rules are promoted to official rules in previous sections of this document.
+
+=== BERT clip-normalization order
+
+For v1.0 only, BERT submissions may implement clip-norm either before or after inter-accelerator all-reduce. For future rounds, the expectation is that submissions must use clip-norm-after-reduce, to be consistent with most commonly used public BERT model repos.  This exception from v1.0 was extended to v1.1 because of the tight schedule between rounds.
+
+=== Preview Category
+
+For v1.1, we changed the policy documentation to say that a Preview submission needs to be available at the next submission after 140 days, not 180 days like it was before.  However, this does not apply to Preview submissions from v1.0, which will still follow the 180 day policy.  For v1.1 Preview submissions and beyond, the 140 day rule will apply.  This is not necessarily an "exception," but we are listing it here as a special case for the record.
 
 == Appendix: RCP Examples
 
