@@ -200,6 +200,8 @@ CLOSED: For benchmarks with sequence inputs, you may choose a length N and eithe
 
 CLOSED: Two ways to represent the Mask R-CNN mask are permitted. One is a polygon and the other is a scalable bitmask. 
 
+CLOSED: For benchmarks which use a language vocabulary, submissions should use the full vocabulary as used by reference. Mathematically equivalent padding of vocabulary size is allowed.
+
 OPEN: The closed division data representations restrictions only apply at the start of the run. Data may be represented in an arbitrary fashion during the run.
 
 === Other Uses of Data
