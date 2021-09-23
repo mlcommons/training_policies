@@ -399,7 +399,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 
 |Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
 |       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`.
-|       |Object detection (light weight) |SSD|Fixed at epochs=40, 50, 55, 60, 65, 70, 75, 80
+|       |Object detection (light weight) |SSD|Every 5 epochs
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
