@@ -504,8 +504,8 @@ To extract submission convergence points, logs should report epochs as follows. 
 | Benchmark | Epoch reporting 
 
 | RN50 | Epoch 
-| BERT | Eval sample (integer) 
-| DLRM | Epoch / 20.0 
+| BERT | Training sample (integer)
+| DLRM | 1 + Epoch / 20.0 (1.05, 1.1, 1.15...)
 | SSD | Epoch 
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
