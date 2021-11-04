@@ -47,9 +47,9 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### Hyperparameters & thresholds:
 
- 1. There must be an explicit list of hyperparameters which can be tuned by submitters, along with tuning rules (e.g. "any positive integer", "grid of allowed values", "one of a few choices" etc.), and allowed optimizers (if more than one).   This should show up in the README and [MLPerf rules doc](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#91-hyperparameters "hyperparameter rules").
+ 1. There must be an explicit list of hyperparameters which can be tuned by submitters, along with tuning rules (e.g. "any positive integer", "grid of allowed values", "one of a few choices" etc.), and allowed optimizers (if more than one).   This should show up in the README and [MLPerf rules doc](https://github.com/mlcommons/training_policies/blob/master/training_rules.adoc#hyperparameters "hyperparameter rules").
 
- 2. The target accuracy threshold needs to be explicit in the README and [MLPerf rules doc](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#3-benchmarks "benchmark table").
+ 2. The target accuracy threshold needs to be explicit in the README and [MLPerf rules doc](https://github.com/mlcommons/training_policies/blob/master/training_rules.adoc#benchmarks "benchmark table").
 
  ### Environment
 
@@ -119,7 +119,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### README
 
- 1. brief description of problem, requirements, environment, preprocessing steps, training data, model, optimizer and target metric (description of the metric, target value, evaluation frequency, size of eval dataset).  See [this](https://github.com/mlperf/training_policies/blob/master/training_rules.adoc#3-benchmarks) section from the rules
+ 1. brief description of problem, requirements, environment, preprocessing steps, training data, model, optimizer and target metric (description of the metric, target value, evaluation frequency, size of eval dataset).  See [this](https://github.com/mlcommons/training_policies/blob/master/training_rules.adoc#benchmarks) section from the rules
 
  2. Three summaries are expected.  
      a. Section 1, Summary, of the readme should be a very high level description of the task, for a reader with zero background of machine learning.  
