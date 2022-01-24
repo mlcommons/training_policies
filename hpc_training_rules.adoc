@@ -143,6 +143,7 @@ It is not allowed to merge logging files for individual instances.
 
 Restrictions: 
 
+* Due to large number of simultaneously-trained instances it's possible that some random seeds will match. Runs with identical seeds must be pruned from final results. Submitters can avoid issue by choosing non-matching seeds for their runs. 
 * The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Strong Scaling (Time to Convergence)>> from the same benchmark.
 * this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
 
