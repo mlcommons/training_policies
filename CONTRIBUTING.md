@@ -12,15 +12,15 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### General
 
- 1. Reference repository code must run without error on reference hardware (1xV100) on day of benchmark reference freeze.
+ 1. Reference repository code must run without error on reference hardware (DGX-A100) on day of benchmark reference freeze.
  
      a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
  2. Compute must be done in full fp32 precision for any math.
 
- 3. Max runtime is 7 days on 1x V100, fp32.
+ 3. Max runtime is 1 day on 1 DGX-A100, fp32.
 
-     a. An exception from the 7-day @ 1 GPU rule can only come from the Submitter's Working Group.
+     a. An exception from the 1-day @ DGX-A100 rule can only come from the Submitter's Working Group.
 
  4. Implementation should be minimalistic.
 
