@@ -154,7 +154,7 @@ N/A = Benchmark absent from round
 |===
 | Round          | v0.5 | v0.6 | v0.7 | v1   | v1.1 | v2
 | Resnet-50 v1.5 |     | No  | Yes | Yes | Yes | Yes
-| SSD            |     | No  | Yes | Yes | Yes | Yes
+| SSD            |     | No  | Yes | Yes | Yes | No
 | MaskRCNN       |     | No  | Yes | Yes | Yes | Yes
 | NCF            |     | N/A | N/A | N/A | N/A | N/A
 | NMT            |     | No  | Yes | N/A | N/A | N/A
