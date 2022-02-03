@@ -143,6 +143,29 @@ The closed division models and quality targets are:
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
 
+Closed division models evolve to meet industry practices. Below table shows compatible MLperf rounds for comparing performance:
+
+Yes = Compatible with last round
+
+No  = Incomptaible with last round
+
+N/A = Benchmark absent from round
+
+|===
+| Round          | v0.5 | v0.6 | v0.7 | v1   | v1.1 | v2
+| Resnet-50 v1.5 |     | No  | Yes | Yes | Yes | Yes
+| SSD            |     | No  | Yes | Yes | Yes | Yes
+| MaskRCNN       |     | No  | Yes | Yes | Yes | Yes
+| NCF            |     | N/A | N/A | N/A | N/A | N/A
+| NMT            |     | No  | Yes | N/A | N/A | N/A
+| Transformer    |     | No  | Yes | N/A | N/A | N/A
+| Minigo         |     | No  | No  | Yes | Yes | Yes
+| DLRM           | N/A | N/A | No  | Yes | Yes | Yes
+| BERT           | N/A | N/A | No  | No  | Yes | Yes 
+| RNN-T          | N/A | N/A | N/A | No  | No  | Yes
+| 3D Unet        | N/A | N/A | N/A | No  | Yes | Yes
+|===
+
 === Open Division
 The Open division allows using arbitrary training data, preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
 
