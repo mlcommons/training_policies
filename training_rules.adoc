@@ -563,8 +563,6 @@ For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 
 
 CLOSED: For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 30 minutes.  This is to enable new submitters to submit who were close to the 20 minute limit.  The 20 minute number was chosen empirically for rounds prior to v1.0.  For v1.1 and beyond, the training working group should make a data driven decision on what compile time is reasonable for real user applications.
 
-OPEN: There is no limit on the untimed compile time. However, the required compile time must be reported in the "notes" column of the public results table.
-OR
 OPEN: The allowed untimed compile time is 4 hours.
 
 == Appendix: RCP Examples
