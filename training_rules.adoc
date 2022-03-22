@@ -559,9 +559,7 @@ Furthermore, for simplicity, the RCPs for this round will use clip-norm-before-r
 
 === Compile time
 
-For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 30 minutes.  This is to enable new submitters to submit who were close to the 20 minute limit.  The 20 minute number was chosen empirically for rounds prior to v1.0.  For v1.1 and beyond, the training working group should make a data driven decision on what compile time is reasonable for real user applications.
-
-CLOSED: For v1.0 only, the allowed untimed compile time is increased from 20 minutes to 30 minutes.  This is to enable new submitters to submit who were close to the 20 minute limit.  The 20 minute number was chosen empirically for rounds prior to v1.0.  For v1.1 and beyond, the training working group should make a data driven decision on what compile time is reasonable for real user applications.
+CLOSED: The allowed untimed compile time is 30 minutes. The 30 minute number has been chosen empirically.
 
 OPEN: The allowed untimed compile time is 4 hours.
 
