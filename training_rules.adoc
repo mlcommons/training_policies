@@ -607,3 +607,17 @@ Let's consider now the following submission scenarios:
 * Submitter S4 makes a submission for A with batch size 512. Since there is neither RCP for that batch size, nor RCPs for larger batch sizes, S2 needs to provide convergence points by running the reference with that batch size.
 * Submitter S5 makes a submission for A with batch size 64 that meets the (stricter) convergence criteria for the RCP with the smallest batch size (128). In this case the submission is accepted.
 * Submitter S6 makes a submission for A with batch size 64 that does not meet the convergence criteria for the RCP with the smallest batch size (128). In this case S1 needs to provide convergence points by running the reference with batch size = 64.
+
+== Appendix: Utilization
+
+MLPerf recommends calculating _utilization_ as `model_tensor_flops / (peak_system_tensor_flops_per_second * runtime_seconds)` where:
+
+    * `model_tensor_flops` means only the tensor (ie matrix multiply or convolution) operations that are required by the model definition.  Vector or pointwise ops in the model such as bias add, normalization etc, are not counted as `model_tensor_flops`.  Furthermore, implementations that use activation recomputation methods should not count any of the operations added by activation recomputation as `model_tensor_flops`.  
+
+    * `peak_system_tensor_flops_per_second` means the peak tensor operations of the hardware, counting only tensor math throughput and not additional vector or pointwise math datapaths.
+
+    * `runtime_seconds` means the mean of the runtimes of the runs used to calculate the benchmark result.
+
+Use of `hardware_tensor_flops` (defined as model_tensor_flops plus operations added due to activation recomputation), instead of `model_tensor_flops` is strongly discouraged because those are not useful flops for the model. If `hardware_tensor_flops` are used for calculating utilization, it is recommended to also provide an accompanying calculation with `model_tensor_flops`.
+
+Note _utilization_ is not an official MLPerf metric.
