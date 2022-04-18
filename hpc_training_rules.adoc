@@ -146,7 +146,7 @@ Restrictions:
 * The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Strong Scaling (Time to Convergence)>> from the same benchmark.
 * this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
 
-In case of resubmission due to HP borrowing: Due to the high overhead of these runs, submitters are not obligated to replace their original results. Instead they can opt to keep both sets of results (pre- and post- HP borrowing). 
+In case of *weakly-scaled* resubmission due to HP borrowing: Due to the high overhead of these runs, submitters are not obligated to replace their original results. Instead they can opt to keep both sets of results (pre- and post- HP borrowing). 
 
 == Benchmark Results
 
