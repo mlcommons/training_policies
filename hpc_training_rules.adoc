@@ -57,7 +57,7 @@ The data at the start of the benchmark run should reside on a parallel file syst
 
 You must flush/reset the on-node caches prior to running each instance of the benchmark. Due to practicality issues, you are not required to reset off-node system-level caches.
 
-We otherwise follow the training rule on consistency with the reference implementation preprocessing and allowance for reformatting.
+We otherwise follow the training rule xref:training_rules.adoc#data-state-at-start-of-run[Data State at Start of Run] on consistency with the reference implementation preprocessing and allowance for reformatting.
 
 == Training Loop
 
@@ -110,7 +110,7 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 MLPerf HPC submissions consist of the following two metrics: metrics 1 is considered mandatory for a complete submission whereas metric 2 is considered optional:
 
 === Strong Scaling (Time to Convergence)
-This is a *mandatory* metric: see MLPerf Training xref:training_rules.adoc#section-run-results[Rule 11] for reference. The same rules apply here.
+This is a *mandatory* metric: see MLPerf Training xref:training_rules.adoc#section-run-results[Run Results] for reference. The same rules apply here.
 
 === Weak Scaling (Throughput)
 This is an *optional* metric. It was designed to test the training capacity of a system.
@@ -149,7 +149,7 @@ Restrictions:
 
 == Benchmark Results
 
-We follow the MLPerf Training Rule 11 along with the following required number of runs per benchmark.
+We follow MLPerf Training xref:training_rules.adoc#benchmark-results[Benchmark Results] rule along with the following required number of runs per benchmark.
 Note that since run-to-run variability is already captured by spatial multiplexing in case of metric 3, we use the adjusted requirement that the number of trained instances has to be at least equal to the number of runs for metric 1 and 2.
 
 |===
