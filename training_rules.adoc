@@ -4,8 +4,8 @@
 :sectnums:
 
 = MLPerf Training Rules
-Version 1.0
-March 25, 2021
+Version 2.0
+April 27, 2022
 
 == Overview
 This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
@@ -474,11 +474,16 @@ As a more computationally efficient method of validating that a submission is cl
 
 An example could be for a benchmark with N=5 runs, a submitter could ahead of time pick M=10, launch 10 runs on their compute resources, sort the 10 runs by their launch time stamp, then take a sliding window of 5 consecutive runs over those 10 runs.  That sliding window would create 6 possible sets of 5 runs.  Each of those 6 sets would be olympically scored, and the set with the median runtime would be submitted as that submitter's score.  Any failed runs within those 10 runs would count as infinity time and need to be included in the olympic scoring (could be thrown away as the slowest score).  It is recommended that a submitter keep the logs for all M runs, because the review committee may ask for the submitter to share the M logs during the review period.
 
+=== Score scaling
+
+The score of an MLPerf submission may be scaled if the training committee decides so during the review period. This scaling may be, but not limited to failing to meet the reference convergence limits imposed by the Reference Convergence Points (see following section). To facilitate the automatic generation of the scaled score the scaling factor must be provided in a json file under the name scaling.json in the directory whose scores are going to be scaled.
+
 == Reference Convergence Points (RCPs)
 
 Reference Convergence Points are used to ensure that the convergence of the submission does not deviate from the convergence of the reference. We are interested in avoiding cases where the submission convergence is faster than the reference. Reference implementation convergence sets a lower bound on epoch convergence that a valid submission should not beat. From a statistical standpoint if the submission mean epochs to converge is significantly lower than the reference mean epochs to converge, then submission convergence points belong to a different population than the reference convergence points, and thus the submission should not be accepted. Compliance to reference convergence points is validated as follows
 
 * Reference implementations provide at least 2N epoch convergence numbers, where N is the number of submission runs needed for each benchmark. Since convergence is affected by batch size (larger batch size means slower convergence), reference implementations provide convergence data for a few different batch sizes.
+* After a set of Reference Convergence Points is gathered, we find the minimal set of these points that are needed for the fastest possible convergence. For example, if the RCP for batch size 128 is at 10 epochs, the RCP for batch size 256 is at 20 epochs, and the RCP for batch size 512 is also at 20 epochs, then we prune the RCP at the 256 batch size. Based on the assumption that convergence increases with batch size, we expect to be able to converge faster than 20 epochs at batch size 256. In practice we prune ALL RCP points that have slower convergence than the linear interpolation at the same batch size of any two surrounding points. Eventually we end up with a pruned set of RCPs which defines the fastest possible convergence of the reference code as a function of batch size.
 * Using the mean and standard deviation of the reference convergence we apply a 1-sided independent two-sample Student's t-test with unequal sample sizes, similar variances with p-value=0.05 (explained link:https://en.wikipedia.org/wiki/Student%27s_t-test#Equal_or_unequal_sample_sizes,_similar_variances_(1/2_%3C_sX1/sX2_%3C_2)[here]) to find the maximum acceptable speedup for submission convergence.
 * At submission time, the submission is matched to an RCP based on the submission batch size.
 ** If there is an RCP for that batch size then mean epochs to converge of the submission is extracted from submission logs. If this does not violate the maximum acceptable speedup condition when compared to the reference then the submission is accepted, otherwise it may be rejected.
@@ -495,22 +500,22 @@ Submitters are encouraged to run the RCP checker script prior to their submissio
 
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to upload, but the submitter must notify the results chair, and prepare for the audit process described in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document] but at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
-If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. If not, the submission will not be accepted. All missing RCPs are due at submission time. RCPs are added by making a pull request into the RCP library in the logging repository.
+If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline. RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document]
 
 To extract submission convergence points, logs should report epochs as follows. For this round no RCP checks will be made for Minigo.
 |===
-| Benchmark | Epoch reporting 
+| Benchmark | Epoch reporting
 
-| RN50 | Epoch 
+| RN50 | Epoch
 | BERT | Training sample (integer)
 | DLRM | 1 + Epoch / 20.0 (1.05, 1.1, 1.15...)
 | SSD | Epoch 
-| Mask-RCNN | Epoch 
-| RNN-T | Epoch 
+| Mask-RCNN | Epoch
+| RNN-T | Epoch
 | UNET3D | Epoch
-| Minigo | N/A 
+| Minigo | N/A
 |===
 
 == Appendix: Benchmark Specific Rules
@@ -518,6 +523,12 @@ To extract submission convergence points, logs should report epochs as follows. 
 * Image Classification
 
 ** The model may have 1000 or 1001 classes, where the 1001st is "I don't know"
+
+* Bert
+
+** Clip-normalization order: The 1.0 and 1.1 exception that benchmarks may implement clip-normalization either before or after accelerator all-reduce has been extended indefinitely to future rounds.
+
+** --rcp-bert-train-samples log compliance parameter: For all benchmarks other than Bert, convergence for RCP purposes is reported in the last eval_accuracy line of the log file. For Bert, submitters are allowed to add an extra log line with key set to train_samples and value the number of samples to converge. If that is the case, the package compliance checker should be run with the --rcp-bert-train-samples command line parameter.
 
 == Appendix: Allowed Closed Division Optimizers
 
