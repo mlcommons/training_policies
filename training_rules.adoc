@@ -347,11 +347,12 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L268-L269[reference code]
  |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L395[reference code]
  |rnnt |lamb |model_weights_initialization_scale      |unconstrained |After random initialization of weight and bias tensors, all are scaled with this factorAfter random initialization of weight and bias tensors, all are scaled with this factor |See link:https://github.com/mwawrzos/training/blob/2126999a1ffff542064bb3208650a1e673920dcf/rnn_speech_recognition/pytorch/train.py#L342[reference code]
- |ssd |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L82[reference code]
- |ssd |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L89[reference code]
- |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L91[reference code]
- |ssd |adam |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L86[reference code]
-|unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
+ |ssd |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L80[reference code]
+ |ssd |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L87[reference code]
+ |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L89[reference code]
+ |ssd |adam |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L84[reference code]
+ |ssd |adam |opt_weight_decay |0 |L2 weight decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L171[reference code]
+ |unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
  |unet3d |sgd |opt_base_learning_rate |unconstrained |base learning rate |reference --learning_rate
  |unet3d |sgd |opt_momentum |unconstrained |SGD momentum |reference --momentum
  |unet3d |sgd |opt_learning_rate_warmup_steps |unconstrained |number of epochs needed for learning rate warmup|reference --lr_warmup_epochs
