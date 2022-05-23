@@ -146,7 +146,7 @@ Restrictions:
 * The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Strong Scaling (Time to Convergence)>> from the same benchmark.
 * this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
 
-In case of a re-submission caused by HP borrowing: Max scale allowed to resubmit is the *proven* max scale from the original submission. Proven max scale is the number of models in the original submitted results (i.e. after pruning - M') multiplied by the instance scale (i.e. chips per model - S). Rule will be simplified when we add capability to submit pruned log files in final submission, in which case max scale will become the originally-intended scale (before pruning).
+In case of a re-submission caused by HP borrowing: Resubmission scale can at most be the *proven* scale of the original submission. Max scale is proved with submitted log files, including log files of pruned results which should be submitted alongside non-pruned results, using the directory structure defined in submission rules.
 
 
 == Benchmark Results
