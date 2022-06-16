@@ -143,10 +143,14 @@ It is not allowed to merge logging files for individual instances.
 
 Restrictions: 
 
+* Due to large number of simultaneously-trained instances it's possible that some random seeds will match. Runs with identical seeds must be pruned from final results. Submitters can avoid issue by choosing non-matching seeds for their runs. 
 * The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Strong Scaling (Time to Convergence)>> from the same benchmark.
 * this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
+* Due to large scale of weakly-scaled submissions, it's possible that hardware failures can occur during training. Although unfortunate, this issue is not a sufficient reason to request a post-deadline re-run and re-submission. Submitters are responsible to plan ahead and give themselves enough time to overcome any challenges that may cause them to miss the submission deadline.
 
 In case of *weakly-scaled* resubmission due to HP borrowing: Due to the high overhead of these runs, submitters are not obligated to replace their original results. Instead they can opt to keep both sets of results (pre- and post- HP borrowing). 
+
+
 
 == Benchmark Results
 

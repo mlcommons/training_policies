@@ -4,8 +4,8 @@
 :sectnums:
 
 = MLPerf Training Rules
-Version 1.0
-March 25, 2021
+Version 2.0
+April 27, 2022
 
 == Overview
 This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
@@ -76,7 +76,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 
 |Vision |Image classification |ImageNet
 | |Image segmentation (medical) |KiTS19
-| |Object detection (light weight) |COCO
+| |Object detection (light weight) |A subset of OpenImages
 | |Object detection (heavy weight) |COCO
 |Language |Speech recognition |LibriSpeech
 | |NLP |Wikipedia 2020/01/01
@@ -133,7 +133,7 @@ The closed division models and quality targets are:
 
 |Vision |Image classification |ResNet-50 v1.5 |75.90% classification
 | |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score
-| |Object detection (light weight) |SSD |23.0% mAP
+| |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
@@ -164,7 +164,7 @@ Random number generators may be initialized repeatedly in multiple processes or 
 OPEN: Any random number generation may be used.
 
 === Numerical formats
-CLOSED: The numerical formats fp64, fp32, tf32, fp16, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
+CLOSED: The numerical formats fp64, fp32, tf32, fp16, fp8, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
 
 Reference Convergence Points must be obtained using FP32 precision, or FP32 emulation with explanation of the methodology for emulation.
 
@@ -282,7 +282,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
- |maskrcnn |sgd |opt_base_learning_rate |0.02 * K for any integer K |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L12[reference code]
+ |maskrcnn |sgd |opt_base_learning_rate |0.02 * K for any integer K. For global_batch_size < 16, 0.02 / K for any integer K is also allowed |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L12[reference code]
  |maskrcnn |sgd |max_image_size$$*$$ |fixed to reference |Maximum size of the longer side |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/transforms/build.py#L8[reference code]
  |maskrcnn |sgd |min_image_size$$*$$ |fixed to reference |Maximum size of the shorter side |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/transforms/build.py#L7[reference code]
  |maskrcnn |sgd |num_image_candidates$$*$$ |1000 or 1000 * batches per chip |tunable number of region proposals for given batch size |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/modeling/rpn/inference.py#L183[reference code]
@@ -347,15 +347,12 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L268-L269[reference code]
  |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L395[reference code]
  |rnnt |lamb |model_weights_initialization_scale      |unconstrained |After random initialization of weight and bias tensors, all are scaled with this factorAfter random initialization of weight and bias tensors, all are scaled with this factor |See link:https://github.com/mwawrzos/training/blob/2126999a1ffff542064bb3208650a1e673920dcf/rnn_speech_recognition/pytorch/train.py#L342[reference code]
-|ssd |sgd |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L23[reference code]
- |ssd |sgd |model_bn_span |integer >= 1 |number of samples whose statistics a given BN layer uses to normalize a training minibatch (may be just the portion of global_batch_size per device, but also may be aggregated over several devices) |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L335[reference code]
- |ssd |sgd |opt_learning_rate_warmup_factor |Integer >= 0 |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L45[reference code]
- |ssd |sgd |opt_learning_rate_warmup_steps |integer >= 1 |number of steps for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L43[reference code]
- |ssd |sgd |opt_weight_decay |arbitrary constant |L2 weight decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L40[reference code]
- |ssd |sgd |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L47[reference code]
- |ssd |sgd |max_samples |1 or 50 |maximum number of samples attempted when generating a training patch for a given IoU choice |link:https://github.com/mlperf/training/pull/367/commits/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59#diff-591431110d6b55f5afe595b96253fddbR111[reference code]
- |ssd |sgd |opt_learning_rate_decay_boundary_epochs |[40, 50] * (1 + k/10) for some integer k |Epochs at which the learning rate decays |link:https://github.com/mlperf/training/blob/e6fbbb323adb7d1521cc5b7d7371f2e4461ece59/single_stage_detector/ssd/train.py#L48[reference code]
-|unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
+ |ssd |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L80[reference code]
+ |ssd |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L87[reference code]
+ |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L89[reference code]
+ |ssd |adam |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L84[reference code]
+ |ssd |adam |opt_weight_decay |0 |L2 weight decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L171[reference code]
+ |unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
  |unet3d |sgd |opt_base_learning_rate |unconstrained |base learning rate |reference --learning_rate
  |unet3d |sgd |opt_momentum |unconstrained |SGD momentum |reference --momentum
  |unet3d |sgd |opt_learning_rate_warmup_steps |unconstrained |number of epochs needed for learning rate warmup|reference --lr_warmup_epochs
@@ -399,7 +396,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 
 |Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
 |       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`.
-|       |Object detection (light weight) |SSD|Every 5 epochs
+|       |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
@@ -436,7 +433,7 @@ For a given round of MLPerf, the "canonical version" of a software component sha
 == Run Results
 A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
 
-Prior to starting the clock, a system may use a maximum of 20 minutes of model initialization time. Model initialization time begins when the system first begins to construct or execute the model. This maximum initialization time is intended to ensure that model initialization is not disproportionate on large systems intended to run much larger models, and may be adjusted in the future with sufficient evidence.
+Prior to starting the clock, a system may use a maximum model initialization time of 30 minutes for _Closed_ division and 4 hours for _Open_ division. Model initialization time begins when the system first begins to construct or execute the model. This maximum initialization time is intended to ensure that model initialization is not disproportionate on large systems intended to run much larger models, and may be adjusted in the future with sufficient evidence.
 
 The clock must start before any part of the system touches the dataset or when the maximum model initialization time is exceeded. The clock may be stopped as soon as any part of the system determines target accuracy has been reached. The clock may not be paused during the run.
 
@@ -474,11 +471,16 @@ As a more computationally efficient method of validating that a submission is cl
 
 An example could be for a benchmark with N=5 runs, a submitter could ahead of time pick M=10, launch 10 runs on their compute resources, sort the 10 runs by their launch time stamp, then take a sliding window of 5 consecutive runs over those 10 runs.  That sliding window would create 6 possible sets of 5 runs.  Each of those 6 sets would be olympically scored, and the set with the median runtime would be submitted as that submitter's score.  Any failed runs within those 10 runs would count as infinity time and need to be included in the olympic scoring (could be thrown away as the slowest score).  It is recommended that a submitter keep the logs for all M runs, because the review committee may ask for the submitter to share the M logs during the review period.
 
+=== Score scaling
+
+The score of an MLPerf submission may be scaled if the training committee decides so during the review period. This scaling may be, but not limited to failing to meet the reference convergence limits imposed by the Reference Convergence Points (see following section). To facilitate the automatic generation of the scaled score the scaling factor must be provided in a json file under the name scaling.json in the directory whose scores are going to be scaled.
+
 == Reference Convergence Points (RCPs)
 
 Reference Convergence Points are used to ensure that the convergence of the submission does not deviate from the convergence of the reference. We are interested in avoiding cases where the submission convergence is faster than the reference. Reference implementation convergence sets a lower bound on epoch convergence that a valid submission should not beat. From a statistical standpoint if the submission mean epochs to converge is significantly lower than the reference mean epochs to converge, then submission convergence points belong to a different population than the reference convergence points, and thus the submission should not be accepted. Compliance to reference convergence points is validated as follows
 
 * Reference implementations provide at least 2N epoch convergence numbers, where N is the number of submission runs needed for each benchmark. Since convergence is affected by batch size (larger batch size means slower convergence), reference implementations provide convergence data for a few different batch sizes.
+* After a set of Reference Convergence Points is gathered, we find the minimal set of these points that are needed for the fastest possible convergence. For example, if the RCP for batch size 128 is at 10 epochs, the RCP for batch size 256 is at 20 epochs, and the RCP for batch size 512 is also at 20 epochs, then we prune the RCP at the 256 batch size. Based on the assumption that convergence increases with batch size, we expect to be able to converge faster than 20 epochs at batch size 256. In practice we prune ALL RCP points that have slower convergence than the linear interpolation at the same batch size of any two surrounding points. Eventually we end up with a pruned set of RCPs which defines the fastest possible convergence of the reference code as a function of batch size.
 * Using the mean and standard deviation of the reference convergence we apply a 1-sided independent two-sample Student's t-test with unequal sample sizes, similar variances with p-value=0.05 (explained link:https://en.wikipedia.org/wiki/Student%27s_t-test#Equal_or_unequal_sample_sizes,_similar_variances_(1/2_%3C_sX1/sX2_%3C_2)[here]) to find the maximum acceptable speedup for submission convergence.
 * At submission time, the submission is matched to an RCP based on the submission batch size.
 ** If there is an RCP for that batch size then mean epochs to converge of the submission is extracted from submission logs. If this does not violate the maximum acceptable speedup condition when compared to the reference then the submission is accepted, otherwise it may be rejected.
@@ -495,22 +497,22 @@ Submitters are encouraged to run the RCP checker script prior to their submissio
 
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to upload, but the submitter must notify the results chair, and prepare for the audit process described in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document] but at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
-If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. If not, the submission will not be accepted. All missing RCPs are due at submission time. RCPs are added by making a pull request into the RCP library in the logging repository.
+If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline. RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document]
 
 To extract submission convergence points, logs should report epochs as follows. For this round no RCP checks will be made for Minigo.
 |===
-| Benchmark | Epoch reporting 
+| Benchmark | Epoch reporting
 
-| RN50 | Epoch 
+| RN50 | Epoch
 | BERT | Training sample (integer)
 | DLRM | 1 + Epoch / 20.0 (1.05, 1.1, 1.15...)
-| SSD | Epoch 
+| SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
 | UNET3D | Epoch
-| Minigo | N/A 
+| Minigo | N/A
 |===
 
 == Appendix: Benchmark Specific Rules
@@ -518,6 +520,12 @@ To extract submission convergence points, logs should report epochs as follows. 
 * Image Classification
 
 ** The model may have 1000 or 1001 classes, where the 1001st is "I don't know"
+
+* Bert
+
+** Clip-normalization order: The 1.0 and 1.1 exception that benchmarks may implement clip-normalization either before or after accelerator all-reduce has been extended indefinitely to future rounds.
+
+** --rcp-bert-train-samples log compliance parameter: For all benchmarks other than Bert, convergence for RCP purposes is reported in the last eval_accuracy line of the log file. For Bert, submitters are allowed to add an extra log line with key set to train_samples and value the number of samples to converge. If that is the case, the package compliance checker should be run with the --rcp-bert-train-samples command line parameter.
 
 == Appendix: Allowed Closed Division Optimizers
 
@@ -540,9 +548,8 @@ TODO: locate the document and provide working link
 | Object detection (heavy weight)	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD
 |      |                          | PyTorch	| torch.optim.SGD
 |      |                          | TensorFlow | tf.train.MomentumOptimizer
-| Object detection (light weight)  | SGD with Momentum	      | PyTorch	| apex.optimizers.FusedSGD
-|      |                          | PyTorch	| torch.optim.SGD
-|      |                          | TensorFlow | tf.train.MomentumOptimizer
+| Object detection (light weight)  | ADAM	      | PyTorch	| torch.optim.Adam
+|      |                          | TensorFlow | tf.keras.optimizers.Adam
 | NLP | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
 | Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
@@ -607,3 +614,17 @@ Let's consider now the following submission scenarios:
 * Submitter S4 makes a submission for A with batch size 512. Since there is neither RCP for that batch size, nor RCPs for larger batch sizes, S2 needs to provide convergence points by running the reference with that batch size.
 * Submitter S5 makes a submission for A with batch size 64 that meets the (stricter) convergence criteria for the RCP with the smallest batch size (128). In this case the submission is accepted.
 * Submitter S6 makes a submission for A with batch size 64 that does not meet the convergence criteria for the RCP with the smallest batch size (128). In this case S1 needs to provide convergence points by running the reference with batch size = 64.
+
+== Appendix: Utilization
+
+MLPerf recommends calculating _utilization_ as `model_tensor_flops / (peak_system_tensor_flops_per_second * runtime_seconds)` where:
+
+    * `model_tensor_flops` means only the tensor (ie matrix multiply or convolution) operations that are required by the model definition.  Vector or pointwise ops in the model such as bias add, normalization etc, are not counted as `model_tensor_flops`.  Furthermore, implementations that use activation recomputation methods should not count any of the operations added by activation recomputation as `model_tensor_flops`.
+
+    * `peak_system_tensor_flops_per_second` means the peak tensor operations of the hardware, counting only tensor math throughput and not additional vector or pointwise math datapaths.
+
+    * `runtime_seconds` means the mean of the runtimes of the runs used to calculate the benchmark result.
+
+Use of `hardware_tensor_flops` (defined as model_tensor_flops plus operations added due to activation recomputation), instead of `model_tensor_flops` is strongly discouraged because those are not useful flops for the model. If `hardware_tensor_flops` are used for calculating utilization, it is recommended to also provide an accompanying calculation with `model_tensor_flops`.
+
+Note _utilization_ is not an official MLPerf metric.
