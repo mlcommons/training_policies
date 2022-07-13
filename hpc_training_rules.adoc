@@ -99,7 +99,7 @@ Allowed hyperparameter and optimizer settings are specified here. For anything n
  |OpenCatalyst |opt_base_learning_rate |`value > 0` |the base learning rate |config setting `lr_initial`
  |OpenCatalyst |opt_learning_rate_warmup_steps |`value >= 0` |the number of steps for learning rate to warm up to base value |`warmup_steps`
  |OpenCatalyst |opt_learning_rate_warmup_factor |`0 <= value <= 1` |the factor applied to the learning rate at the start of warmup |`warmup_factor`
- |OpenCatalyst |opt_learning_rate_decay_boundary_steps |list of positive integers |`lr_milestones`
+ |OpenCatalyst |opt_learning_rate_decay_boundary_steps |list of positive integers |The steps at which learning rate is decayed |`lr_milestones`
  |OpenCatalyst |opt_learning_rate_decay_factor |`0 <= value <= 1` |the factor applied to decay the learning rate at each decay boundary step |`lr_gamma`
 |===
 
