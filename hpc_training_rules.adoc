@@ -42,9 +42,9 @@ The closed division models are:
 
 |===
 |Problem |Model
-|Climate segmentation  |https://github.com/azrael417/mlperf-deepcam
-|Cosmological parameter prediction |https://github.com/sparticlesteve/cosmoflow-benchmark
-|Modeling catalysts |https://github.com/sparticlesteve/ocp/tree/mlperf-hpc-reference
+|Climate segmentation  |https://github.com/mlcommons/hpc/tree/main/deepcam
+|Cosmological parameter prediction |https://github.com/mlcommons/hpc/tree/main/cosmoflow
+|Modeling catalysts |https://github.com/mlcommons/hpc/tree/main/open_catalyst
 |===
 
 == Data Set
