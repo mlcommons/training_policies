@@ -12,7 +12,7 @@ Points of contact: David Kanter (dkanter@gmail.com), Steve Farrell (sfarrell@lbl
 
 == Overview
 
-All rules are taken from the MLPerf Training Rules except for those that are overridden here.
+All rules are taken from the MLPerf Training Rules (the version at the time of HPC rules freeze) except for those that are overridden here. 
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the
 MLPerf name, the result must conform to the letter and spirit of the rules
