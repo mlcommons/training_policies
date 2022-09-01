@@ -488,7 +488,7 @@ Reference Convergence Points are used to ensure that the convergence of the subm
 ** If there is no RCP for that batch size but there are RCPs for smaller and larger batch sizes an interpolated RCP is created, and the mean epochs to converge is compared against the interpolated RCP just like in the previous case
 ** If the submission batch size is larger than the batch size of any RCP the submitter must provide the missing RCPs by running the reference implementation with their batch size.
 ** If the submission batch size is smaller that the batch size of any RCP AND the convergence test against the RCP with the minimum batch size fails, then again the submitter must provide the missing RCPs by running the reference implementation with their batch size.
-** Accepted submissions with mean epochs lower than RCP mean (faster) but within the acceptable speedup range are normalized to (potentially interpolated) RCP mean epochs for fairness.
+** Accepted submissions with mean epochs lower than RCP mean (faster) but within the acceptable speedup range are normalized to (potentially interpolated) RCP mean epochs for fairness. New normalized score = Submission-olympic-score * (RCP-mean / olympic-submission-epochs)
 
 Please refer to the related Appendix for examples that shed light to the RCP process.
 
