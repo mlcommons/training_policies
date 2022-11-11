@@ -3,7 +3,7 @@
 
 :sectnums:
 
-= MLPerf HPC Training Rules
+= MLPerf™ HPC Training Rules
 
 Version 0.7 
 July 16, 2020
@@ -12,12 +12,11 @@ Points of contact: David Kanter (dkanter@gmail.com), Steve Farrell (sfarrell@lbl
 
 == Overview
 
-All rules are taken from the MLPerf Training Rules except for those that are overridden here.
+All rules are taken from the MLPerf™ Training Rules except for those that are overridden here.
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the
 MLPerf name, the result must conform to the letter and spirit of the rules
-specified in this document. The MLPerf organization reserves the right to solely
-determine if a use of its name or logo is acceptable.
+specified in this document. The MLCommons® Association reserves the right to solely determine if a use of its name or logos are acceptable.
 
 == Benchmarks
 
