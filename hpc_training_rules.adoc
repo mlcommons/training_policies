@@ -14,9 +14,7 @@ Points of contact: David Kanter (dkanter@gmail.com), Steve Farrell (sfarrell@lbl
 
 All rules are taken from the MLPerf™ Training Rules except for those that are overridden here.
 
-The MLPerf name and logo are trademarks. In order to refer to a result using the
-MLPerf name, the result must conform to the letter and spirit of the rules
-specified in this document. The MLCommons® Association reserves the right to solely determine if a use of its name or logos is acceptable.
+The MLPerf name and logo are trademarks of the MLCommons® Association ("MLCommons"). In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. MLCommons reserves the right to solely determine if a use of its name or logos is acceptable.
 
 == Benchmarks
 
