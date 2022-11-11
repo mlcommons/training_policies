@@ -3,7 +3,7 @@
 
 :sectnums:
 
-= MLPerf Training Rules
+= MLPerf™ Training Rules
 Version 2.0
 April 27, 2022
 
