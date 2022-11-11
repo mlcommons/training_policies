@@ -8,7 +8,7 @@ Version 2.0
 April 27, 2022
 
 == Overview
-This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
+This document describes how to implement the MLPerf™ Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
 
 There are seperate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
 
