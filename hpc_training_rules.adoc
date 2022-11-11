@@ -16,7 +16,7 @@ All rules are taken from the MLPerf™ Training Rules except for those that are 
 
 The MLPerf name and logo are trademarks. In order to refer to a result using the
 MLPerf name, the result must conform to the letter and spirit of the rules
-specified in this document. The MLCommons® Association reserves the right to solely determine if a use of its name or logos are acceptable.
+specified in this document. The MLCommons® Association reserves the right to solely determine if a use of its name or logos is acceptable.
 
 == Benchmarks
 
