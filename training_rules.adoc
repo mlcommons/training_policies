@@ -12,7 +12,7 @@ This document describes how to implement the MLPerf™ Training Suite using an M
 
 There are seperate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
 
-The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLCommons® Association reserves the right to solely determine if a use of its name or logo is acceptable.
+The MLPerf name and logo are trademarks of the MLCommons® Association ("MLCommons"). In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. MLCommons reserves the right to solely determine if a use of its name or logos is acceptable.
 
 === Definitions (read this section carefully)
 The following definitions are used throughout this document:
