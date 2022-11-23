@@ -81,7 +81,6 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Language |Speech recognition |LibriSpeech
 | |NLP |Wikipedia 2020/01/01
 |Commerce |Recommendation |1TB Click Logs
-|Research |Reinforcement learning |Go
 |===
 
 The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
@@ -138,7 +137,6 @@ The closed division models and quality targets are:
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
 |Commerce |Recommendation |DLRM |0.8025 AUC
-|Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -288,11 +286,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |maskrcnn |sgd |num_image_candidates$$*$$ |1000 or 1000 * batches per chip |tunable number of region proposals for given batch size |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/modeling/rpn/inference.py#L183[reference code]
  |maskrcnn |sgd |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L28[reference code]
  |maskrcnn |sgd |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L29[reference code]
- |minigo |sgd |train_batch_size |integer > 0 |Batch size to use for training |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L47[reference code]
- |minigo |sgd |lr_boundaries |unconstrained |The number of steps at which the learning rate will decay |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L67[reference code]
- |minigo |sgd |lr_rates |unconstrained |The different learning rates |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L70[reference code]
- |minigo |sgd |actual_selfplay_games_per_generation |integer >= 8192 (min_selfplay_games_per_generation) |"NOT A HYPERPARAMETER, CANNOT BE 'BORROWED' during review" Implicit (LOG ONLY) - total number of games played per epoch; many parameters can impact this, varies per iteration |N/A
- |minigo |sgd |min_selfplay_games_per_generation$$*$$ |fixed to reference (8192) |Minimum number of games to play for each training iteration |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/ml_perf/train_loop.py#L51[reference code]
  |resnet |lars |lars_opt_base_learning_rate |arbitrary constant |Base "plr" in the PR linked. |link:https://github.com/mlperf/training/pull/342/files#[reference code]
  |resnet |lars |lars_opt_end_learning_rate$$*$$ |fixed to reference |end learning rate for polynomial decay, implied mathemetically from other HPs |N/A
  |resnet |lars |lars_opt_learning_rate_decay_poly_power$$*$$ |fixed to reference |power of polynomial decay, no link needed since not tunable |N/A
@@ -399,8 +392,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
-|Commerce|Recommendation |DLRM|Every 102400 samples 
-|Research|Reinforcement learning |Mini Go|Every 1 epoch   
+|Commerce|Recommendation |DLRM|Every 102400 samples
 |===
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
@@ -449,7 +441,6 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Language |NLP |10
 | |Speech recognition |10
 |Commerce |Recommendation |5
-|Research |Reinforcement learning |10
 |===
 
 Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run. 
@@ -502,7 +493,7 @@ If a submission is missing the RCP for the batch size they are submitting, such 
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document]
 
-To extract submission convergence points, logs should report epochs as follows. For this round no RCP checks will be made for Minigo.
+To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting
 
@@ -513,7 +504,6 @@ To extract submission convergence points, logs should report epochs as follows. 
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
 | UNET3D | Epoch
-| Minigo | N/A
 |===
 
 == Appendix: Benchmark Specific Rules
@@ -543,9 +533,6 @@ TODO: locate the document and provide working link
 |      |                          |	PyTorch | torch.optim.SGD
 |      |                          |	TensorFlow | tf.train.MomentumOptimizer
 |      |                          | MxNet | [No compliant implementation]
-| Reinforcement learning| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD
-|      |                          | PyTorch | torch.optim.SGD
-|      |                          | TensorFlow | tf.train.MomentumOptimizer
 | Object detection (heavy weight)	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD
 |      |                          | PyTorch	| torch.optim.SGD
 |      |                          | TensorFlow | tf.train.MomentumOptimizer
