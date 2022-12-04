@@ -83,7 +83,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Commerce |Recommendation |1TB Click Logs
 |===
 
-The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
+MLCommons provides a reference implementation of each benchmark, which includes the following elements:
 
 Code that implements the model in a framework.
 
