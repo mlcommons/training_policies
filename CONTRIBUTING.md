@@ -12,7 +12,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### General
 
- 1. Reference repository code must run without error on reference hardware (1xV100) on day of benchmark reference freeze.
+ 1. Reference repository code must run without error on reference hardware (1xV100) on day of benchmark reference freeze. Exception: large language model code must run on (64xA100s) as it does not fit on (1xV100).
  
      a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
