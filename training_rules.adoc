@@ -66,6 +66,8 @@ The framework and system should not detect and behave differently for benchmarks
 === Pre-training is not allowed
 Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form. High-level statistical information about the dataset, such as distribution of sizes, may be used.
 
+For gpt3, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
+
 For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained. For v0.7, sets of weights used in v0.6 are allowed.
 
 == Benchmarks
@@ -80,6 +82,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Object detection (heavy weight) |COCO
 |Language |Speech recognition |LibriSpeech
 | |NLP |Wikipedia 2020/01/01
+| |Large language model |c4/en/3.0.1
 |Commerce |Recommendation |1TB Click Logs
 |===
 
@@ -136,6 +139,7 @@ The closed division models and quality targets are:
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
+| |Large Language Model |GPT3 |2.69 log perplexity
 |Commerce |Recommendation |DLRM |0.8025 AUC
 |===
 
@@ -202,7 +206,7 @@ OPEN: The closed division data representations restrictions only apply at the st
 
 === Other Uses of Data
 
-Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes.
+Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes. Same applies to processing metadata like the number of documents, or document sizes in a dataset.
 
 === Training and Test Sets
 CLOSED: If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
@@ -277,6 +281,20 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |dlrm |sgd |sgd_opt_base_learning_rate |unconstrained |learning rate at the start of poly decay |See PR (From Intel and NV, TODO Link)
  |dlrm |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of the poly decay |See PR (From Intel and NV, TODO Link)
  |dlrm |sgd |sgd_opt_learning_rate_decay_steps |unconstrained |the step at which you reach the end learning rate |See PR (From Intel and NV, TODO Link)
+ |gpt3 |adam |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_adam_beta_1 |0.9 |adam beta1 |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_adam_beta_2 |0.95 |adam beta2 |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_adam_epsilon |1e-8 |adam epsilon |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |dropout |0.0 |Disable all dropouts during training. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |sequence_length |2048 |sequence length |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_weight_decay |0.1 |weight decay |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_learning_rate_warmup_steps |ceil(265 * 1536 / global_batch_size) |steps taken for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_learning_rate_decay_steps |ceil(108600 * 1536 / global_batch_size) |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_init_checkpoint_step |ceil(4000 * 1536 / batch_size) |first step after loading initial checkpoint |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "GPT3 learning rates" |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_end_learning_rate |10% of opt_base_learning_rate |learning rate at the last step of decay period |See PR (From NV and Google, TODO Link)
  |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
@@ -362,6 +380,27 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
 
 OPEN: Hyperparameters and optimizer may be freely changed.
 
+==== GPT3 hyperparameter constraints
+
+Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding batch sizes are fixed as follows.
+
+|===
+ |global_batch_size |opt_base_learning_rate 
+
+ |1536 |2.0e-5
+ |2048 |2.0e-5
+ |3072 |2.0e-5
+ |4096 |3.0e-5
+ |8192 |3.0e-5
+|===
+
+* GBS<1536 or GBS>8192 - new RCP needs to be generated, reach out to the task force
+* GBS [1536,3072] - opt_base_learning_rate=2.0e-5
+* For (3072,4096) - opt_base_learning_rate=2.0e-5 or opt_base_learning_rate=3.0e-5
+* GBS [4096,8192] - opt_base_learning_rate=3.0e-5
+
+If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+
 === Hyperparameter Borrowing
 
 Submitters are expected to use their best efforts to submit with optimal hyperparameters for their system.  The intent of Hyperparameter Borrowing is to allow a submitter to update their submission to reflect what they would have submitted had they known about more optimal hyperparameters before submitting, without knowing any other info (ie the performance of other submissions).
@@ -372,6 +411,7 @@ With evidence that the resulting model, using the same batch size as the other s
 
 A resubmission of a benchmark with borrowed hyperparameters must use the same software (with the exceptions listed in the Software Adoption section of this document), system and system configuration (accelerators, NICs etc) as the original submission.  The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result.  In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
 
+Since the hyperparameters are fixed for GPT3, hyperparameter borrowing is not allowed. 
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
@@ -392,6 +432,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
+|        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
 |Commerce|Recommendation |DLRM|Every 102400 samples
 |===
 
@@ -440,6 +481,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Object detection (heavy weight) |5
 |Language |NLP |10
 | |Speech recognition |10
+| |Large language model |3
 |Commerce |Recommendation |5
 |===
 
@@ -470,8 +512,10 @@ The score of an MLPerf submission may be scaled if the training committee decide
 Reference Convergence Points are used to ensure that the convergence of the submission does not deviate from the convergence of the reference. We are interested in avoiding cases where the submission convergence is faster than the reference. Reference implementation convergence sets a lower bound on epoch convergence that a valid submission should not beat. From a statistical standpoint if the submission mean epochs to converge is significantly lower than the reference mean epochs to converge, then submission convergence points belong to a different population than the reference convergence points, and thus the submission should not be accepted. Compliance to reference convergence points is validated as follows
 
 * Reference implementations provide at least 2N epoch convergence numbers, where N is the number of submission runs needed for each benchmark. Since convergence is affected by batch size (larger batch size means slower convergence), reference implementations provide convergence data for a few different batch sizes.
+* For GPT3 where there are two reference implementations which have been verified to be equivalent with minimum variance, each reference implementation should provide at least N epoch convergence numbers for each RCP.
 * After a set of Reference Convergence Points is gathered, we find the minimal set of these points that are needed for the fastest possible convergence. For example, if the RCP for batch size 128 is at 10 epochs, the RCP for batch size 256 is at 20 epochs, and the RCP for batch size 512 is also at 20 epochs, then we prune the RCP at the 256 batch size. Based on the assumption that convergence increases with batch size, we expect to be able to converge faster than 20 epochs at batch size 256. In practice we prune ALL RCP points that have slower convergence than the linear interpolation at the same batch size of any two surrounding points. Eventually we end up with a pruned set of RCPs which defines the fastest possible convergence of the reference code as a function of batch size.
 * A potential submitter can request generation of new RCPs by suggesting a better set of hparams to the WG or generate new RCPs by running the reference themselves. A request for a new RCP run should be backed by at least one run on either the submitter’s code or the reference code proving faster convergence. A request to generate RCPs should be made in the Training WG meeting at least 8 weeks before submission deadline and the reference owner (or a volunteer appointed by WG) should provide the RCP at least 4 weeks before submission deadline. Subject to WG's approval, requester's set of convergence points (2N runs) may act as temporary RCPs for that round if the RCP request is not met by a timely response.
+* For GPT3, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and both reference owners (NV and Google) should provide RCPs (N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
 * Using the mean and standard deviation of the reference convergence we apply a 1-sided independent two-sample Student's t-test with unequal sample sizes, similar variances with p-value=0.05 (explained link:https://en.wikipedia.org/wiki/Student%27s_t-test#Equal_or_unequal_sample_sizes,_similar_variances_(1/2_%3C_sX1/sX2_%3C_2)[here]) to find the maximum acceptable speedup for submission convergence.
 * At submission time, the submission is matched to an RCP based on the submission batch size.
 ** If there is an RCP for that batch size then mean epochs to converge of the submission is extracted from submission logs. If this does not violate the maximum acceptable speedup condition when compared to the reference then the submission is accepted, otherwise it may be rejected.
@@ -489,7 +533,7 @@ Submitters are encouraged to run the RCP checker script prior to their submissio
 
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to upload, but the submitter must notify the results chair, and prepare for the audit process described in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document] but at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
-If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline. RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
+If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline (Exception is GPT3: where RCPs are due 5 weeks before the submission deadline). RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document]
 
@@ -499,6 +543,7 @@ To extract submission convergence points, logs should report epochs as follows.
 
 | RN50 | Epoch
 | BERT | Training sample (integer)
+| GPT3 | Training token starting from 0 (integer)
 | DLRM | 1 + Epoch / 20.0 (1.05, 1.1, 1.15...)
 | SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch 
@@ -540,6 +585,7 @@ TODO: locate the document and provide working link
 |      |                          | TensorFlow | tf.keras.optimizers.Adam
 | NLP | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
+| Large Language Model | Adam             	      | PyTorch	| apex.optimizers.FusedAdam
 | Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
 | Recommendation | SGD             	        | PyTorch	| torch.optim.SGD
