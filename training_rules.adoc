@@ -396,7 +396,7 @@ Since training large language models is very expensive, the task force aims to l
 
 * GBS<1536 or GBS>8192 - new RCP needs to be generated, reach out to the task force
 * GBS [1536,3072] - opt_base_learning_rate=2.0e-5
-* For (3073,4096) - opt_base_learning_rate=2.0e-5 or opt_base_learning_rate=3.0e-5
+* For (3072,4096) - opt_base_learning_rate=2.0e-5 or opt_base_learning_rate=3.0e-5
 * GBS [4096,8192] - opt_base_learning_rate=3.0e-5
 
 If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
@@ -543,7 +543,7 @@ To extract submission convergence points, logs should report epochs as follows.
 
 | RN50 | Epoch
 | BERT | Training sample (integer)
-| GPT3 | Training sample starting from 0 (integer)
+| GPT3 | Training token starting from 0 (integer)
 | DLRM | 1 + Epoch / 20.0 (1.05, 1.1, 1.15...)
 | SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch 
