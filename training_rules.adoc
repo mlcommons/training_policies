@@ -140,7 +140,7 @@ The closed division models and quality targets are:
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
 | |Large Language Model |GPT3 |2.69 log perplexity
-|Commerce |Recommendation |DCN V2 |0.80275 AUC
+|Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -275,14 +275,14 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |bert |lamb |opt_lamb_beta_2 |unconstrained |adam beta2 |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L74[reference code]
  |bert |lamb |opt_lamb_weight_decay_rate |unconstrained |Weight decay |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L72[reference code]
  |dlrmv2 |adagrad |global_batch_size |unconstrained |global batch size |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L705-L708[reference code]
- |dlrmv2 |adagrad |opt_base_learning_rate |unconstrained |base learning rate for both dense layers and embeddings |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code]
- |dlrmv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |Decay for learning rate |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L73[reference code]
+ |dlrmv2 |adagrad |opt_base_learning_rate |unconstrained |learning rate (for both dense layers and embeddings) |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code]
+ |dlrmv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |learning rate decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L73[reference code]
  |dlrmv2 |adagrad |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L76[reference code]
  |dlrmv2 |adagrad |opt_adagrad_initial_accumulator_value |0.0 |adagrad initial accumulator value |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L74[reference code]
  |dlrmv2 |adagrad |opt_adagrad_epsilon |1e-8 |adagrad epsilon |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L75[reference code]
- |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 == disabled |number to steps go from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code]
- |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 == disabled |step at which you start poly decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code]
- |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 == disabled |the step at which you reach the end learning rate |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code]
  |gpt3 |adam |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Google, TODO Link)
  |gpt3 |adam |opt_adam_beta_1 |0.9 |adam beta1 |See PR (From NV and Google, TODO Link)
  |gpt3 |adam |opt_adam_beta_2 |0.95 |adam beta2 |See PR (From NV and Google, TODO Link)
@@ -435,7 +435,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
-|Commerce|Recommendation |DLRM|Every `$((TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL))` samples, where `TOTAL_TRAINING_SAMPLES=4195197692` and `NUM_EVAL=20`
+|Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20
 |===
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
@@ -546,7 +546,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | RN50 | Epoch
 | BERT | Training sample (integer)
 | GPT3 | Training token starting from 0 (integer)
-| DLRM | Training iteration / 20 (0.05, 0.1, 0.15, ...)
+| DLRMv2 (DCNv2) | Training iteration / 20 (0.05, 0.1, 0.15, ...)
 | SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
