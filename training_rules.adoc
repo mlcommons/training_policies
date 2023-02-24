@@ -218,6 +218,8 @@ CLOSED: the training and test data must be traversed in the same conceptual orde
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once. Modifications to data order and/or batching must be presented to the SWG group in advance of the submission deadline for approval if they could affect the ability to borrow hyperparameters and/or approximately follow the learning rate schedule defined by the RCPs. 
 
+In the case of DLRMv2 benchmark, training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
+
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
@@ -447,7 +449,7 @@ The CLOSED division allows limited exemptions to mathematical equivalence betwee
 
 * Different methods can be used to add color jitter as long as the methods are of a similar distribution and magnitude to the reference.
 
-* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch.
+* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch. Additionally, in the case of DLRMv2 benchmark, the last partial training batch may be dropped.
 
 * Values introduced for padding purposes may be reflected in batch norm computations.
 
