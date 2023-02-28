@@ -83,7 +83,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Language |Speech recognition |LibriSpeech
 | |NLP |Wikipedia 2020/01/01
 | |Large language model |c4/en/3.0.1
-|Commerce |Recommendation |1TB Click Logs
+|Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant)
 |===
 
 MLCommons provides a reference implementation of each benchmark, which includes the following elements:
@@ -140,7 +140,7 @@ The closed division models and quality targets are:
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
 | |Large Language Model |GPT3 |2.69 log perplexity
-|Commerce |Recommendation |DLRM |0.8025 AUC
+|Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -218,6 +218,8 @@ CLOSED: the training and test data must be traversed in the same conceptual orde
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once. Modifications to data order and/or batching must be presented to the SWG group in advance of the submission deadline for approval if they could affect the ability to borrow hyperparameters and/or approximately follow the learning rate schedule defined by the RCPs. 
 
+In the case of DLRMv2 benchmark, training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
+
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
@@ -274,13 +276,15 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |bert |lamb |opt_lamb_beta_1 |unconstrained |adam beta1 |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L73[reference code]
  |bert |lamb |opt_lamb_beta_2 |unconstrained |adam beta2 |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L74[reference code]
  |bert |lamb |opt_lamb_weight_decay_rate |unconstrained |Weight decay |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L72[reference code]
- |dlrm |sgd |global_batch_size |unconstrained |global batch size |
- |dlrm |sgd |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/facebookresearch/dlrm/blob/master/dlrm_s_pytorch.py#L492[reference code]
- |dlrm |sgd |opt_learning_rate_warmup_steps |unconstrained |Number to steps go from 0 to sgd_opt_base_learning_rate with a linear warmup |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |lr_decay_start_steps |unconstrained |step at which you start poly decay |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |sgd_opt_base_learning_rate |unconstrained |learning rate at the start of poly decay |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of the poly decay |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |sgd_opt_learning_rate_decay_steps |unconstrained |the step at which you reach the end learning rate |See PR (From Intel and NV, TODO Link)
+ |dlrmv2 |adagrad |global_batch_size |unconstrained |global batch size |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L705-L708[reference code]
+ |dlrmv2 |adagrad |opt_base_learning_rate |unconstrained |learning rate (for both dense layers and embeddings) |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code]
+ |dlrmv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |learning rate decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L73[reference code]
+ |dlrmv2 |adagrad |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L76[reference code]
+ |dlrmv2 |adagrad |opt_adagrad_initial_accumulator_value |0.0 |adagrad initial accumulator value |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L74[reference code]
+ |dlrmv2 |adagrad |opt_adagrad_epsilon |1e-8 |adagrad epsilon |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L75[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code]
  |gpt3 |adam |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Google, TODO Link)
  |gpt3 |adam |opt_adam_beta_1 |0.9 |adam beta1 |See PR (From NV and Google, TODO Link)
  |gpt3 |adam |opt_adam_beta_2 |0.95 |adam beta2 |See PR (From NV and Google, TODO Link)
@@ -433,7 +437,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
-|Commerce|Recommendation |DLRM|Every 102400 samples
+|Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20
 |===
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
@@ -445,7 +449,7 @@ The CLOSED division allows limited exemptions to mathematical equivalence betwee
 
 * Different methods can be used to add color jitter as long as the methods are of a similar distribution and magnitude to the reference.
 
-* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch.
+* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch. Additionally, in the case of DLRMv2 benchmark, the last partial training batch may be dropped.
 
 * Values introduced for padding purposes may be reflected in batch norm computations.
 
@@ -544,7 +548,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | RN50 | Epoch
 | BERT | Training sample (integer)
 | GPT3 | Training token starting from 0 (integer)
-| DLRM | 1 + Epoch / 20.0 (1.05, 1.1, 1.15...)
+| DLRMv2 (DCNv2) | Training iteration / 20 (0.05, 0.1, 0.15, ...)
 | SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
@@ -588,8 +592,7 @@ TODO: locate the document and provide working link
 | Large Language Model | Adam             	      | PyTorch	| apex.optimizers.FusedAdam
 | Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
-| Recommendation | SGD             	        | PyTorch	| torch.optim.SGD
-|      |              	          | TensorFlow	| tf.train.MomentumOptimizer
+| Recommendation | Adagrad             	        | PyTorch	| torch.optim.Adagrad (dense layers) + torchrec.optim.Adagrad (embeddings)
 | Image segmentation (medical) | SGD with Momentum      | PyTorch	    | torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
