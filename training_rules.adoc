@@ -548,7 +548,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | RN50 | Epoch
 | BERT | Training sample (integer)
 | GPT3 | Training token starting from 0 (integer)
-| DLRMv2 (DCNv2) | Training iteration / 20 (0.05, 0.1, 0.15, ...)
+| DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
 | SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
@@ -566,6 +566,10 @@ To extract submission convergence points, logs should report epochs as follows.
 ** Clip-normalization order: The 1.0 and 1.1 exception that benchmarks may implement clip-normalization either before or after accelerator all-reduce has been extended indefinitely to future rounds.
 
 ** --rcp-bert-train-samples log compliance parameter: For all benchmarks other than Bert, convergence for RCP purposes is reported in the last eval_accuracy line of the log file. For Bert, submitters are allowed to add an extra log line with key set to train_samples and value the number of samples to converge. If that is the case, the package compliance checker should be run with the --rcp-bert-train-samples command line parameter.
+
+* DLRMv2 (DCNv2)
+
+** Because DLRMv2 (DCNv2) benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
 
 == Appendix: Allowed Closed Division Optimizers
 
