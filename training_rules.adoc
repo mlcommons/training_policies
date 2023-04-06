@@ -594,6 +594,7 @@ TODO: locate the document and provide working link
 | NLP | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
 | Large Language Model | Adam             	      | PyTorch	| apex.optimizers.FusedAdam
+|      |                         | PaxML	| praxis.optimizers.Adam
 | Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
 | Recommendation | Adagrad             	        | PyTorch	| torch.optim.Adagrad (dense layers) + torchrec.optim.Adagrad (embeddings)
