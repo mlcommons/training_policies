@@ -486,7 +486,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Language |NLP |10
 | |Speech recognition |10
 | |Large language model |3
-|Commerce |Recommendation |5
+|Commerce |Recommendation |10
 |===
 
 Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run. 
