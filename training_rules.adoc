@@ -571,13 +571,13 @@ To extract submission convergence points, logs should report epochs as follows.
 
 ** Because DLRMv2 (DCNv2) benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
 
-== Appendix: Allowed Closed Division Optimizers
+== Appendix: Examples of Compliant Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
 TODO: locate the document and provide working link
 
 |===
-| Benchmark | Algorithm | Framework | Allowed Optimizer
+| Benchmark | Algorithm | Framework | Optimizer Implementations
 
 | Image classification | LARS                     | PyTorch	| [No compliant implementation]
 |      |                          |	TensorFlow | MLPERF_LARSOptimizer
