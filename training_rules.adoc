@@ -442,6 +442,8 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
 
+Exceptions for GPT3 OPEN: the open submissions are allowed to choose a language version that’s not English for the C4 dataset. When doing so, the submitter needs to make it clear that the dataset and convergence measures are different from the close division submissions.
+
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained.
 
 === Equivalence exceptions
