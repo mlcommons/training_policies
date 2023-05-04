@@ -573,10 +573,6 @@ To extract submission convergence points, logs should report epochs as follows.
 
 ** Because DLRMv2 (DCNv2) benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
 
-* Large Language Model (GPT3)
-
-** Allowed model initialization compile time for GPT3 benchmark is increased to 60 minutes for Closed Division owing to the large memory footprint of initial checkpoints.
-
 == Appendix: Examples of Compliant Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
@@ -640,6 +636,12 @@ For v1.0 only, BERT submissions may implement clip-norm either before or after i
 === Preview Category
 
 For v1.1, we changed the policy documentation to say that a Preview submission needs to be available at the next submission after 140 days, not 180 days like it was before.  However, this does not apply to Preview submissions from v1.0, which will still follow the 180 day policy.  For v1.1 Preview submissions and beyond, the 140 day rule will apply.  This is not necessarily an "exception," but we are listing it here as a special case for the record.
+
+== Appendix: v3.0 Specific Rules
+
+=== Large Language Model (GPT3)
+
+Allowed model initialization compile time for GPT3 benchmark is increased to 60 minutes for Closed Division owing to the large memory footprint of initial checkpoints.
 
 == Appendix: RCP Examples
 
