@@ -5,10 +5,10 @@
 
 = MLPerf™ HPC Training Rules
 
-Version 0.7 
-July 16, 2020
+Version 3.0
+May 15, 2023
 
-Points of contact: David Kanter (dkanter@gmail.com), Steve Farrell (sfarrell@lbl.gov)
+Points of contact: David Kanter (dkanter@gmail.com), Andreas Prodromou (aprodromou@nvidia.com), Murali Emani (memani@anl.gov)
 
 == Overview
 
@@ -50,11 +50,12 @@ The closed division models are:
 
 Each reference implementation includes a download script or broadly available method to acquire and verify the dataset.
 
-The data at the start of the benchmark run should reside on a parallel file system that is persistent (>= 1 month, not subject to eviction by other users), can be downloaded to / accessed by the user, and can be shared among users at the facility. Any staging to node-local disk or memory or system burst buffer should be included in the benchmark time measurement.
+Starting with submission round v3.0 (October 2023), data state at start of run follows the xref:training_rules.adoc#data-state-at-start-of-run[the same rules] as MLPerf Training submissions. 
 
-You must flush/reset the on-node caches prior to running each instance of the benchmark. Due to practicality issues, you are not required to reset off-node system-level caches.
+[quote,MLPerf Training Rules (Section 6.1), as of May 15 2023]
+Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.
 
-We otherwise follow the training rule xref:training_rules.adoc#data-state-at-start-of-run[Data State at Start of Run] on consistency with the reference implementation preprocessing and allowance for reformatting.
+Submissions prior to v3.0 required data to start on a parallel, persistent file system. This requirement is no longer in effect.
 
 == Training Loop
 
@@ -104,12 +105,14 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 
 == Run Results
 
-MLPerf HPC submissions consist of the following two metrics: metrics 1 is considered mandatory for a complete submission whereas metric 2 is considered optional:
+**Note:** Starting with submission round v3.0 (October 2023), we are transitioning to more descriptive metric names. "Strong Scaling" is now Time To Solution (TTS) and "Weak Scaling" is now Throughput. Rules regarding these two metrics rename unchanged.
 
-=== Strong Scaling (Time to Convergence)
+MLPerf HPC submissions consist of the following two metrics: Time To Solution (TTS) and Throughput. TTS is mandatory for a compliant submission whereas Throughput is optional:
+
+=== Time To Solution (TTS)
 This is a *mandatory* metric: see MLPerf Training xref:training_rules.adoc#section-run-results[Run Results] for reference. The same rules apply here.
 
-=== Weak Scaling (Throughput)
+=== Throughput
 This is an *optional* metric. It was designed to test the training capacity of a system.
 
 Measurement: we will define 3 important parameters first. 
@@ -141,11 +144,11 @@ It is not allowed to merge logging files for individual instances.
 Restrictions: 
 
 * Due to large number of simultaneously-trained instances it's possible that some random seeds will match. Runs with identical seeds must be pruned from final results. Submitters can avoid issue by choosing non-matching seeds for their runs. 
-* The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Strong Scaling (Time to Convergence)>> from the same benchmark.
+* The submitter *must not report this score on its own*. It has to be reported in conjunction with at least one score from <<Time To Solution (TTS)>> from the same benchmark.
 * this score *does not allow for extrapolation*. All reported M' training instances must have converged and it is not allowed to extrapolate results in S or T.
 * Due to large scale of weakly-scaled submissions, it's possible that hardware failures can occur during training. Although unfortunate, this issue is not a sufficient reason to request a post-deadline re-run and re-submission. Submitters are responsible to plan ahead and give themselves enough time to overcome any challenges that may cause them to miss the submission deadline.
 
-In case of *weakly-scaled* resubmission due to HP borrowing: Due to the high overhead of these runs, submitters are not obligated to replace their original results. Instead they can opt to keep both sets of results (pre- and post- HP borrowing). 
+In case of *Throughput* resubmission due to HP borrowing: Due to the high overhead of these runs, submitters are not obligated to replace their original results. Instead they can opt to keep both sets of results (pre- and post- HP borrowing). 
 
 
 In case of a re-submission caused by HP borrowing: Resubmission scale can at most be the *proven* scale of the original submission. Max scale is proved with submitted log files, including log files of pruned results which should be submitted alongside non-pruned results, using the directory structure defined in submission rules.
