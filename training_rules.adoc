@@ -3,16 +3,16 @@
 
 :sectnums:
 
-= MLPerf Training Rules
+= MLPerf™ Training Rules
 Version 2.0
 April 27, 2022
 
 == Overview
-This document describes how to implement the MLPerf Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
+This document describes how to implement the MLPerf™ Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
 
 There are seperate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
 
-The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
+The MLPerf name and logo are trademarks of the MLCommons® Association ("MLCommons"). In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. MLCommons reserves the right to solely determine if a use of its name or logos is acceptable.
 
 === Definitions (read this section carefully)
 The following definitions are used throughout this document:
@@ -66,6 +66,8 @@ The framework and system should not detect and behave differently for benchmarks
 === Pre-training is not allowed
 Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form. High-level statistical information about the dataset, such as distribution of sizes, may be used.
 
+For gpt3, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
+
 For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained. For v0.7, sets of weights used in v0.6 are allowed.
 
 == Benchmarks
@@ -80,11 +82,11 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Object detection (heavy weight) |COCO
 |Language |Speech recognition |LibriSpeech
 | |NLP |Wikipedia 2020/01/01
-|Commerce |Recommendation |1TB Click Logs
-|Research |Reinforcement learning |Go
+| |Large language model |c4/en/3.0.1
+|Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant)
 |===
 
-The MLPerf organization provides a reference implementation of each benchmark, which includes the following elements:
+MLCommons provides a reference implementation of each benchmark, which includes the following elements:
 
 Code that implements the model in a framework.
 
@@ -137,8 +139,8 @@ The closed division models and quality targets are:
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
-|Commerce |Recommendation |DLRM |0.8025 AUC
-|Research |Reinforcement learning |Mini Go (based on Alpha Go paper) |50% win rate vs. checkpoint
+| |Large Language Model |GPT3 |2.69 log perplexity
+|Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -204,7 +206,7 @@ OPEN: The closed division data representations restrictions only apply at the st
 
 === Other Uses of Data
 
-Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes.
+Input encoding data, such as language vocabulary, or the set of possible labels may used during pre-processing or execution without counting as "touching the training data" for timing purposes. Same applies to processing metadata like the number of documents, or document sizes in a dataset.
 
 === Training and Test Sets
 CLOSED: If applicable, the dataset must be separated into training and test sets in the same manner as the reference implementation.
@@ -215,6 +217,8 @@ OPEN: If applicable, the test dataset must be extracted in the same manner as th
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once. Modifications to data order and/or batching must be presented to the SWG group in advance of the submission deadline for approval if they could affect the ability to borrow hyperparameters and/or approximately follow the learning rate schedule defined by the RCPs. 
+
+In the case of DLRMv2 benchmark, training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
 
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
@@ -272,13 +276,29 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |bert |lamb |opt_lamb_beta_1 |unconstrained |adam beta1 |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L73[reference code]
  |bert |lamb |opt_lamb_beta_2 |unconstrained |adam beta2 |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L74[reference code]
  |bert |lamb |opt_lamb_weight_decay_rate |unconstrained |Weight decay |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L72[reference code]
- |dlrm |sgd |global_batch_size |unconstrained |global batch size |
- |dlrm |sgd |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/facebookresearch/dlrm/blob/master/dlrm_s_pytorch.py#L492[reference code]
- |dlrm |sgd |opt_learning_rate_warmup_steps |unconstrained |Number to steps go from 0 to sgd_opt_base_learning_rate with a linear warmup |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |lr_decay_start_steps |unconstrained |step at which you start poly decay |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |sgd_opt_base_learning_rate |unconstrained |learning rate at the start of poly decay |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of the poly decay |See PR (From Intel and NV, TODO Link)
- |dlrm |sgd |sgd_opt_learning_rate_decay_steps |unconstrained |the step at which you reach the end learning rate |See PR (From Intel and NV, TODO Link)
+ |dlrmv2 |adagrad |global_batch_size |unconstrained |global batch size |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L705-L708[reference code]
+ |dlrmv2 |adagrad |opt_base_learning_rate |unconstrained |learning rate (for both dense layers and embeddings) |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code]
+ |dlrmv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |learning rate decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L73[reference code]
+ |dlrmv2 |adagrad |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L76[reference code]
+ |dlrmv2 |adagrad |opt_adagrad_initial_accumulator_value |0.0 |adagrad initial accumulator value |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L74[reference code]
+ |dlrmv2 |adagrad |opt_adagrad_epsilon |1e-8 |adagrad epsilon |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L75[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code]
+ |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code]
+ |gpt3 |adam |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_adam_beta_1 |0.9 |adam beta1 |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_adam_beta_2 |0.95 |adam beta2 |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_adam_epsilon |1e-8 |adam epsilon |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |dropout |0.0 |Disable all dropouts during training. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |sequence_length |2048 |sequence length |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_weight_decay |0.1 |weight decay |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_learning_rate_warmup_steps |ceil(265 * 1536 / global_batch_size) |steps taken for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_learning_rate_decay_steps |ceil(108600 * 1536 / global_batch_size) |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_init_checkpoint_step |ceil(4000 * 1536 / batch_size) |first step after loading initial checkpoint |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "GPT3 learning rates" |See PR (From NV and Google, TODO Link)
+ |gpt3 |adam |opt_end_learning_rate |10% of opt_base_learning_rate |learning rate at the last step of decay period |See PR (From NV and Google, TODO Link)
  |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
@@ -288,12 +308,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |maskrcnn |sgd |num_image_candidates$$*$$ |1000 or 1000 * batches per chip |tunable number of region proposals for given batch size |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/modeling/rpn/inference.py#L183[reference code]
  |maskrcnn |sgd |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L28[reference code]
  |maskrcnn |sgd |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L29[reference code]
- |maskrcnn |sgd |num_image_candidates$$*$$ |(1000 or 2000) or (1000 * batches per chip) |tunable number of region proposals for given batch size |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/modeling/rpn/inference.py#L183[reference code]
- |minigo |sgd |train_batch_size |integer > 0 |Batch size to use for training |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L47[reference code]
- |minigo |sgd |lr_boundaries |unconstrained |The number of steps at which the learning rate will decay |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L67[reference code]
- |minigo |sgd |lr_rates |unconstrained |The different learning rates |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/dual_net.py#L70[reference code]
- |minigo |sgd |actual_selfplay_games_per_generation |integer >= 8192 (min_selfplay_games_per_generation) |"NOT A HYPERPARAMETER, CANNOT BE 'BORROWED' during review" Implicit (LOG ONLY) - total number of games played per epoch; many parameters can impact this, varies per iteration |N/A
- |minigo |sgd |min_selfplay_games_per_generation$$*$$ |fixed to reference (8192) |Minimum number of games to play for each training iteration |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/reinforcement/tensorflow/minigo/ml_perf/train_loop.py#L51[reference code]
  |resnet |lars |lars_opt_base_learning_rate |arbitrary constant |Base "plr" in the PR linked. |link:https://github.com/mlperf/training/pull/342/files#[reference code]
  |resnet |lars |lars_opt_end_learning_rate$$*$$ |fixed to reference |end learning rate for polynomial decay, implied mathemetically from other HPs |N/A
  |resnet |lars |lars_opt_learning_rate_decay_poly_power$$*$$ |fixed to reference |power of polynomial decay, no link needed since not tunable |N/A
@@ -370,6 +384,27 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
 
 OPEN: Hyperparameters and optimizer may be freely changed.
 
+==== GPT3 hyperparameter constraints
+
+Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding batch sizes are fixed as follows.
+
+|===
+ |global_batch_size |opt_base_learning_rate 
+
+ |1536 |2.0e-5
+ |2048 |2.0e-5
+ |3072 |2.0e-5
+ |4096 |3.0e-5
+ |8192 |3.0e-5
+|===
+
+* GBS<1536 or GBS>8192 - new RCP needs to be generated, reach out to the task force
+* GBS [1536,3072] - opt_base_learning_rate=2.0e-5
+* For (3072,4096) - opt_base_learning_rate=2.0e-5 or opt_base_learning_rate=3.0e-5
+* GBS [4096,8192] - opt_base_learning_rate=3.0e-5
+
+If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+
 === Hyperparameter Borrowing
 
 Submitters are expected to use their best efforts to submit with optimal hyperparameters for their system.  The intent of Hyperparameter Borrowing is to allow a submitter to update their submission to reflect what they would have submitted had they known about more optimal hyperparameters before submitting, without knowing any other info (ie the performance of other submissions).
@@ -380,6 +415,7 @@ With evidence that the resulting model, using the same batch size as the other s
 
 A resubmission of a benchmark with borrowed hyperparameters must use the same software (with the exceptions listed in the Software Adoption section of this document), system and system configuration (accelerators, NICs etc) as the original submission.  The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result.  In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
 
+Since the hyperparameters are fixed for GPT3, hyperparameter borrowing is not allowed. 
 
 === Loss function 
 CLOSED: The same loss function used in the reference implementation must be used.
@@ -400,11 +436,13 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
-|Commerce|Recommendation |DLRM|Every 102400 samples 
-|Research|Reinforcement learning |Mini Go|Every 1 epoch   
+|        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
+|Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20
 |===
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
+
+Exceptions for GPT3 OPEN: the open submissions are allowed to choose a language version that’s not English for the C4 dataset. When doing so, the submitter needs to make it clear that the dataset and convergence measures are different from the close division submissions.
 
 Check points can be created at the discretion of submitter. No check points are required to be produced or retained.
 
@@ -413,7 +451,7 @@ The CLOSED division allows limited exemptions to mathematical equivalence betwee
 
 * Different methods can be used to add color jitter as long as the methods are of a similar distribution and magnitude to the reference.
 
-* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch.
+* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch. Additionally, in the case of DLRMv2 benchmark, the last partial training batch may be dropped.
 
 * Values introduced for padding purposes may be reflected in batch norm computations.
 
@@ -449,8 +487,8 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Object detection (heavy weight) |5
 |Language |NLP |10
 | |Speech recognition |10
-|Commerce |Recommendation |5
-|Research |Reinforcement learning |10
+| |Large language model |3
+|Commerce |Recommendation |10
 |===
 
 Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run. 
@@ -480,13 +518,17 @@ The score of an MLPerf submission may be scaled if the training committee decide
 Reference Convergence Points are used to ensure that the convergence of the submission does not deviate from the convergence of the reference. We are interested in avoiding cases where the submission convergence is faster than the reference. Reference implementation convergence sets a lower bound on epoch convergence that a valid submission should not beat. From a statistical standpoint if the submission mean epochs to converge is significantly lower than the reference mean epochs to converge, then submission convergence points belong to a different population than the reference convergence points, and thus the submission should not be accepted. Compliance to reference convergence points is validated as follows
 
 * Reference implementations provide at least 2N epoch convergence numbers, where N is the number of submission runs needed for each benchmark. Since convergence is affected by batch size (larger batch size means slower convergence), reference implementations provide convergence data for a few different batch sizes.
+* For GPT3 where there are two reference implementations which have been verified to be equivalent with minimum variance, each reference implementation should provide at least N epoch convergence numbers for each RCP.
 * After a set of Reference Convergence Points is gathered, we find the minimal set of these points that are needed for the fastest possible convergence. For example, if the RCP for batch size 128 is at 10 epochs, the RCP for batch size 256 is at 20 epochs, and the RCP for batch size 512 is also at 20 epochs, then we prune the RCP at the 256 batch size. Based on the assumption that convergence increases with batch size, we expect to be able to converge faster than 20 epochs at batch size 256. In practice we prune ALL RCP points that have slower convergence than the linear interpolation at the same batch size of any two surrounding points. Eventually we end up with a pruned set of RCPs which defines the fastest possible convergence of the reference code as a function of batch size.
+* A potential submitter can request generation of new RCPs by suggesting a better set of hparams to the WG or generate new RCPs by running the reference themselves. A request for a new RCP run should be backed by at least one run on either the submitter’s code or the reference code proving faster convergence. A request to generate RCPs should be made in the Training WG meeting at least 8 weeks before submission deadline and the reference owner (or a volunteer appointed by WG) should provide the RCP at least 4 weeks before submission deadline. Subject to WG's approval, requester's set of convergence points (2N runs) may act as temporary RCPs for that round if the RCP request is not met by a timely response.
+* For GPT3, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and both reference owners (NV and Google) should provide RCPs (N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
 * Using the mean and standard deviation of the reference convergence we apply a 1-sided independent two-sample Student's t-test with unequal sample sizes, similar variances with p-value=0.05 (explained link:https://en.wikipedia.org/wiki/Student%27s_t-test#Equal_or_unequal_sample_sizes,_similar_variances_(1/2_%3C_sX1/sX2_%3C_2)[here]) to find the maximum acceptable speedup for submission convergence.
 * At submission time, the submission is matched to an RCP based on the submission batch size.
 ** If there is an RCP for that batch size then mean epochs to converge of the submission is extracted from submission logs. If this does not violate the maximum acceptable speedup condition when compared to the reference then the submission is accepted, otherwise it may be rejected.
 ** If there is no RCP for that batch size but there are RCPs for smaller and larger batch sizes an interpolated RCP is created, and the mean epochs to converge is compared against the interpolated RCP just like in the previous case
 ** If the submission batch size is larger than the batch size of any RCP the submitter must provide the missing RCPs by running the reference implementation with their batch size.
 ** If the submission batch size is smaller that the batch size of any RCP AND the convergence test against the RCP with the minimum batch size fails, then again the submitter must provide the missing RCPs by running the reference implementation with their batch size.
+** Accepted submissions with mean epochs lower than RCP mean (faster) but within the acceptable speedup range are normalized to (potentially interpolated) RCP mean epochs for fairness. New normalized score = Submission-olympic-score * (RCP-mean / olympic-submission-epochs)
 
 Please refer to the related Appendix for examples that shed light to the RCP process.
 
@@ -497,22 +539,22 @@ Submitters are encouraged to run the RCP checker script prior to their submissio
 
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to upload, but the submitter must notify the results chair, and prepare for the audit process described in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document] but at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
-If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline. RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
+If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline (Exception is GPT3: where RCPs are due 5 weeks before the submission deadline). RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document]
 
-To extract submission convergence points, logs should report epochs as follows. For this round no RCP checks will be made for Minigo.
+To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting
 
 | RN50 | Epoch
 | BERT | Training sample (integer)
-| DLRM | 1 + Epoch / 20.0 (1.05, 1.1, 1.15...)
+| GPT3 | Training token starting from 0 (integer)
+| DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
 | SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch 
 | RNN-T | Epoch 
 | UNET3D | Epoch
-| Minigo | N/A
 |===
 
 == Appendix: Benchmark Specific Rules
@@ -527,13 +569,17 @@ To extract submission convergence points, logs should report epochs as follows. 
 
 ** --rcp-bert-train-samples log compliance parameter: For all benchmarks other than Bert, convergence for RCP purposes is reported in the last eval_accuracy line of the log file. For Bert, submitters are allowed to add an extra log line with key set to train_samples and value the number of samples to converge. If that is the case, the package compliance checker should be run with the --rcp-bert-train-samples command line parameter.
 
-== Appendix: Allowed Closed Division Optimizers
+* DLRMv2 (DCNv2)
+
+** Because DLRMv2 (DCNv2) benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
+
+== Appendix: Examples of Compliant Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
 TODO: locate the document and provide working link
 
 |===
-| Benchmark | Algorithm | Framework | Allowed Optimizer
+| Benchmark | Algorithm | Framework | Optimizer Implementations
 
 | Image classification | LARS                     | PyTorch	| [No compliant implementation]
 |      |                          |	TensorFlow | MLPERF_LARSOptimizer
@@ -542,9 +588,6 @@ TODO: locate the document and provide working link
 |      |                          |	PyTorch | torch.optim.SGD
 |      |                          |	TensorFlow | tf.train.MomentumOptimizer
 |      |                          | MxNet | [No compliant implementation]
-| Reinforcement learning| SGD with Momentum	      | PyTorch | apex.optimizers.FusedSGD
-|      |                          | PyTorch | torch.optim.SGD
-|      |                          | TensorFlow | tf.train.MomentumOptimizer
 | Object detection (heavy weight)	| SGD with Momentum	  | PyTorch	| apex.optimizers.FusedSGD
 |      |                          | PyTorch	| torch.optim.SGD
 |      |                          | TensorFlow | tf.train.MomentumOptimizer
@@ -552,10 +595,11 @@ TODO: locate the document and provide working link
 |      |                          | TensorFlow | tf.keras.optimizers.Adam
 | NLP | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
+| Large Language Model | Adam             	      | PyTorch	| apex.optimizers.FusedAdam
+|      |                         | PaxML	| praxis.optimizers.Adam
 | Speech recognition | LAMB             	      | PyTorch	| apex.optimizers.FusedLAMB
 |      |              	          | TensorFlow	| tf.optimizers.LAMB
-| Recommendation | SGD             	        | PyTorch	| torch.optim.SGD
-|      |              	          | TensorFlow	| tf.train.MomentumOptimizer
+| Recommendation | Adagrad             	        | PyTorch	| torch.optim.Adagrad (dense layers) + torchrec.optim.Adagrad (embeddings)
 | Image segmentation (medical) | SGD with Momentum      | PyTorch	    | torch.optim.SGD
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
@@ -592,6 +636,12 @@ For v1.0 only, BERT submissions may implement clip-norm either before or after i
 === Preview Category
 
 For v1.1, we changed the policy documentation to say that a Preview submission needs to be available at the next submission after 140 days, not 180 days like it was before.  However, this does not apply to Preview submissions from v1.0, which will still follow the 180 day policy.  For v1.1 Preview submissions and beyond, the 140 day rule will apply.  This is not necessarily an "exception," but we are listing it here as a special case for the record.
+
+== Appendix: v3.0 Specific Rules
+
+=== Large Language Model (GPT3)
+
+Allowed model initialization compile time for GPT3 benchmark is increased to 60 minutes for Closed Division owing to the large memory footprint of initial checkpoints.
 
 == Appendix: RCP Examples
 
