@@ -12,7 +12,7 @@ Points of contact: David Kanter (dkanter@gmail.com), Andreas Prodromou (aprodrom
 
 == Overview
 
-All rules are taken from the MLPerf™ Training Rules except for those that are overridden here.
+All rules are taken from the MLPerf™ Training Rules, the version at the time of HPC rules freeze, (https://github.com/mlcommons/training_policies/commit/5a910009c991cb3b98448c9baf60b7ba018c3c06) except for those that are overridden here.
 
 The MLPerf name and logo are trademarks of the MLCommons® Association ("MLCommons"). In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. MLCommons reserves the right to solely determine if a use of its name or logos is acceptable.
 
