@@ -25,8 +25,8 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82
 |Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.124
 |Modeling catalysts |Open Catalyst 2020 (OC20) S2EF 2M training split, ID validation set| Forces mean absolute error 0.036
-|Protein Structure Prediction (OpenFold)| A three-dimensional structural data of large biological molecules, such as proteins and nucleic acids.
- | Local Distance Difference Test (lDDT) > 0.9
+|Protein Structure Prediction (OpenFold)| OpenProteinSet and Protein Data Bank 
+ | Local Distance Difference Test (lDDT-Cα) >= 0.8
 |===
 
 == Divisions
@@ -106,7 +106,12 @@ Allowed hyperparameter and optimizer settings are specified here. For anything n
  |OpenCatalyst |opt_learning_rate_warmup_factor |`0 <= value <= 1` |the factor applied to the learning rate at the start of warmup |`warmup_factor`
  |OpenCatalyst |opt_learning_rate_decay_boundary_steps |list of positive integers |The steps at which learning rate is decayed |`lr_milestones`
  |OpenCatalyst |opt_learning_rate_decay_factor |`0 <= value <= 1` |the factor applied to decay the learning rate at each decay boundary step |`lr_gamma`
- |OpenFold| To be added | | |
+ |OpenFold| global_batch_size |`value >= 1` | the global batch size |`batch_size` times number of GPUs
+| OpenFold | opt_name | Adam | the optimizer name |  not configurable
+| OpenFold | opt_base_learning_rate |  `value >= 0.0`​ | Base learning rate value | `--base_lr​`
+| OpenFold | opt_learning_rate_warmup_init |  `value >= 0.0` |  Warm-up initial learning rate value | `--warmup_lr_init​`
+| OpenFold | opt_learning_rate_warmup_steps | `value >= 0` | Num iterations for learning rate warm-up | `--warmup_lr_iters​`
+| OpenFold | initial_training_dataloader_type | InitialTrainingDataloaderPT​ or InitialTrainingDataloaderPQ​ | Which dataloader type use for training. *PT​ - standard PyTorch DataLoader. *PQ​ - custom dataloader with higher throughput | `--initial_training_dataloader_type​`
 |===
 
 OPEN: Hyperparameters and optimizer may be freely changed.
@@ -177,5 +182,5 @@ Note that since run-to-run variability is already captured by spatial multiplexi
 |DeepCAM | 5 | >=5
 |CosmoFlow | 10 | >=10
 |OpenCatalyst | 5 | >=5
-|OpenFold | | 
+|OpenFold | 10 | >=10
 |===
