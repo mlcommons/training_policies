@@ -639,10 +639,6 @@ For v1.1, we changed the policy documentation to say that a Preview submission n
 
 == Appendix: v3.0 Specific Rules
 
-=== Large Language Model (GPT3)
-
-Allowed model initialization compile time for GPT3 benchmark is increased to 60 minutes for Closed Division owing to the large memory footprint of initial checkpoints.
-
 == Appendix: RCP Examples
 
 The RCP checking process is best illustrated with the following examples:
