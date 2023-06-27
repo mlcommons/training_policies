@@ -25,6 +25,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82
 |Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.124
 |Modeling catalysts |Open Catalyst 2020 (OC20) S2EF 2M training split, ID validation set| Forces mean absolute error 0.036
+|Protein Structure Prediction (OpenFold)| OpenProteinSet and Protein Data Bank | Local Distance Difference Test (lDDT-Cα) >= 0.8
 |===
 
 == Divisions
@@ -42,7 +43,17 @@ The closed division models are:
 |Climate segmentation  |https://github.com/mlcommons/hpc/tree/main/deepcam
 |Cosmological parameter prediction |https://github.com/mlcommons/hpc/tree/main/cosmoflow
 |Modeling catalysts |https://github.com/mlcommons/hpc/tree/main/open_catalyst
+|Protein Structure Prediction |https://github.com/mlcommons/hpc/tree/main/openfold 
 |===
+
+=== Open Division
+The open division enables novel implementations of the benchmarks to improve the metrics. The newer implementations will still need
+to be mathematically equivalent to the model reference implementation. Hyperparameters and optimizer may be freely changed.
+
+== Exceptions to the MLPerf™ Training Rules
+
+* In OpenFold benchmark it is allowed to use provided InitialTrainingDataloaderPQ class in the training loop.
+This custom dataloader uses non-blocking priority queue to enable higher throughput at the cost of non-deterministic order of samples.
 
 == Data Set
 
@@ -99,6 +110,12 @@ Allowed hyperparameter and optimizer settings are specified here. For anything n
  |OpenCatalyst |opt_learning_rate_warmup_factor |`0 <= value <= 1` |the factor applied to the learning rate at the start of warmup |`warmup_factor`
  |OpenCatalyst |opt_learning_rate_decay_boundary_steps |list of positive integers |The steps at which learning rate is decayed |`lr_milestones`
  |OpenCatalyst |opt_learning_rate_decay_factor |`0 <= value <= 1` |the factor applied to decay the learning rate at each decay boundary step |`lr_gamma`
+ |OpenFold| global_batch_size |`value >= 1` | the global batch size |`batch_size` times number of GPUs
+| OpenFold | opt_name | Adam | the optimizer name |  not configurable
+| OpenFold | opt_base_learning_rate |  `value >= 0.0`​ | Base learning rate value | `--base_lr​`
+| OpenFold | opt_learning_rate_warmup_init |  `value >= 0.0` |  Warm-up initial learning rate value | `--warmup_lr_init​`
+| OpenFold | opt_learning_rate_warmup_steps | `value >= 0` | Num iterations for learning rate warm-up | `--warmup_lr_iters​`
+| OpenFold | initial_training_dataloader_type | InitialTrainingDataloaderPT​ or InitialTrainingDataloaderPQ​ | Which dataloader type use for training. *PT​ - standard PyTorch DataLoader. *PQ​ - custom dataloader with higher throughput | `--initial_training_dataloader_type​`
 |===
 
 OPEN: Hyperparameters and optimizer may be freely changed.
@@ -154,6 +171,10 @@ In case of *Throughput* resubmission due to HP borrowing: Due to the high overhe
 
 In case of a re-submission caused by HP borrowing: Resubmission scale can at most be the *proven* scale of the original submission. Max scale is proved with submitted log files, including log files of pruned results which should be submitted alongside non-pruned results, using the directory structure defined in submission rules.
 
+[PLACEHOLDER]
+
+=== Power 
+Optional power measurement numbers can also be reported by the submitters. These are to be captured from run_start to run_stop with node-level power sampling. The rules for measureing and reporting power efficiency numbers are followed by the training policies and adapted to the HPC group, if any, as listed here explicitly. 
 
 == Benchmark Results
 
@@ -165,4 +186,5 @@ Note that since run-to-run variability is already captured by spatial multiplexi
 |DeepCAM | 5 | >=5
 |CosmoFlow | 10 | >=10
 |OpenCatalyst | 5 | >=5
+|OpenFold | 10 | >=10
 |===
