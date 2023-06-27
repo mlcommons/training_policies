@@ -25,8 +25,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Climate segmentation |CAM5+TECA climate simulation with 3 target classes (atmospheric river, tropical cyclone, background) |IOU 0.82
 |Cosmological parameter prediction |CosmoFlow N-body cosmological simulation data with 4 cosmological parameter targets |Mean average error 0.124
 |Modeling catalysts |Open Catalyst 2020 (OC20) S2EF 2M training split, ID validation set| Forces mean absolute error 0.036
-|Protein Structure Prediction (OpenFold)| OpenProteinSet and Protein Data Bank 
- | Local Distance Difference Test (lDDT-Cα) >= 0.8
+|Protein Structure Prediction (OpenFold)| OpenProteinSet and Protein Data Bank | Local Distance Difference Test (lDDT-Cα) >= 0.8
 |===
 
 == Divisions
@@ -50,6 +49,11 @@ The closed division models are:
 === Open Division
 The open division enables novel implementations of the benchmarks to improve the metrics. The newer implementations will still need
 to be mathematically equivalent to the model reference implementation. Hyperparameters and optimizer may be freely changed.
+
+== Exceptions to the MLPerf™ Training Rules
+
+* In OpenFold benchmark it is allowed to use provided InitialTrainingDataloaderPQ class in the training loop.
+This custom dataloader uses non-blocking priority queue to enable higher throughput at the cost of non-deterministic order of samples.
 
 == Data Set
 
