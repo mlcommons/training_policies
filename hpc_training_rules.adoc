@@ -8,7 +8,7 @@
 Version 3.0
 May 15, 2023
 
-Points of contact: David Kanter (dkanter@gmail.com), Andreas Prodromou (aprodromou@nvidia.com), Murali Emani (memani@anl.gov)
+Points of contact: Andreas Prodromou (aprodromou@nvidia.com), Murali Emani (memani@anl.gov), David Kanter (david@mlcommons.org)
 
 == Overview
 
