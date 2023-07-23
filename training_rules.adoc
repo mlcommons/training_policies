@@ -137,7 +137,7 @@ The closed division models and quality targets are:
 | |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score
 | |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
-| |Text to image |Stable Diffusion v2.0 |80 FID and 0.339 CLIP
+| |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
 | |Large Language Model |GPT3 |2.69 log perplexity
@@ -442,7 +442,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`.
 |       |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch
 |       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch
-|       |Text to image |Stable Diffusion v2.0 |Every 2,048,000 images. CEIL(2048000 / global_batch_size) if 2048000 is not divisible by GBS
+|       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>>
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
@@ -494,6 +494,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Image segmentation (medical) | 40
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
+| |Stable Diffusion v2.0 | 10
 |Language |NLP |10
 | |Speech recognition |10
 | |Large language model |3
@@ -567,7 +568,16 @@ To extract submission convergence points, logs should report epochs as follows.
 | UNET3D | Epoch
 |===
 
-== Appendix: Benchmark Specific Rules
+== Appendix: Benchmark Specific Rules [[benchmark_specific_rules]]
+
+* Stable Diffusion
+** 10 runs per submission
+** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) if 512000 is not divisible by GBS.
+** The collected checkpoints may be evaluated freely (in order, out of order, some checkpoints may be skipped), provided that:
+1. FID and CLIP scores must to be submitted for all collected checkpoints (up to the first checkpoint with a passing score) for 1/10 of the runs.
+2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
+** evaluation is done offline, the time is not counted towards the submission time.
+** A passing score is FID<=90 and CLIP>=0.15
 
 * Image Classification
 
