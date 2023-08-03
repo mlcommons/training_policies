@@ -8,7 +8,7 @@ Version 2.0
 April 27, 2022
 
 == Overview
-This document describes how to implement the MLPerf™ Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware. 
+This document describes how to implement the MLPerf™ Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware.
 
 There are seperate rules for the submission, review, and publication process for all MLPerf benchmarks https://github.com/mlperf/policies/blob/master/submission_rules.adoc[here].
 
@@ -25,13 +25,13 @@ A _system_ consists of a defined set of hardware resources such as processors, m
 
 A _framework_ is a specific version of a software library or set of related libraries, possibly with associated offline compiler, for training ML models using a system. Examples include specific versions of Caffe2, MXNet, PaddlePaddle, pyTorch, or TensorFlow.
 
-A _benchmark_ is an abstract problem that can be solved using ML by training a model based on a specific dataset or simulation environment to a target quality level. 
+A _benchmark_ is an abstract problem that can be solved using ML by training a model based on a specific dataset or simulation environment to a target quality level.
 
 A _suite_ is a specific set of benchmarks.
 
 A _division_ is a set of rules for implementing benchmarks from a suite to produce a class of comparable results.
 
-A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization. 
+A _reference implementation_ is a specific implementation of a benchmark provided by the MLPerf organization.
 
 A _benchmark implementation_ is an implementation of a benchmark in a particular framework by a user under the rules of a specific division.
 
@@ -49,7 +49,7 @@ A _submission result set_ is a one benchmark result for each benchmark implement
 
 A _submission_ is a submission implementation set and a corresponding submission result set.
 
-A _custom summary result_ is the weighted geometric mean of an arbitrary set of results from a specific submission. MLPerf endorses this methodology for computing custom summary results but does not endorse any official summary result. 
+A _custom summary result_ is the weighted geometric mean of an arbitrary set of results from a specific submission. MLPerf endorses this methodology for computing custom summary results but does not endorse any official summary result.
 
 == General rules
 The following rules apply to all benchmark implementations.
@@ -92,7 +92,7 @@ Code that implements the model in a framework.
 
 A plain text “README.md” file that describes:
 
-* Problem 
+* Problem
 ** Dataset/Environment
 ** Publication/Attribution
 ** Data preprocessing
@@ -102,7 +102,7 @@ A plain text “README.md” file that describes:
 ** Simulation environment (RL models only)
 ** Steps necessary for reproducing the initial set of weights, if an initial set of non-standard weights is used. For v0.7, weights from v0.6 may be used without this information.
 ** Publication/Attribution
-** List of layers 
+** List of layers
 ** Weight and bias initialization
 ** Loss function
 ** Optimizer
@@ -123,7 +123,7 @@ A “verify_dataset” script that verifies the dataset against the checksum.
 A “run_and_time” script that executes the benchmark and reports the wall-clock time.
 
 == Divisions
-There are two divisions of the benchmark suite, the Closed division and the Open division. 
+There are two divisions of the benchmark suite, the Closed division and the Open division.
 
 === Closed Division
 The Closed division requires using the same preprocessing, model, training method, and quality target as the reference implementation.
@@ -137,6 +137,7 @@ The closed division models and quality targets are:
 | |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score
 | |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
+| |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
 | |Large Language Model |GPT3 |2.69 log perplexity
@@ -150,10 +151,10 @@ The Open division allows using arbitrary training data, preprocessing, model, an
 
 Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Image Classification Open benchmark, the system achieved a result of 7.2.”
 
-== Basics 
+== Basics
 
 === Random numbers
-CLOSED: Random numbers must be generated using stock random number generators. 
+CLOSED: Random numbers must be generated using stock random number generators.
 
 Random number generators may be seeded from the following sources:
 
@@ -181,16 +182,16 @@ Public results should be rounded normally.
 == Data Set
 
 === Data State at Start of Run
-CLOSED: Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data. 
+CLOSED: Each reference implementation includes a script to download the input dataset and script to verify the dataset using a checksum. The data must then be preprocessed in a manner consistent with the reference implementation, excepting any transformations that must be done for each run (e.g. random transformations). The data may also be reformatted for the target system provided that the reformatting does not introduce new information or introduce duplicate copies of data.
 
 OPEN: Any public dataset may be used for training the model, however the evaluation data must be drawn from the benchmark dataset in a manner consistent with the reference.
 
-You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.	
+You must flush the cache or restart the system prior to benchmarking.	Data can start on any durable storage system such as local disks and cloud storage systems. This explicitly excludes RAM.
 
 === Preprocessing During the Run
 Only preprocessing that must be done for each run (e.g. random transformations) must be timed.
 
-CLOSED: The same preprocessing steps as the reference implementation must be used. 
+CLOSED: The same preprocessing steps as the reference implementation must be used.
 
 OPEN: Any preprocessing steps are allowed for training data. However, each datum must be preprocessed individually in a manner that is not influenced by any other data. The evaluation data must be preprocessed in a manner consistent with reference.
 
@@ -198,9 +199,9 @@ OPEN: Any preprocessing steps are allowed for training data. However, each datum
 
 CLOSED: Images must have the same size as in the reference implementation. Mathematically equivalent padding of images is allowed.
 
-CLOSED: For benchmarks with sequence inputs, you may choose a length N and either truncate all examples to length N or throw out all examples which exceed length N. This must be done uniformly for all examples. This may only be done on the training set and not the evaluation set. 
+CLOSED: For benchmarks with sequence inputs, you may choose a length N and either truncate all examples to length N or throw out all examples which exceed length N. This must be done uniformly for all examples. This may only be done on the training set and not the evaluation set.
 
-CLOSED: Two ways to represent the Mask R-CNN mask are permitted. One is a polygon and the other is a scalable bitmask. 
+CLOSED: Two ways to represent the Mask R-CNN mask are permitted. One is a polygon and the other is a scalable bitmask.
 
 OPEN: The closed division data representations restrictions only apply at the start of the run. Data may be represented in an arbitrary fashion during the run.
 
@@ -216,14 +217,14 @@ OPEN: If applicable, the test dataset must be extracted in the same manner as th
 === Training Data Order
 CLOSED: the training and test data must be traversed in the same conceptual order as the reference implementation. For instance, the data might be traversed sequentially or randomly with uniform distribution. Batch size, shard size, and the random number generator will affect order.
 
-Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once. Modifications to data order and/or batching must be presented to the SWG group in advance of the submission deadline for approval if they could affect the ability to borrow hyperparameters and/or approximately follow the learning rate schedule defined by the RCPs. 
+Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once. Modifications to data order and/or batching must be presented to the SWG group in advance of the submission deadline for approval if they could affect the ability to borrow hyperparameters and/or approximately follow the learning rate schedule defined by the RCPs.
 
 In the case of DLRMv2 benchmark, training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
 
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
 == RL Environment
-CLOSED: The implementation must use the same RL algorithm and simulator or game as the reference implementation, with the same parameters. 
+CLOSED: The implementation must use the same RL algorithm and simulator or game as the reference implementation, with the same parameters.
 
 OPEN: The implementation may use a different RL algorithm but must use the same simulator or game with the same parameters. If the reference implementation generates all data online, the Open division implementation must also generate all data online.
 
@@ -232,7 +233,7 @@ It is allowed and encouraged to parallelize and otherwise optimize (e.g. by impl
 == Model
 CLOSED: The benchmark implementation must use the same model as the reference implementation, as defined by the remainder of this section.
 
-OPEN: The benchmark implementation may use a different model. 
+OPEN: The benchmark implementation may use a different model.
 
 === Graph Definition
 
@@ -241,25 +242,25 @@ CLOSED: Each of the current frameworks has a graph that describes the operations
 === Weight and Bias Initialization
 CLOSED: Weights and biases must be initialized using the same constant or random value distribution as the reference implementation, unless a pre-trained set of weights, such as a checkpoint or backbone, is used by the reference.
 
-OPEN: Weights and biases must be initialized using a consistent constant or random value distribution. 
+OPEN: Weights and biases must be initialized using a consistent constant or random value distribution.
 
 === Graph Execution
-CLOSED: Frameworks are free to optimize the non-weight parts of the computation graph provided that the changes are mathematically equivalent. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, loop-invariant code motion, and recomputation of node state are entirely allowed. 
+CLOSED: Frameworks are free to optimize the non-weight parts of the computation graph provided that the changes are mathematically equivalent. So optimizations and graph / code transformations of the flavor of dead code elimination, common subexpression elimination, loop-invariant code motion, and recomputation of node state are entirely allowed.
 
 OPEN: Frameworks are free to alter the graph.
 
 == Training Loop
 
 === Hyperparameters
-CLOSED: 
+CLOSED:
 
-By default, the hyperparameters must be the same as the reference. 
+By default, the hyperparameters must be the same as the reference.
 
 Hyperparameters include the optimizer used and values like the regularization norms and weight decays.
 
 The implementation of the optimizer must match the optimizer specified in the Appendex: Allowed Optimizer.  The Appendex lists which optimizers in the popular deep learning frameworks are compliant by default.  If a submission uses an alternate implementation, the submitter must describe the optimizer's equation and demonstrate equivalence with the approved optimizers on that list.
 
-The following table lists the tunable hyperparameters for each allowed model,optimizer combination. The value of each tunable hyperparameter must meet the listed constraint. 
+The following table lists the tunable hyperparameters for each allowed model,optimizer combination. The value of each tunable hyperparameter must meet the listed constraint.
 
 The MLPerf verifier scripts checks all hyperparameters except those with names marked with asterisks. If a hyperparameter is marked with one asterisk, it must be checked manually. If a hyperparameter is marked with two asterisks, it is also not logged and it must be checked manually in the code.  If the verifier and the constraints in this table differ, the verifier (specifically, the version on the date of submission unless otherwise decided by the review committee) is the source of truth.
 
@@ -316,7 +317,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |resnet |lars |lars_opt_momentum | 0.9 for batch<32k, otherwise arbitrary constant |momentum in reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
  |resnet |lars |lars_opt_weight_decay |(0.0001 * 2 ^ N) where N is any integer |weight_decay in  reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
  |resnet |lars |lars_opt_learning_rate_decay_steps |unconstrained |num_epochs in reference |link:https://github.com/mlperf/training/blob/master/image_classification/tensorflow/official/resnet/resnet_run_loop.py[reference code]
- |resnet |lars |global_batch_size |unconstrained |global batch size in reference 
+ |resnet |lars |global_batch_size |unconstrained |global batch size in reference
 |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/image_classification/tensorflow/official/utils/arg_parsers/parsers.py#L158[reference code]
  |resnet |lars |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
  |resnet |lars |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
@@ -361,6 +362,13 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L268-L269[reference code]
  |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L395[reference code]
  |rnnt |lamb |model_weights_initialization_scale      |unconstrained |After random initialization of weight and bias tensors, all are scaled with this factorAfter random initialization of weight and bias tensors, all are scaled with this factor |See link:https://github.com/mwawrzos/training/blob/2126999a1ffff542064bb3208650a1e673920dcf/rnn_speech_recognition/pytorch/train.py#L342[reference code]
+ |stable diffusion |adamw |global_batch_size |unconstrained |The glboal batch size for training |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/main.py#L633[reference code]
+ |stable diffusion |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1629[reference code]
+ |stable diffusion |adamw |opt_adamw_beta_2 |0.999 |coefficients used for computing running averages of gradient and its square |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1630[reference code]
+ |stable diffusion |adamw |opt_adamw_epsilon |1e-08 |term added to the denominator to improve numerical stability |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1631[reference code]
+ |stable diffusion |adamw |opt_adamw_weight_decay |0.01 |weight decay coefficient |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1632[reference code]
+ |stable diffusion |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1633[reference code]
+ |stable diffusion |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1639[reference code]
  |ssd |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L80[reference code]
  |ssd |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L87[reference code]
  |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L89[reference code]
@@ -389,7 +397,7 @@ OPEN: Hyperparameters and optimizer may be freely changed.
 Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding batch sizes are fixed as follows.
 
 |===
- |global_batch_size |opt_base_learning_rate 
+ |global_batch_size |opt_base_learning_rate
 
  |1536 |2.0e-5
  |2048 |2.0e-5
@@ -415,9 +423,9 @@ With evidence that the resulting model, using the same batch size as the other s
 
 A resubmission of a benchmark with borrowed hyperparameters must use the same software (with the exceptions listed in the Software Adoption section of this document), system and system configuration (accelerators, NICs etc) as the original submission.  The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result.  In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
 
-Since the hyperparameters are fixed for GPT3, hyperparameter borrowing is not allowed. 
+Since the hyperparameters are fixed for GPT3, hyperparameter borrowing is not allowed.
 
-=== Loss function 
+=== Loss function
 CLOSED: The same loss function used in the reference implementation must be used.
 
 OPEN: Any loss function may be used. Do not confuse the loss function with target quality measure.
@@ -433,7 +441,8 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
 |       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`.
 |       |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch
-|       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch 
+|       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch
+|       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>>
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
@@ -485,13 +494,14 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |Image segmentation (medical) | 40
 | |Object detection (light weight) |5
 | |Object detection (heavy weight) |5
+| |Stable Diffusion v2.0 | 10
 |Language |NLP |10
 | |Speech recognition |10
 | |Large language model |3
 |Commerce |Recommendation |10
 |===
 
-Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run. 
+Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run.
 
 In the case of UNET3D, due to large variance, 40 runs are required. Out of the 40 runs, the 4 fastest and 4 slowest are dropped. There can be maximum of 4 non-converging runs. A run is classified as non-converged if the target quality metric is not reached within `CEILING(10000*168/samples_in_epoch)` epochs.
 
@@ -499,11 +509,11 @@ Each benchmark result should be normalized by dividing the reference result for 
 
 === Scoring
 
-An MLPerf submission score is intended to represent the median expected result across a large number of runs. 
+An MLPerf submission score is intended to represent the median expected result across a large number of runs.
 
 To reduce statistical variance and the potential to cherry pick results, each benchmark submission is composed of a set of N independent runs, with N chosen based on the observed variation of the benchmark, as described in the table above.
 
-Running multiple iterations of N independent runs with the goal of validating that the submission is close to a median result is encouraged but not required.  Running multiple iterations of N runs to try find the lowest one is against the spirit of MLPerf and is prohibited – see Section 2.1, “Strive to be fair”.  Results that appear to be too far away from a median result may be rejected. 
+Running multiple iterations of N independent runs with the goal of validating that the submission is close to a median result is encouraged but not required.  Running multiple iterations of N runs to try find the lowest one is against the spirit of MLPerf and is prohibited – see Section 2.1, “Strive to be fair”.  Results that appear to be too far away from a median result may be rejected.
 
 As a more computationally efficient method of validating that a submission is close to the median result, it is also allowed to run M>N independent runs as a group and to designate N consecutive runs from the group as the runs to be used for scoring, provided that the submitter chooses the N consecutive runs that are closest to the median result.  For the purposes of calculating the median, sets of N consecutive runs that would create an invalid benchmark result should be included in the median calculation as "infinite" scores.  If the median set would be an invalid benchmark result, the entire result is invalid.  Submitting the full run set (vs just the N runs used for scoring) as a reference is optional, but may be required in the future.  For purposes of this scoring, "consecutive" is defined as an objective and deterministic method, such as submission timestamps.  Submitters are not allowed to pick different orderings to improve their score.  Runs may go in parallel on the submitter's compute resources, as long as there is a way to objectively and deterministically sort the runs, for example by timestamp.
 
@@ -551,13 +561,23 @@ To extract submission convergence points, logs should report epochs as follows.
 | BERT | Training sample (integer)
 | GPT3 | Training token starting from 0 (integer)
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
+| Stable-Diffusion | Training sample (integer)
 | SSD (RetinaNet) | Epoch
-| Mask-RCNN | Epoch 
-| RNN-T | Epoch 
+| Mask-RCNN | Epoch
+| RNN-T | Epoch
 | UNET3D | Epoch
 |===
 
-== Appendix: Benchmark Specific Rules
+== Appendix: Benchmark Specific Rules [[benchmark_specific_rules]]
+
+* Stable Diffusion
+** 10 runs per submission
+** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) if 512000 is not divisible by GBS.
+** The collected checkpoints may be evaluated freely (in order, out of order, some checkpoints may be skipped), provided that:
+1. FID and CLIP scores must to be submitted for all collected checkpoints (up to the first checkpoint with a passing score) for 1/10 of the runs.
+2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
+** evaluation is done offline, the time is not counted towards the submission time.
+** A passing score is FID<=90 and CLIP>=0.15
 
 * Image Classification
 
@@ -647,14 +667,14 @@ Allowed model initialization compile time for GPT3 benchmark is increased to 60 
 
 The RCP checking process is best illustrated with the following examples:
 
-Benchmark A requires 5 submission runs. 
-The reference implementation provides (at least) 10 convergence points, let's say [16, 14, 16, 17, 16, 16, 15, 16, 15, 16] for batch size 128. 
-The top and bottom run are excluded from the mean and standard deviation computation. 
+Benchmark A requires 5 submission runs.
+The reference implementation provides (at least) 10 convergence points, let's say [16, 14, 16, 17, 16, 16, 15, 16, 15, 16] for batch size 128.
+The top and bottom run are excluded from the mean and standard deviation computation.
 So in this case the Mean = 15.75 epochs and Stdev = 0.43. Based on the t-test the maximum allowed speedup for p-value=0.05 is 3.53%. In other words the minimum mean epochs to converge for each submission with batch size 128 is 15.21.
 
-The reference also provides convergence points for batch size 256: [20, 21, 21, 20, 22, 22, 21, 21, 20, 20]. 
-In this case Mean = 20.75, Stdev = 0.66 and based on the t-test the maximum allowed speedup for p-value=0.05 is 4.12%. 
-In other words the minimum mean epochs to converge for batch-256 is 19.93. 
+The reference also provides convergence points for batch size 256: [20, 21, 21, 20, 22, 22, 21, 21, 20, 20].
+In this case Mean = 20.75, Stdev = 0.66 and based on the t-test the maximum allowed speedup for p-value=0.05 is 4.12%.
+In other words the minimum mean epochs to converge for batch-256 is 19.93.
 
 Let's consider now the following submission scenarios:
 
