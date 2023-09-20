@@ -1,0 +1,88 @@
+:toc:
+:toclevels: 4
+
+:sectnums:
+
+= MLPerf Training - Power Measurement Rules
+
+== Preamble
+
+This document describes how to measure Power for benchmarks in the https://github.com/mlcommons/training[MLPerf Training] suite.
+It only outlines the additional steps to be considered for Power submissions compared with original Performance submissions.
+Please see the https://github.com/mlcommons/training_policies/blob/master/training_rules.adoc[MLPerf Training rules] that cover the submission, review, and publication process for MLPerf Training benchmarks in detail.
+
+== Overview
+
+The MLPerf name and logo are trademarks. In order to refer to a result using the MLPerf name, the result must conform to the letter and spirit of the rules specified in this document. The MLPerf organization reserves the right to solely determine if a use of its name or logo is acceptable.
+
+== Requirements
+
+=== Scope of Measurement
+
+==== Measure at Node Level
+
+A *system under test (SUT)* consists of a defined set of hardware and software resources that will be measured for performance and power. The hardware resources may include processors, accelerators, memories, disks, and interconnect. The software resources may include an operating system, compilers, libraries, and drivers that significantly affect the running time or power consumption of a benchmark. Each power submitter must document the system being measured in the system description file.
+
+Example : for data center environments, think of a SUT (or system) as a host or a node. This definition should apply to Cloud, Enterprise or HPC machine installs.
+
+==== Measure All Nodes
+
+All nodes participating in the performance runs must be measured.
+
+==== Measure or Estimate Interconnects
+
+If an interconnect is used to transmit weights, weight-updates, or activations, its power usage must be measured or estimated.
+
+The estimated power of an interconnect is its maximum specified power consumption, weighted by the provisioning to a run. The total estimated power of interconnects is the sum of estimates over connections in the network topology; submission of networking topology or estimation details is optional.
+
+==== Not Required to Measure Other Components
+
+Other components, such as remote storage and cooling that is not part of the participating nodes, are not required to be measured.
+
+=== Measure at the PSUs
+
+The node level measurement is at the PSU for DC. If AC/DC PSUs in an AC system can only report input power, AC/DC conversion efficiency factor can be used to derive the DC power of the system.  AC/DC efficiency of the PSU must be documented, e.g., using the 80Plus efficiency rating of the converter at the operating point.
+
+The PSU measurement must exposes the power consumed by all the components of the node in a composite manner.
+
+Using PDU measurement for indivual nodes is also acceptable.
+
+=== Measure all Runs
+
+Follow the training rules for how many runs is needed for each benchmark.
+
+=== Report 1 Measurement per Second
+
+Power measurement must be at least once every second distributed evenly throughout the timed portion of a run.
+
+=== Measure max(a run, 60 power samples)
+
+Power measurement begins just before a run starts and stops just afterwards. Power measurement must include all timed operations and may include a small fraction of untimed operations.
+
+For runs that take <60 samples to complete, suggest extending the training loop till the minimum required number of power samples is acquired. Continue reporting performance markers, such as epoch or block start/stop and throughputs, in the extended period.
+
+=== Target 5% Accuracy
+
+A power meter is hardware and / or software that measures power and / or energy.
+
+A power meter is considered to have x% accuracy at 1 Hz, if:
+
+1. It’s a SPEC or revenue grade power with specified accuracy better than x% at 1 Hz; or
+
+2. Showing accuracy within x% at y Hz when comparing to a power meter in 1, by the following test:
+  . Measure the same SUT;
+  . Reporting frequency at 1 Hz;
+  . Under different load conditions, e.g. idle + 2 different MLPerf benchmarks;
+  . Olympic scoring of the two meters, for 5 un-overlapped timed durations of 1 minute each, are within x % of each other. 
+
+== Scoring
+
+The score represents the energy consumption to accomplish a given task. For training, the task is a training run.
+
+The energy metric is calculated by summing up energy consumption from all SUTs. For a given SUT, the energy consumption is calculated as:
+
+1. `sum(a power reading * duration between the previous reading and the current reading)` for all readings covering the timed portion of a run, if power is measured;
+
+2. `sum(maximum specified power consumption * duration of a run * provisioning ratio of the SUT for a run)` for components whose power consumption is estimated  (e.g. for interconnect).
+
+Use Olympic scoring amoung multiple runs for power scores; choose the same runs as the performance score's Olympic scoring.
