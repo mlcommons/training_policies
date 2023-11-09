@@ -593,6 +593,15 @@ To extract submission convergence points, logs should report epochs as follows.
 
 ** Because DLRMv2 (DCNv2) benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
 
+* GNN (RGAT)
+
+** Partitioning for multi-node training: The graph must be partitioned but any non-data aware partitioning algorithm can be used as long as:
+1. it is reproducible, either using a fixed seed or a deterministic algorithm, and
+2. the submitter ensures that each graph node’s feature can only be read from disk on one exclusive training node. Other training nodes that needs this graph node’s feature should fetch it over the network (RPCs, etc.) during training.
+Partitioning can be done before training starts (outside the timed region) and can be done only once for a submission.
+
+** Cacheing: In real world datasets, the graph node's features are very large so feature caching is not allowed. However, the graph is much smaller than features so caching only the graph is allowed, but it should be done after run_start as it involves touching the dataset.
+
 == Appendix: Examples of Compliant Optimizers
 
 Analysis to support this can be found in the document "MLPerf Optimizer Review" in the MLPerf Training document area.
