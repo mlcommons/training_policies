@@ -127,3 +127,16 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
      b. Following the high level description in section 1 should be a description for technical press, who have some machine learning context, so would be interested in more details.  
 
      c. Section 4, Model, should describe the problem to a machine learning practitioner, and also include a link to the paper describing that network.
+
+### Target Accuracy
+
+ 1. All reference benchmarks are expected to take 7-day @ 1 GPU to run, thus the target accuracy should be chosen such that the benchmark fits in that time frame. Some references like gpt3/stable diffusion take much longer, but these are rare excpetions
+ 2. The goal is to choose an accuracy target with low variance on the probability distribution of number of iterations. To get this, run as many runs as possible and plot accuracy vs iteration plots. Target accuracy should be picked from the region right after the knee point in the accuracy curve
+     ![plot](./images/target_accuracy_knee.png "Target Accuracy")
+
+     a. Too flat region - The reason the ""too flat"" region is ""too flat"" is because when you try to pick an accuracy by drawing a horizontal line at that accuracy, the angle the line intersects with the plot is very low. Which means the iterations needed to get that accuracy has a very high range (In numerical analysis this is called ""ill conditioned""). Thus, it would not make a good benchmark accuracy target
+
+     b. Too much noise region - the model starts improving very quickly in this region, so the accuracy change for a small delta in iterations is very high. Thus, the accuracy in this region is not stable for a benchmark target
+ 3. Some examples for target accuracy from the DLRM and GPT3 benchmarks are shown below
+     ![plot](./images/target_accuracy_dlrm.png "DLRM DCNv2 - target accuracy value is 0.8025")
+     ![plot](./images/target_accuracy_gpt3.png "GPT3 - target accuracy value is 2.69")
