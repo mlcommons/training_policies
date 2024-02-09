@@ -267,7 +267,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
 |===
  |Model |Optimizer |Name |Constraint |Definition |Reference Code
 
-|bert |lamb |global_batch_size |unconstrained |The glboal batch size for training. |--train_batch_size
+|bert |lamb |global_batch_size |unconstrained |The global batch size for training. |--train_batch_size
  |bert |lamb |opt_base_learning_rate |unconstrained |The base learning rate. |--learning_rate
  |bert |lamb |opt_epsilon |unconstrained |adam epsilon |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L75[reference code]
  |bert |lamb |opt_learning_rate_training_steps |unconstrained |Step at which your reach the lowest learning late |link:https://github.com/mlperf/training/blob/master/language_model/tensorflow/bert/run_pretraining.py#L64[reference code]
