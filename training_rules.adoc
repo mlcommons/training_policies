@@ -547,11 +547,11 @@ Please refer to the related Appendix for examples that shed light to the RCP pro
 
 Submitters are encouraged to run the RCP checker script prior to their submission to make sure they do not violate RCP limits.
 
-If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to upload, but the submitter must notify the results chair, and prepare for the audit process described in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document] but at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
+If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to upload, but the submitter must notify the results chair, and prepare for the audit process described in the next section where at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
 If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline (Exception is GPT3: where RCPs are due 5 weeks before the submission deadline). RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
 
-During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the link:https://github.com/mlcommons/policies/blob/master/submission_rules.adoc#auditing[policies document]
+During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the next section.
 
 To extract submission convergence points, logs should report epochs as follows.
 |===
@@ -567,6 +567,27 @@ To extract submission convergence points, logs should report epochs as follows.
 | RNN-T | Epoch
 | UNET3D | Epoch
 |===
+
+=== Handling RCP Failures
+
+In order to reduce the burden on the submitter as well as the Submitter’s Working Group (SWG) during the review period, submitters shall ensure compliance with RCP tests ahead of the submission deadline. Submissions that need new RCPs are required to supply those RCPs at the same time as their submission, as specified in the Training Rules document. While providing new RCPs, a submitter must also include reference run logs for the SWG and reference owner to review.
+
+Submissions with failing RCP tests are rejected by default until the SWG approves the submission. Submitters shall notify the SWG in advance of a potential RCP failure, so they can prefetch requests for additional data and minimize churn during the review period.  A submitter requesting approval for a submission with failing RCP test shall provide additional explanatory data to the SWG explaining why the WG should consider the non-compliant submission a fair comparison to compliant submissions. This list will be decided by the WG for each submission individually. 
+
+A non-exhaustive list of potential requests of data is: 
+
+1. Written statement from the submitter explaining the plausible cause of deviation. This should also be supported by data from A/B experiments.
+2. Logs showing training loss of the submission vs training loss of the reference. Note that the reference run should be on reference hardware platform in FP32
+3. Model summary showing number of trainable_parameters (weights) in the model vs the same. 
+4. Debugging via comparing intermediate activations, distributions of initialization weights, and/or compliant randomization on the reference vs the submission.
+The SWG may further request additional information, not listed above, at their discretion.
+
+A submitter requesting approval for their RCP failing submission during the review period shall provide requested information in a timely manner. All evidence supporting the appeal is due at the latest by the end of Review Week 1.  For resubmissions during the review period, all appeal evidence is due at the time of resubmission.
+
+The SWG must come to majority consensus to approve a submission that fails the RCP test.  If the SWG cannot come to majority consensus to approve a submission, then potential alternatives are:
+
+1. Normalize submission run epochs to reference epochs to pass RCP test irrespective of accuracy achieved
+2. Submission is withdrawn due to non-compliance
 
 == Appendix: Benchmark Specific Rules [[benchmark_specific_rules]]
 
