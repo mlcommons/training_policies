@@ -138,8 +138,9 @@ The closed division models and quality targets are:
 | |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 | |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15
-|Language | Speech recognition | RNN-T | 0.058 Word Error Rate
+| |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
+| |Large Language Model |Llama2-70B-LoRA |0.925 Eval loss
 | |Large Language Model |GPT3 |2.69 log perplexity
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC
 |===
@@ -300,6 +301,16 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |gpt3 |adam |opt_init_checkpoint_step |ceil(4000 * 1536 / batch_size) |first step after loading initial checkpoint |See PR (From NV and Google, TODO Link)
  |gpt3 |adam |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "GPT3 learning rates" |See PR (From NV and Google, TODO Link)
  |gpt3 |adam |opt_end_learning_rate |10% of opt_base_learning_rate |learning rate at the last step of decay period |See PR (From NV and Google, TODO Link)
+ |llama2_70b_lora |adamw |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Habana, TODO Link)
+ |llama2_70b_lora |adamw |opt_gradient_clip_norm |unconstrained | Gradients are clipped above this norm threshold. |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |lora_dropout |0.1 |fixed to reference (0.1). |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |sequence_length |8196 |the sequence length - fixed to reference |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |lora_alpha |unconstrained | scaling factor for the LoRA weight matrices |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |opt_weight_decay |unconstrained |weight decay |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |opt_learning_rate_warmup_ratio | unconstrained |ratio of steps out of training for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |opt_learning_rate_training_steps | unconstrained |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From Habana, TODO Link)
+ |llama2_70b_lora |adamw |opt_base_learning_rate |unconstrained | base leraning rate |See PR (From Habana, TODO Link)
  |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
  |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
@@ -445,6 +456,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>>
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
+|        |large Language Model |Llama2_70B_LoRA| Every 512 sequences, CEIL(512 / global_batch_size) steps if 512 is not divisible by GBS. skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20
 |===
@@ -560,6 +572,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | RN50 | Epoch
 | BERT | Training sample (integer)
 | GPT3 | Training token starting from 0 (integer)
+| GPT3 | Training samples starting from 0 (integer)
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
 | Stable-Diffusion | Training sample (integer)
 | SSD (RetinaNet) | Epoch
