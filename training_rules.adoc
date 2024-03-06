@@ -456,7 +456,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>>
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
-|        |large Language Model |Llama2_70B_LoRA| Every 512 sequences, CEIL(512 / global_batch_size) steps if 512 is not divisible by GBS. skipping 0
+|        |large Language Model |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20
 |===
