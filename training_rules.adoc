@@ -600,7 +600,7 @@ The SWG must come to majority consensus to approve a submission that fails the R
 == Appendix: Benchmark Specific Rules [[benchmark_specific_rules]]
 
 * Node Classification
-** Timed region: Graph loading, training, evaluation are all timed. Graph-partitioning for multi-node runs is not timed.
+** Timed region: Graph and feature loading, training, evaluation are all timed. Graph-partitioning for multi-node runs is not timed.
 ** Node features are in fp32 in the dataset, but lower precisions are allowed. Feature precision can be converted offline. 
 ** Any sparse format may be used for storing the graph. Offline conversion is allowed. 
 ** Graph partitioning algorithm and locality:
