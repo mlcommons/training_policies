@@ -84,6 +84,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |NLP |Wikipedia 2020/01/01
 | |Large language model |c4/en/3.0.1
 |Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant)
+|Graphs | Node classification | IGBH-Full 
 |===
 
 MLCommons provides a reference implementation of each benchmark, which includes the following elements:
@@ -138,11 +139,12 @@ The closed division models and quality targets are:
 | |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP
 | |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
 | |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15
-| |Language | Speech recognition | RNN-T | 0.058 Word Error Rate
+|Language | Speech recognition | RNN-T | 0.058 Word Error Rate
 | |NLP |BERT |0.720 Mask-LM accuracy
-| |Large Language Model |Llama2-70B-LoRA |0.925 Eval loss
 | |Large Language Model |GPT3 |2.69 log perplexity
+| |Large Language Model |Llama2-70B-LoRA |0.925 Eval loss
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC
+|Graphs | Node classification|R-GAT | 72.0 % classification
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
@@ -399,9 +401,12 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |unet3d |sgd |evaluation_input_shape |fixed to reference |evaluation input shape |reference --val_input_shape
  |unet3d |sgd |data_train_samples |fixed to reference |number of training samples | N/A
  |unet3d |sgd |data_eval_samples |fixed to reference |number of evaluation samples | N/A
+ |gnn |adam |global_batch_size |arbitrary constant |global batch size |link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L293[reference code]
+ |gnn |adam |opt_base_learning_rate |unconstrained |base learning rate|link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L296[reference code]
 |===
 
-OPEN: Hyperparameters and optimizer may be freely changed.
+OPEN: Hyperparameters and optimizer may be freely changed. 
+
 
 ==== GPT3 hyperparameter constraints
 
@@ -456,9 +461,10 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>>
 |Language|Speech recognition |RNN-T|Every 1 epoch
 |        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
-|        |large Language Model |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
+|        |large Language Model |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. skipping first 3 evaluations
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20
+|Graphs|Node classification|R-GAT|Evaluate 20 times per epoch
 |===
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
@@ -510,7 +516,9 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Language |NLP |10
 | |Speech recognition |10
 | |Large language model |3
+| |Large language model Fine Tune (LoRA) |10
 |Commerce |Recommendation |10
+|Graphs|Node classification|10
 |===
 
 Each benchmark result is computed by dropping the fastest and slowest runs, then taking the mean of the remaining times. For this purpose, a single non-converging run may be treated as the slowest run and dropped. A benchmark result is invalid if there is more than one non-converging run.
@@ -572,13 +580,14 @@ To extract submission convergence points, logs should report epochs as follows.
 | RN50 | Epoch
 | BERT | Training sample (integer)
 | GPT3 | Training token starting from 0 (integer)
-| GPT3 | Training samples starting from 0 (integer)
+| Llama2_70B_LoRA | Training sample (integer)
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
 | Stable-Diffusion | Training sample (integer)
 | SSD (RetinaNet) | Epoch
 | Mask-RCNN | Epoch
 | RNN-T | Epoch
 | UNET3D | Epoch
+| R-GAT | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
 |===
 
 === Handling RCP Failures
@@ -603,6 +612,16 @@ The SWG must come to majority consensus to approve a submission that fails the R
 2. Submission is withdrawn due to non-compliance
 
 == Appendix: Benchmark Specific Rules [[benchmark_specific_rules]]
+
+* Node Classification
+** Timed region: Graph and feature loading, training, evaluation are all timed. Graph-partitioning for multi-node runs is not timed.
+** Node features are in fp32 in the dataset, but lower precisions are allowed. Feature precision can be converted offline. 
+** Any sparse format may be used for storing the graph. Offline conversion is allowed. 
+** Graph partitioning algorithm and locality:
+*** Any any general non-data-aware partitioning algorithm that is reproducible, either using a fixed seed or a deterministic algorithm
+*** We require that each graph node’s feature can only be read from disk on one exclusive training node. Other training nodes that need this graph node’s feature should fetch it over the network
+** Caching: Graph caching is allowed, but feature caching is not allowed. 
+** Sampler: Submitters are not expected to exactly match reference sampler implementation due to known framework differences, but must meet RCP criteria.
 
 * Stable Diffusion
 ** 10 runs per submission
