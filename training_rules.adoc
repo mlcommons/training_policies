@@ -607,7 +607,7 @@ The SWG must come to majority consensus to approve a submission that fails the R
 *** Any any general non-data-aware partitioning algorithm that is reproducible, either using a fixed seed or a deterministic algorithm
 *** We require that each graph node’s feature can only be read from disk on one exclusive training node. Other training nodes that need this graph node’s feature should fetch it over the network
 ** Caching: Graph caching is allowed, but feature caching is not allowed. 
-** Sampler: We do not impose that submitters using standard frameworks to maintain exact sampler equivalence as reference, but must meet RCP criteria
+** Sampler: Submitters are not expected to exactly match reference sampler implementation due to known framework differences, but must meet RCP criteria.
 
 * Stable Diffusion
 ** 10 runs per submission
