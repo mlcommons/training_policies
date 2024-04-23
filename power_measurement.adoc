@@ -59,7 +59,7 @@ Power measurement must be at least once every second distributed evenly througho
 
 Power measurement begins just before a run starts and stops just afterwards. Power measurement must include all timed operations and may include a small fraction of untimed operations.
 
-For runs that take <60 samples to complete, suggest extending the training loop till the minimum required number of power samples is acquired. Continue reporting performance markers, such as epoch or block start/stop and throughputs, in the extended period.
+For runs that take <60 samples to complete, suggest extending the training loop till the minimum required number of power samples is acquired. The extended period should use the same codepath & not skip any computation to comply with the spirit of the rule. Continue reporting performance markers, such as epoch or block start/stop and throughputs, in the extended period.
 
 === Target 5% Accuracy
 
