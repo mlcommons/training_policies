@@ -81,7 +81,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Language |NLP |Wikipedia 2020/01/01
 | |Large language model |c4/en/3.0.1
 | |Large language model |SCROLLS GovReport
-|Commerce |Recommendation |Criteo 4TB Click Logs (multi-hot variant)
+|Commerce |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant)
 |Graphs | Node classification | IGBH-Full 
 |===
 
