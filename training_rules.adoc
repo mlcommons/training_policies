@@ -76,14 +76,12 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |===
 |Area|Problem |Dataset
 
-|Vision |Image classification |ImageNet
-| |Image segmentation (medical) |KiTS19
-| |Object detection (light weight) |A subset of OpenImages
-| |Object detection (heavy weight) |COCO
-|Language |Speech recognition |LibriSpeech
-| |NLP |Wikipedia 2020/01/01
+|Vision |Object detection (light weight) |A subset of OpenImages
+| |Text to Image |LAION-400M-filtered
+|Language |NLP |Wikipedia 2020/01/01
 | |Large language model |c4/en/3.0.1
-|Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant)
+| |Large language model |SCROLLS GovReport
+|Commerce |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant)
 |Graphs | Node classification | IGBH-Full 
 |===
 
@@ -134,25 +132,21 @@ The closed division models and quality targets are:
 |===
 |Area |Problem |Model |Target
 
-|Vision |Image classification |ResNet-50 v1.5 |75.90% classification
-| |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score
-| |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP
-| |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP
+|Vision |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP
 | |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15
-|Language | Speech recognition | RNN-T | 0.058 Word Error Rate
-| |NLP |BERT |0.720 Mask-LM accuracy
+|Language |NLP |BERT |0.720 Mask-LM accuracy
 | |Large Language Model |GPT3 |2.69 log perplexity
 | |Large Language Model |Llama2-70B-LoRA |0.925 Eval loss
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC
 |Graphs | Node classification|R-GAT | 72.0 % classification
 |===
 
-Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Image Classification Closed benchmark, the system achieved a result of 7.2.”
+Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Recommendation Closed benchmark, the system achieved a result of 7.2.”
 
 === Open Division
 The Open division allows using arbitrary training data, preprocessing, model, and/or training method. However, the Open division still requires using supervised or reinforcement machine learning in which a model is iteratively improved based on training data, simulation, or self-play.
 
-Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Image Classification Open benchmark, the system achieved a result of 7.2.”
+Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Recommendation Open benchmark, the system achieved a result of 7.2.”
 
 == Basics
 
@@ -313,68 +307,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |llama2_70b_lora |adamw |opt_learning_rate_warmup_ratio | unconstrained |ratio of steps out of training for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From Habana, TODO Link)
  |llama2_70b_lora |adamw |opt_learning_rate_training_steps | unconstrained |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From Habana, TODO Link)
  |llama2_70b_lora |adamw |opt_base_learning_rate |unconstrained | base leraning rate |See PR (From Habana, TODO Link)
- |maskrcnn |sgd |global_batch_size |arbitrary constant |global version of reference SOLVER.IMS_PER_BATCH |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/build.py#L112[reference code]
- |maskrcnn |sgd |opt_learning_rate_decay_factor$$*$$ |fixed to reference (0.1) |learning rate decay factor |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L13[reference code]
- |maskrcnn |sgd |opt_learning_rate_decay_steps$$*$$ |(60000, 80000) * (1 + K / 10) * 16 / global_batch_size where K is integer |Steps at which learning rate is decayed |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L26[reference code]
- |maskrcnn |sgd |opt_base_learning_rate |0.02 * K for any integer K. For global_batch_size < 16, 0.02 / K for any integer K is also allowed |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L12[reference code]
- |maskrcnn |sgd |max_image_size$$*$$ |fixed to reference |Maximum size of the longer side |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/transforms/build.py#L8[reference code]
- |maskrcnn |sgd |min_image_size$$*$$ |fixed to reference |Maximum size of the shorter side |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/data/transforms/build.py#L7[reference code]
- |maskrcnn |sgd |num_image_candidates$$*$$ |1000 or 1000 * batches per chip |tunable number of region proposals for given batch size |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/modeling/rpn/inference.py#L183[reference code]
- |maskrcnn |sgd |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L28[reference code]
- |maskrcnn |sgd |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/object_detection/pytorch/maskrcnn_benchmark/solver/build.py#L29[reference code]
- |resnet |lars |lars_opt_base_learning_rate |arbitrary constant |Base "plr" in the PR linked. |link:https://github.com/mlperf/training/pull/342/files#[reference code]
- |resnet |lars |lars_opt_end_learning_rate$$*$$ |fixed to reference |end learning rate for polynomial decay, implied mathemetically from other HPs |N/A
- |resnet |lars |lars_opt_learning_rate_decay_poly_power$$*$$ |fixed to reference |power of polynomial decay, no link needed since not tunable |N/A
- |resnet |lars |lars_epsilon$$*$$ |Fixed to reference |epsilon in reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
- |resnet |lars |lars_opt_learning_rate_warmup_epochs |arbitrary constant |w_epochs in PR |link:https://github.com/mlperf/training/pull/342/files#[reference code]
- |resnet |lars |lars_opt_momentum | 0.9 for batch<32k, otherwise arbitrary constant |momentum in reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
- |resnet |lars |lars_opt_weight_decay |(0.0001 * 2 ^ N) where N is any integer |weight_decay in  reference |link:https://github.com/mlperf/training/pull/342/files#diff-b7db7d58acb8134acb65b4d1d60b8e90R49[reference code]
- |resnet |lars |lars_opt_learning_rate_decay_steps |unconstrained |num_epochs in reference |link:https://github.com/mlperf/training/blob/master/image_classification/tensorflow/official/resnet/resnet_run_loop.py[reference code]
- |resnet |lars |global_batch_size |unconstrained |global batch size in reference
-|link:https://github.com/mlperf/training/blob/00570abf77d351e474d57830014f6a3e501dece1/image_classification/tensorflow/official/utils/arg_parsers/parsers.py#L158[reference code]
- |resnet |lars |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
- |resnet |lars |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
- |resnet |sgd |global_batch_size |arbitrary constant |reference --batch_size |See LARS
- |resnet |sgd |sgd_opt_base_learning_rate |0.001 * k where is an integer  |the learning rate |See LARS
- |resnet |sgd |sgd_opt_end_learning_rate |10^-4 |end learning rate for polynomial decay, implied mathemetically from other HPs |See LARS
- |resnet |sgd |sgd_opt_learning_rate_decay_poly_power |2 |power of polynomial decay, no link needed since not tunable |See LARS
- |resnet |sgd |sgd_opt_learning_rate_decay_steps |integer >= 0 |num_epochs in reference |See LARS
- |resnet |sgd |sgd_opt_weight_decay |(0.0001 * 2 ^ N) where N is any integer |Weight decay, same as LARS. |See LARS
- |resnet |sgd |sgd_opt_momentum |0.9 |Momentum for SGD. |See LARS
- |resnet |sgd |model_bn_span |arbitrary constant |number of samples whose statistics a given BN layer uses to normalize a training minibatch (may be just the portion of global_batch_size per device, but also may be aggregated over several devices) |See LARS
- |resnet |sgd |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs needed for learning rate warmup |See LARS
- |resnet |sgd |label smoothing$$*$$$$*$$ |0 or 0.1 | TODO |TODO
- |resnet |sgd |truncated norm initialization$$*$$$$*$$ |boolean | TODO |TODO
- |resnet |lars/sgd |opt_name |"lars" or "sgd" |The optimizer that was used. |
- |rnnt |lamb |global_batch_size                       |unconstrained |reference --batch_size       |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L270-L271[reference code]
- |rnnt |lamb |opt_name                                |"lamb"        |The optimizer that was used. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L357[reference code]
- |rnnt |lamb |opt_base_learning_rate                  |unconstrained |base learning rate, this should be the learning rate after warm up and before decay  |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L358[reference code]
- |rnnt |lamb |opt_lamb_epsilon                        |1e-9          |LAMB epsilon |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L359[reference code]
- |rnnt |lamb |opt_lamb_learning_rate_decay_poly_power |unconstrained |Exponential decay rate |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L360[reference code]
- |rnnt |lamb |opt_lamb_learning_rate_hold_epochs      |unconstrained |Number of epochs when LR schedule keeps the base learning rate value |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L362[reference code]
- |rnnt |lamb |opt_learning_rate_warmup_epochs         |unconstrained |Number of epochs when LR linearly increases from 0 to base learning rate |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L361[reference code]
- |rnnt |lamb |opt_weight_decay                        |1e-3          |L2 weight decay |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L372[reference code]
- |rnnt |lamb |opt_lamb_beta_1                         |unconstrained |LAMB beta 1 |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L363[reference code]
- |rnnt |lamb |opt_lamb_beta_2                         |unconstrained |LAMB beta 2 |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L364[reference code]
- |rnnt |lamb |opt_gradient_clip_norm                  |1 or inf      |Gradients are clipped above this norm threshold. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L365[reference code]
- |rnnt |lamb |opt_gradient_accumulation_steps         |unconstrained |Numer of fwd/bwd steps between optimizer step. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L222[reference code]
- |rnnt |lamb |opt_learning_rate_alt_decay_func        |True          |whether to use alternative learning rate decay function |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/common/optimizers.py#L20-L49[reference code]
- |rnnt |lamb |opt_learning_rate_alt_warmup_func       |True          |whether to use alternative learning rate warmup function |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L367[reference code]
- |rnnt |lamb |opt_lamb_learning_rate_min              |1e-5          |LR schedule doesn't set LR values below this threshold |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L368[reference code]
- |rnnt |lamb |train_samples                           |unconstrained |Number of training samples after filtering out samples longer than data_train_max_duration |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L337[reference code]
- |rnnt |lamb |eval_samples                            |2703          |Number of evaluation samples |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L338[reference code]
- |rnnt |lamb |data_train_max_duration                 |unconstrained |Samples longer than this number of seconds are not included to training dataset |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L252-L253[reference code]
- |rnnt |lamb |data_train_num_buckets                  |unconstrained |Training dataset is split to this number of buckets |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L293[reference code]
- |rnnt |lamb |data_train_speed_perturbation_min       |0.85          |Input audio is resampled to a random rample rate not less than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L256-L257[reference code]
- |rnnt |lamb |data_train_speed_perturbation_max       |1.15          |Input audio is resampled to a random rample rate not greater than this fraction of original sample rate. |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L254-L255[reference code]
- |rnnt |lamb |data_spec_augment_freq_n                |2             |Number of masks for frequency bands |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L258-L259[reference code]
- |rnnt |lamb |data_spec_augment_freq_min              |0             |Minimum number of frequencies in a single mask |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L260-L261[reference code]
- |rnnt |lamb |data_spec_augment_freq_max              |20            |Maximum number of frequencies in a single mask |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L262-L263[reference code]
- |rnnt |lamb |data_spec_augment_time_n                |10            |Number of masks for time band  |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L264-L265[reference code]
- |rnnt |lamb |data_spec_augment_time_min              |0             |Minimum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L266-L267[reference code]
- |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L268-L269[reference code]
- |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L395[reference code]
- |rnnt |lamb |model_weights_initialization_scale      |unconstrained |After random initialization of weight and bias tensors, all are scaled with this factorAfter random initialization of weight and bias tensors, all are scaled with this factor |See link:https://github.com/mwawrzos/training/blob/2126999a1ffff542064bb3208650a1e673920dcf/rnn_speech_recognition/pytorch/train.py#L342[reference code]
  |stable diffusion |adamw |global_batch_size |unconstrained |The glboal batch size for training |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/main.py#L633[reference code]
  |stable diffusion |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1629[reference code]
  |stable diffusion |adamw |opt_adamw_beta_2 |0.999 |coefficients used for computing running averages of gradient and its square |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1630[reference code]
@@ -387,20 +319,6 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L89[reference code]
  |ssd |adam |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L84[reference code]
  |ssd |adam |opt_weight_decay |0 |L2 weight decay |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L171[reference code]
- |unet3d |sgd |global_batch_size |unconstrained |global batch size |reference --batch_size
- |unet3d |sgd |opt_base_learning_rate |unconstrained |base learning rate |reference --learning_rate
- |unet3d |sgd |opt_momentum |unconstrained |SGD momentum |reference --momentum
- |unet3d |sgd |opt_learning_rate_warmup_steps |unconstrained |number of epochs needed for learning rate warmup|reference --lr_warmup_epochs
- |unet3d |sgd |opt_initial_learning_rate |unconstrained |initial learning rate (for LR warm up) |reference --init_learning_rate
- |unet3d |sgd |opt_learning_rate_decay_steps |unconstrained |epochs at which the learning rate decays |reference --lr_decay_epochs
- |unet3d |sgd |opt_learning_rate_decay_factor |unconstrained |factor used for learning rate decay |reference --lr_decay_factor
- |unet3d |sgd |opt_weight_decay |unconstrained |L2 weight decay |reference --weight_decay
- |unet3d |sgd |training_oversampling |fixed to reference |training oversampling |reference --oversampling
- |unet3d |sgd |training_input_shape |fixed to reference |training input shape |reference --input_shape
- |unet3d |sgd |evaluation_overlap |fixed to reference |evaluation sliding window overlap |reference --overlap
- |unet3d |sgd |evaluation_input_shape |fixed to reference |evaluation input shape |reference --val_input_shape
- |unet3d |sgd |data_train_samples |fixed to reference |number of training samples | N/A
- |unet3d |sgd |data_eval_samples |fixed to reference |number of evaluation samples | N/A
  |gnn |adam |global_batch_size |arbitrary constant |global batch size |link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L293[reference code]
  |gnn |adam |opt_base_learning_rate |unconstrained |base learning rate|link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L296[reference code]
 |===
@@ -454,13 +372,9 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |===
 |Area |Problem |Model|Evaluation frequency
 
-|Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3
-|       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`.
-|       |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch
-|       |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch
+|Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch
 |       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>>
-|Language|Speech recognition |RNN-T|Every 1 epoch
-|        |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
+|Language|NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0
 |        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS
 |        |large Language Model |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20
@@ -508,13 +422,9 @@ Each benchmark result is based on a set of run results. The number of results fo
 |===
 |Area|Problem |Minimum Number of Runs
 
-|Vision |Image classification |5
-| |Image segmentation (medical) | 40
-| |Object detection (light weight) |5
-| |Object detection (heavy weight) |5
+|Vision |Object detection (light weight) |5
 | |Stable Diffusion v2.0 | 10
 |Language |NLP |10
-| |Speech recognition |10
 | |Large language model |3
 | |Large language model Fine Tune (LoRA) |10
 |Commerce |Recommendation |10
@@ -577,16 +487,12 @@ To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting
 
-| RN50 | Epoch
 | BERT | Training sample (integer)
 | GPT3 | Training token starting from 0 (integer)
 | Llama2_70B_LoRA | Training sample (integer)
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
 | Stable-Diffusion | Training sample (integer)
 | SSD (RetinaNet) | Epoch
-| Mask-RCNN | Epoch
-| RNN-T | Epoch
-| UNET3D | Epoch
 | R-GAT | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0)
 |===
 

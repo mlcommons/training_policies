@@ -134,7 +134,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
  
  2. Since reference benchmarks are expected to take 7-day @ 1 GPU to run, the target accuracy can be adjusted to make sure that the benchmark runtime is not too high. Some references like gpt3/stable diffusion take much longer, but these are rare excpetions
  
- 3. The goal is to choose an accuracy target with low variance on the probability distribution of number of iterations. To get this, run as many runs as possible and plot accuracy vs iterations. Target accuracy should be picked from the region right after the knee point in the plot as shown below.
+ 3. The goal is to choose an accuracy target with low variance on the probability distribution of number of iterations. To get this, run as many runs as possible and plot accuracy vs iterations. Target accuracy should be picked from the region right after the knee point in the plot.
      ![plot](./images/target_accuracy_knee.png "Target Accuracy")
 
      a. "Too flat" region - The reason the "too flat" region is "too flat" is because when you try to pick an accuracy by drawing a horizontal line at that accuracy, the angle the line intersects with the curve is very low. This means that the iterations needed to reach the target accuracy in this region has a very high range (In numerical analysis this is called "ill conditioned"). Thus, it would not make a good benchmark accuracy target.
