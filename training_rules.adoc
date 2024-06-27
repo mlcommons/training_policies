@@ -51,6 +51,8 @@ A _submission_ is a submission implementation set and a corresponding submission
 
 A _custom summary result_ is the weighted geometric mean of an arbitrary set of results from a specific submission. MLPerf endorses this methodology for computing custom summary results but does not endorse any official summary result.
 
+_latest version available_ is the last MLPerf submission suite that a benchmark was part of.
+
 == General rules
 The following rules apply to all benchmark implementations.
 
