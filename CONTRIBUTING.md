@@ -88,6 +88,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
  6. Support for multi-node training is optional, but encouraged.  This support does not have to be documented in the public README.
 
  7. Support for mixed precision training w/ [AMP](https://developer.nvidia.com/automatic-mixed-precision) is optional, but encouraged.
+ 8. Reference implementation should have support for checkpointing to support writing a partially trained checkpoint, reloading and restarting from such previously saved checkpoint. 
 
  ### Data
 
