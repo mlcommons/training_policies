@@ -85,7 +85,9 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  5. Execution should be deterministic if possible, following rules established in the [convergence document](https://docs.google.com/document/d/15DBV5mM8KHYMjGRsJiztQaz-uxKaekOr2pnwmQl_RT0/edit#heading=h.m94pu2k61l60 "google doc").
 
- 6. Support for multi-node training is optional, but encouraged.  This support does not have to be documented in the public README.
+ 6. Support for multi-node training
+     a. Required for models that do not fit in DGX-A100 memory with fp32 precision.
+     b. Optional (but encouraged) for benchmarks that fit on DGX-A100 with fp32. This support does not have to be documented in the public README.
 
  7. Support for mixed precision training w/ [AMP](https://developer.nvidia.com/automatic-mixed-precision) is optional, but encouraged.
 
