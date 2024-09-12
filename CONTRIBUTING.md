@@ -12,17 +12,13 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### General
 
- 1. Reference repository code must run without error on reference hardware (1xV100) on day of benchmark reference freeze. Exception: large language model code must run on (64xA100s) as it does not fit on (1xV100).
+ 1. Reference repository code must run without error on reference hardware (DGX-A100 or DGX-H100) on day of benchmark reference freeze. Exception: large language model code must run on 8 DGX-A100s as it does not fit on one DGX-A100.
  
      a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
  2. Compute must be done in full fp32 precision for any math.
 
- 3. Max runtime is 7 days on 1x V100, fp32.
-
-     a. An exception from the 7-day @ 1 GPU rule can only come from the Submitter's Working Group.
-
- 4. Implementation should be minimalistic.
+ 3. Implementation should be minimalistic.
 
      a. Remove redundant files and features not relevant to the reference
 
@@ -31,7 +27,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
      c. Avoid not obvious or hacky solutions (e.g. monkey patching), code should be easy to read
      and straightforward
 
- 5. Command-line arguments:
+ 4. Command-line arguments:
 
      a. There must be a command line parameter for every tunable hyperparameter.
 
@@ -41,7 +37,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
      d. Hyperparameters may also come from a JSON file, but command line settings take precedent over the file, or a warning could be raised.
 
- 6. This document applies to ***new*** references, in v1.0 and after.  Existing references from v0.7 and earlier should try to adhere as well, but are not required to.
+ 5. This document applies to ***new*** references, in v1.0 and after.  Existing references from v0.7 and earlier should try to adhere as well, but are not required to.
 
      a. For example, Mini-Go was a v0.7 benchmark so it does not need to adhere to the new gradient accumulation requirement.
 
