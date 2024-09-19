@@ -87,6 +87,10 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  7. Support for mixed precision training w/ [AMP](https://developer.nvidia.com/automatic-mixed-precision) is optional, but encouraged.
 
+ 8. Reference implementation should have support for checkpointing to support writing a partially trained checkpoint, reloading and restarting from such previously saved checkpoint.
+     a. Required for reference models developed after v4.1.
+     b. Optional (but encouraged) for benchmarks developed before v4.1.
+
  ### Data
 
  1. Justification for setting target accuracy must be provided.
