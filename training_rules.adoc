@@ -165,7 +165,7 @@ Open division benchmarks must be referred to using the benchmark name plus the t
 === Random numbers
 CLOSED: Random numbers must be generated using stock random number generators.
 
-Random number generators may be seeded from the following sources:
+Random number generators must be seeded from the following sources:
 
 * Clock
 * System source of randomness, e.g. /dev/random or /dev/urandom
@@ -173,7 +173,18 @@ Random number generators may be seeded from the following sources:
 
 Random number generators may be initialized repeatedly in multiple processes or threads. For a single run, the same seed may be shared across multiple processes or threads.
 
-OPEN: Any random number generation may be used.
+From v4.1 onwards, the seeds should be logged and they need to satisfy the following requirements:
+
+* The only way to log seeds is through https://github.com/mlcommons/logging/tree/master/mlperf_logging/mllog[`mllog`]. Any seed logged via any other method is discarded.
+* All seeds must be valid integer (convertible via https://docs.python.org/3/library/functions.html#int[`int()`]).
+* We expect all runs to log at least one seed.
+* If one run logs one seed on a certain line in a certain source file, no other run can log the same seed on the same line in the same source file. What files are considered as source files are defined https://github.com/mlcommons/logging/blob/master/mlperf_logging/package_checker/seed_checker.py#L7[here].
+
+Unsatisfying any of the above requirements will result in seed checker failures reported by the https://github.com/mlcommons/logging/tree/master/mlperf_logging/package_checker[package checker].
+
+If any run logs more than one seed, a warning is raised by the package checker. This is a reminder to submitters to rethink their design because using multiple seeds per run should not be necessary.
+
+OPEN: Any random number generation may be used. The seed is not expected to be logged.
 
 === Numerical formats
 CLOSED: The numerical formats fp64, fp32, tf32, fp16, fp8, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Scaling may be added where required to compensate for different precision.
