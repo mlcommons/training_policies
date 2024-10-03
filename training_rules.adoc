@@ -287,7 +287,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
 |===
  |Model |Optimizer |Name |Constraint |Definition |Reference Code |Latest version available
 
-|bert |lamb |global_batch_size |unconstrained |The glboal batch size for training. |--train_batch_size |v4.1
+|bert |lamb |global_batch_size |unconstrained |The global batch size for training. |--train_batch_size |v4.1
  |bert |lamb |opt_base_learning_rate |unconstrained |The base learning rate. |--learning_rate |v4.1
  |bert |lamb |opt_epsilon |unconstrained |adam epsilon |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/language_model/tensorflow/bert/optimization.py#L75[reference code] |v4.1
  |bert |lamb |opt_learning_rate_training_steps |unconstrained |Step at which your reach the lowest learning late |link:https://github.com/mlperf/training/blob/master/language_model/tensorflow/bert/run_pretraining.py#L64[reference code] |v4.1
@@ -330,7 +330,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |llama2_70b_lora |adamw |opt_learning_rate_warmup_ratio | unconstrained |ratio of steps out of training for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From Habana, TODO Link) |v4.1
  |llama2_70b_lora |adamw |opt_learning_rate_training_steps | unconstrained |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From Habana, TODO Link) |v4.1
  |llama2_70b_lora |adamw |opt_base_learning_rate |unconstrained | base leraning rate |See PR (From Habana, TODO Link) |v4.1
- |stable diffusion |adamw |global_batch_size |unconstrained |The glboal batch size for training |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/main.py#L633[reference code] |v4.1
+ |stable diffusion |adamw |global_batch_size |unconstrained |The global batch size for training |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/main.py#L633[reference code] |v4.1
  |stable diffusion |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1629[reference code] |v4.1
  |stable diffusion |adamw |opt_adamw_beta_2 |0.999 |coefficients used for computing running averages of gradient and its square |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1630[reference code] |v4.1
  |stable diffusion |adamw |opt_adamw_epsilon |1e-08 |term added to the denominator to improve numerical stability |link:https://github.com/mlcommons/training/blob/master/stable_diffusion/ldm/models/diffusion/ddpm.py#L1631[reference code] |v4.1
