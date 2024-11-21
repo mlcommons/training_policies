@@ -93,6 +93,14 @@ The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
 
+### Benchmark Lifecycle
+
+Developing high-quality benchmarks requires significant effort, computational resources, and commitment. Therefore, each benchmark is expected to remain part of the benchmark suite for a minimum of two years or four submission rounds, whichever comes first.
+
+A benchmark may be considered for early retirement due to reasons such as, but not limited to, low industry adoption. Early retirement requests will be reviewed by the Training working group, followed by a formal vote to determine the benchmark's status.
+
+### Benchmark reference implementation
+
 MLCommons provides a reference implementation of each benchmark, which includes the following elements:
 
 Code that implements the model in a framework.
