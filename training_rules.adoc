@@ -68,7 +68,7 @@ The framework and system should not detect and behave differently for benchmarks
 === Pre-training is not allowed
 Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form. High-level statistical information about the dataset, such as distribution of sizes, may be used.
 
-For Llama31_405B, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
+For GPT3 and Llama31_405B, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
 
 For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained. For v0.7, sets of weights used in v0.6 are allowed.
 
@@ -81,7 +81,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Vision |Object detection (light weight) |A subset of OpenImages |v4.1
 | |Text to Image |LAION-400M-filtered |v4.1
 |Language |NLP |Wikipedia 2020/01/01 |v4.1
-| |Large language model |c4/en/3.0.1 |v4.1
+| |Large language model |c4/en/3.0.1 |v5.0
 | |Large language model |SCROLLS GovReport |v4.1
 |Commerce |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant) |v4.1
 |Graphs | Node classification | IGBH-Full |v4.1
@@ -151,6 +151,7 @@ The closed division models and quality targets are:
 |Vision |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v4.1
 | |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15 |v4.1
 |Language |NLP |BERT |0.720 Mask-LM accuracy |v4.1
+| |Large Language Model |GPT3 |2.69 log perplexity |v4.1
 | |Large Language Model |Llama31-405B |5.6 log perplexity |v5.0
 | |Large Language Model |Llama2-70B-LoRA |0.925 Eval loss |v4.1
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v4.1
@@ -314,6 +315,20 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code] |v4.1
  |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code] |v4.1
  |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code] |v4.1
+ |gpt3 |adam |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_adam_beta_1 |0.9 |adam beta1 |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_adam_beta_2 |0.95 |adam beta2 |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_adam_epsilon |1e-8 |adam epsilon |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |dropout |0.0 |Disable all dropouts during training. |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |sequence_length |2048 |sequence length |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_weight_decay |0.1 |weight decay |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_learning_rate_warmup_steps |ceil(265 * 1536 / global_batch_size) |steps taken for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_learning_rate_decay_steps |ceil(108600 * 1536 / global_batch_size) |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_init_checkpoint_step |ceil(4000 * 1536 / batch_size) |first step after loading initial checkpoint |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "GPT3 learning rates" |See PR (From NV and Google, TODO Link) |v4.1
+ |gpt3 |adam |opt_end_learning_rate |10% of opt_base_learning_rate |learning rate at the last step of decay period |See PR (From NV and Google, TODO Link) |v4.1
  |llama31_405b |adam |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L301[reference code] |v5.0
  |llama31_405b |adam |opt_adam_beta_1 |0.9 |adam beta1 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.0
  |llama31_405b |adam |opt_adam_beta_2 |0.95 |adam beta2 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.0
@@ -433,6 +448,27 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
 OPEN: Hyperparameters and optimizer may be freely changed. 
 
 
+==== GPT3 hyperparameter constraints
+
+Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding batch sizes are fixed as follows.
+
+|===
+ |global_batch_size |opt_base_learning_rate
+
+ |1536 |2.0e-5
+ |2048 |2.0e-5
+ |3072 |2.0e-5
+ |4096 |3.0e-5
+ |8192 |3.0e-5
+|===
+
+* GBS<1536 or GBS>8192 - new RCP needs to be generated, reach out to the task force
+* GBS [1536,3072] - opt_base_learning_rate=2.0e-5
+* For (3072,4096) - opt_base_learning_rate=2.0e-5 or opt_base_learning_rate=3.0e-5
+* GBS [4096,8192] - opt_base_learning_rate=3.0e-5
+
+If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+
 ==== Llama 3.1 hyperparameter constraints
 
 Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding batch sizes are fixed as follows.
@@ -461,7 +497,7 @@ With evidence that the resulting model, using the same batch size as the other s
 
 A resubmission of a benchmark with borrowed hyperparameters must use the same software (with the exceptions listed in the Software Adoption section of this document), system and system configuration (accelerators, NICs etc) as the original submission.  The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result.  In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
 
-Since the hyperparameters are fixed for Llama31_405B, hyperparameter borrowing is not allowed.
+Since the hyperparameters are fixed for GPT3 and Llama31_405B, hyperparameter borrowing is not allowed.
 
 === Loss function
 CLOSED: The same loss function used in the reference implementation must be used.
@@ -479,6 +515,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v4.1
 |       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>> |v4.1
 |Language|NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0 |v4.1
+|        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS |v4.1
 |        |large Language Model |Llama31_405B| Every 46080 sequences. CEIL(46080 / global_batch_size) if 46080 is not divisible by GBS |v5.0
 |        |large Language Model |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations |v4.1
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v4.1
@@ -573,7 +610,7 @@ Reference Convergence Points are used to ensure that the convergence of the subm
 * For GPT3 where there are two reference implementations which have been verified to be equivalent with minimum variance, each reference implementation should provide at least N epoch convergence numbers for each RCP.
 * After a set of Reference Convergence Points is gathered, we find the minimal set of these points that are needed for the fastest possible convergence. For example, if the RCP for batch size 128 is at 10 epochs, the RCP for batch size 256 is at 20 epochs, and the RCP for batch size 512 is also at 20 epochs, then we prune the RCP at the 256 batch size. Based on the assumption that convergence increases with batch size, we expect to be able to converge faster than 20 epochs at batch size 256. In practice we prune ALL RCP points that have slower convergence than the linear interpolation at the same batch size of any two surrounding points. Eventually we end up with a pruned set of RCPs which defines the fastest possible convergence of the reference code as a function of batch size.
 * A potential submitter can request generation of new RCPs by suggesting a better set of hparams to the WG or generate new RCPs by running the reference themselves. A request for a new RCP run should be backed by at least one run on either the submitter’s code or the reference code proving faster convergence. A request to generate RCPs should be made in the Training WG meeting at least 8 weeks before submission deadline and the reference owner (or a volunteer appointed by WG) should provide the RCP at least 4 weeks before submission deadline. Subject to WG's approval, requester's set of convergence points (2N runs) may act as temporary RCPs for that round if the RCP request is not met by a timely response.
-* For Llama31_405B, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and the reference owner (NVIDIA) should provide RCPs (N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
+* For GPT3 and Llama31_405B, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and the reference owner (NVIDIA) should provide RCPs (N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
 * Using the mean and standard deviation of the reference convergence we apply a 1-sided independent two-sample Student's t-test with unequal sample sizes, similar variances with p-value=0.05 (explained link:https://en.wikipedia.org/wiki/Student%27s_t-test#Equal_or_unequal_sample_sizes,_similar_variances_(1/2_%3C_sX1/sX2_%3C_2)[here]) to find the maximum acceptable speedup for submission convergence.
 * At submission time, the submission is matched to an RCP based on the submission batch size.
 ** If there is an RCP for that batch size then mean epochs to converge of the submission is extracted from submission logs. If this does not violate the maximum acceptable speedup condition when compared to the reference then the submission is accepted, otherwise it may be rejected.
@@ -591,7 +628,7 @@ Submitters are encouraged to run the RCP checker script prior to their submissio
 
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp_bypass parameter. This will allow the submission to upload, but the submitter must notify the results chair, and prepare for the audit process described in the next section where at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
-If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline (Exception is Llama31_405B: where RCPs are due 5 weeks before the submission deadline). RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
+If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline (Exception is GPT3 and Llama31_405B: where RCPs are due 5 weeks before the submission deadline). RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the next section.
 
@@ -600,6 +637,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | Benchmark | Epoch reporting | Latest version available
 
 | BERT | Training sample (integer) | v4.1
+| GPT3 | Training token starting from 0 (integer) | v4.1
 | Llama31_405B | Training token starting from 0 (integer) | v5.0
 | Llama2_70B_LoRA | Training sample (integer) | v4.1
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v4.1
