@@ -777,6 +777,16 @@ For v1.1, we changed the policy documentation to say that a Preview submission n
 
 Allowed model initialization compile time for GPT3 benchmark is increased to 60 minutes for Closed Division owing to the large memory footprint of initial checkpoints.
 
+== Appendix: v5.0 Specific Rules
+
+=== Large Language Model (Llama 3.1 405B)
+
+This section contains rules specific to Llama 3.1 405B of the v5.0 round of MLPerf training. Since we observe that a larger global batch size leads to increased variation when training Llama 3.1 405B to convergence, we introduce the following benchmark-specific rules for Llama 3.1 405B benchmark for MLPerf v5.0: 
+
+For v5.0's Llama 3.1 405B benchmark only, the maximum Global Batch Size (GBS) for Llama 3.1 405B benchmark will be constrained at 9216. 
+
+For v5.0's Llama 3.1 405B benchmark only, if a submission with 6912 &le; GBS &le; 9216 is unable to pass the RCP checker, extra runs must be submitted during the review period to demonstrate that the submitted convergence distribution matches the reference. 
+
 == Appendix: RCP Examples
 
 The RCP checking process is best illustrated with the following examples:
