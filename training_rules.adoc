@@ -830,7 +830,7 @@ If a new learning rate is needed for any GBS point, request new RCPs from the ta
 |Language|Speech recognition |RNN-T|Every 1 epoch |v3.1
 |===
 
-== Deprecated benchmarks results
+=== Deprecated benchmarks results
 
 |===
 |Area|Problem |Minimum Number of Runs |Latest version available
