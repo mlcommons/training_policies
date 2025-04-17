@@ -783,6 +783,8 @@ Allowed model initialization compile time for GPT3 benchmark is increased to 60 
 
 This section contains rules specific to Llama 3.1 405B of the v5.0 round of MLPerf training. Since we observe that a larger global batch size leads to increased variation when training Llama 3.1 405B to convergence, we introduce the following benchmark-specific rules for Llama 3.1 405B benchmark for MLPerf v5.0: 
 
+For v5.0's Llama 3.1 405B benchmark only, we allow submissions that converge **1 evaluation (46080 samples) earlier than allowed by the reference** to submit with correctly computed scaling factor, so that the score will be normalized to the reference RCP mean for a fair comparison. We are introducing this rule since we acknowledge that convergence debuggings can be very difficult for a benchmark at this scale given the limited amount of time. For future rounds, we expect submissions to comply with the original convergence. 
+
 For v5.0's Llama 3.1 405B benchmark only, the maximum Global Batch Size (GBS) for Llama 3.1 405B benchmark will be constrained at 9216. 
 
 For v5.0's Llama 3.1 405B benchmark only, if a submission with 6912 &le; GBS &le; 9216 is unable to pass the RCP checker, extra runs must be submitted during the review period to demonstrate that the submitted convergence distribution matches the reference. 
