@@ -70,7 +70,7 @@ Unless part of the definition of a benchmark, the implementation should not enco
 
 For Llama31_405B, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
 
-For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained. For v0.7, sets of weights used in v0.6 are allowed.
+For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained.
 
 == Benchmarks
 The benchmark suite consists of the benchmarks shown in the following table.
@@ -567,10 +567,6 @@ The SWG must come to majority consensus to approve a submission that fails the R
 ** evaluation is done offline, the time is not counted towards the submission time.
 ** A passing score is FID<=90 and CLIP>=0.15
 
-* Image Classification
-
-** The model may have 1000 or 1001 classes, where the 1001st is "I don't know"
-
 * Bert
 
 ** Clip-normalization order: The 1.0 and 1.1 exception that benchmarks may implement clip-normalization either before or after accelerator all-reduce has been extended indefinitely to future rounds.
@@ -612,6 +608,10 @@ TODO: locate the document and provide working link
 |      |              	          | TensorFlow	| tf.train.MomentumOptimizer
 |      |              	          | MXNet	    | mx.optimizer.NAG
 |===
+
+== Appendix: v0.7 Specific Rules
+
+For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide information and code sufficient for reproducing how those starting weights were obtained. For v0.7, sets of weights used in v0.6 are allowed.
 
 == Appendix: v1.0 Specific Rules
 
@@ -856,4 +856,17 @@ To extract submission convergence points, logs should report epochs as follows.
 | Mask-RCNN | Epoch | v3.1
 | RNN-T | Epoch | v3.1
 |===
+=== Benchmark specific rules for deprecated benchmarks
+* Image Classification
 
+** The model may have 1000 or 1001 classes, where the 1001st is "I don't know"
+
+* GPT3 
+** For GPT3, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
+** Since the hyperparameters are fixed for GPT3, hyperparameter borrowing is not allowed.
+** Exceptions for GPT3 OPEN: the open submissions are allowed to choose a language version that’s not English for the C4 dataset. When doing so, the submitter needs to make it clear that the dataset and convergence measures are different from the close division submissions.
+** For GPT3 where there are two reference implementations which have been verified to be equivalent with minimum variance, each reference implementation should provide at least N epoch convergence numbers for each RCP.
+** For GPT3, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and both reference owners (NV and Google) should provide RCPs (N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
+
+* UNET3D
+** In the case of UNET3D, due to large variance, 40 runs are required. Out of the 40 runs, the 4 fastest and 4 slowest are dropped. There can be maximum of 4 non-converging runs. A run is classified as non-converged if the target quality metric is not reached within `CEILING(10000*168/samples_in_epoch)` epochs. 
