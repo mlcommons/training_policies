@@ -85,11 +85,6 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Large language model |SCROLLS GovReport |v5.0
 |Commerce |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant) |v5.0
 |Graphs | Node classification | IGBH-Full |v5.0
-|Vision |Image classification |ImageNet |v4.0
-| |Image segmentation (medical) |KiTS19 |v4.0
-|Vision |Object detection (heavy weight) |COCO |v3.1
-|Language |Speech recognition |LibriSpeech |v3.1
-|Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant) |v2.1
 
 |===
 
@@ -151,15 +146,10 @@ The closed division models and quality targets are:
 |Vision |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v5.0
 | |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15 |v5.0
 |Language |NLP |BERT |0.720 Mask-LM accuracy |v5.0
-| |Large Language Model |GPT3 |2.69 log perplexity |v4.1
 | |Large Language Model |Llama31-405B |5.6 log perplexity |v5.0
 | |Large Language Model |Llama2-70B-LoRA |0.925 Eval loss |v5.0
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v5.0
 |Graphs | Node classification|R-GAT | 72.0 % classification |v5.0
-|Vision |Image classification |ResNet-50 v1.5 |75.90% classification |v4.0
-| |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score |v4.0
-|Vision |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP |v3.1
-|Language | Speech recognition | RNN-T | 0.058 Word Error Rate |v3.1
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Recommendation Closed benchmark, the system achieved a result of 7.2.”
@@ -698,6 +688,29 @@ Use of `hardware_tensor_flops` (defined as model_tensor_flops plus operations ad
 Note _utilization_ is not an official MLPerf metric.
 
 == Appendix: Deprecated benchmarks 
+
+=== Deprecated benchmarks
+
+|===
+|Area|Problem |Dataset |Latest version available
+
+|Vision |Image classification |ImageNet |v4.0
+| |Image segmentation (medical) |KiTS19 |v4.0
+|Vision |Object detection (heavy weight) |COCO |v3.1
+|Language |Speech recognition |LibriSpeech |v3.1
+|Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant) |v2.1
+
+=== Deprecated benchmarks models and quality targets
+
+|===
+|Area |Problem |Model |Target |Latest version available
+
+|Language |Large Language Model |GPT3 |2.69 log perplexity |v4.1
+|Vision |Image classification |ResNet-50 v1.5 |75.90% classification |v4.0
+| |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score |v4.0
+|Vision |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP |v3.1
+|Language | Speech recognition | RNN-T | 0.058 Word Error Rate |v3.1
+|===
 
 === Deprecated benchmarks hyperparameters
 
