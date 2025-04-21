@@ -700,6 +700,7 @@ Note _utilization_ is not an official MLPerf metric.
 |Language |Speech recognition |LibriSpeech |v3.1
 |Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant) |v2.1
 
+|===
 === Deprecated benchmarks models and quality targets
 
 |===
