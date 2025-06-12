@@ -423,6 +423,18 @@ Additional exemptions need to be explicitly requested and approved in advance. I
 
 The OPEN division does not restrict mathematical equivalence.
 
+== Results Resubmission
+
+Submitters may resubmit logs from a previous round in a future round if those logs represent their best result and they wish to showcase it. Log resubmission is permitted only when the following criteria match between both rounds:
+* Benchmark
+* Accelerator
+* Category
+* Availability
+* Software
+* Division
+
+Submitters must notify the review committee of their intent to resubmit logs by creating an issue in the submission repository before the first review meeting. The review committee will verify the validity of the resubmission before approval. Late notifications may result in rejection of the resubmission request.
+
 [#section-run-results]
 == Run Results
 A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
