@@ -12,7 +12,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### General
 
- 1. Reference repository code must run without error on reference hardware (DGX-A100 or DGX-H100) on day of benchmark reference freeze. Exception: large language model code must run on 8 DGX-A100s as it does not fit on one DGX-A100.
+ 1. Reference repository code must run without error on reference hardware (DGX-A100, DGX-H100 or DGX-H200) on day of benchmark reference freeze. 
  
      a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
