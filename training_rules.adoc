@@ -423,6 +423,12 @@ Additional exemptions need to be explicitly requested and approved in advance. I
 
 The OPEN division does not restrict mathematical equivalence.
 
+== Results Resubmission ==
+
+Submitters may resubmit logs from a previous round in a future round if those logs represent their best result and they wish to showcase it. Log resubmission is permitted only if the system.json matches exactly between both rounds and the resubmitted logs pass the package_checker with the future round's mlperf_logging tag.
+
+Submitters must notify the review committee of their intent to resubmit logs by creating an issue in the submission repository before the first review meeting. The review committee will verify the validity of the resubmission before approval. Late notifications may result in rejection of the resubmission request.
+
 == Software Adoption ==
 
 For a given round of MLPerf, the "canonical version" of a software component shall be defined as the public version as of 14 days before submission. If the software is open source, the canonical version shall be the one compiled with the default compilation options. If a system software provider submits with a component whose version is other than the canonical version, then other submitters using the same component are allowed to update their submission to use that version.  Those other submitters must resubmit with the updated system software before the resubmission deadline during the review period. Software adoption applies only to system software, only to the version used by the software provider’s submission, and explicitly does not cover benchmark implementations. Benchmark implementations should be borrowed as a whole only if the software provider’s submission introduces new APIs.
