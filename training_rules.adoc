@@ -484,7 +484,7 @@ To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting | Latest version available
 
-| Llmama3.1_8b | Training sample (integer) | v5.1
+| Llama3.1_8b | Training sample (integer) | v5.1
 | Llama31_405B | Training samples starting from 0 (integer) | v5.1
 | Llama2_70B_LoRA | Training sample (integer) | v5.1
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
