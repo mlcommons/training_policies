@@ -16,7 +16,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
  
      a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
- 2. Compute must be done in full fp32 precision for any math.
+ 2. Compute must be done in either full precision (FP32) or half precision (BF16) for all math.
 
  3. Implementation should be minimalistic.
 
@@ -217,7 +217,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
 ### Some things to note while generating reference convergence points (RCPs)
 
- 1. Use FP32 precision instead of lower precision because we want the RCPs to act as a good convergence baseline
+ 1. Use one of FP32/BF16 precision because we want the RCPs to act as a good convergence baseline. State the exact precision which was used to generate RCPs in the RCP logging json file for reproducibility.
  
  2. Generate RCPs for atleast 3 reasonable batch sizes
  
