@@ -145,11 +145,11 @@ The closed division models and quality targets are:
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v5.1
 | |Text to image |FLUX.1 |TBD |v5.1
-|Language |Small LLM Pretraining |Llama3.1-8b |TBD |v5.1
-| |LLM pretraining |Llama31-405B |5.6 log perplexity |v5.1
-| |LLM finetuning |Llama2-70B-LoRA |0.925 Eval loss |v5.1
+|Language |Small LLM Pretraining |Llama31_8b |TBD |v5.1
+| |LLM pretraining |Llama31_405B |5.6 log perplexity |v5.1
+| |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v5.1
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v5.1
-|Graphs | Node classification|R-GAT | 72.0 % classification |v5.1
+|Graphs | Node classification|RGAT | 72.0 % classification |v5.1
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Recommendation Closed benchmark, the system achieved a result of 7.2.”
@@ -377,11 +377,11 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
 |       |Text to image |Flux.1 | TBD |v5.1
-|Language|Small LLM pretraining |Llama3.1_8b| TBD |v5.1
+|Language|Small LLM pretraining |Llama31_8b| TBD |v5.1
 |        |LLM pretraining |Llama31_405B| Every 46080 sequences. CEIL(46080 / global_batch_size) if 46080 is not divisible by GBS |v5.1
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations |v5.1
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v5.1
-|Graphs|Node classification|R-GAT|Evaluate 20 times per epoch |v5.1
+|Graphs|Node classification|RGAT|Evaluate 20 times per epoch |v5.1
 |===
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
 
@@ -484,13 +484,13 @@ To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting | Latest version available
 
-| Llama3.1_8b | Training sample (integer) | v5.1
+| Llama31_8b | Training sample (integer) | v5.1
 | Llama31_405B | Training samples starting from 0 (integer) | v5.1
 | Llama2_70B_LoRA | Training sample (integer) | v5.1
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
 | FLUX.1 | Training sample (integer) | v5.1
 | SSD (RetinaNet) | Epoch | v5.1
-| R-GAT | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
+| RGAT | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
 |===
 Refer to epoch reporting for deprecated benchmarks at <<Epoch reporting for deprecated benchmarks>>
 
