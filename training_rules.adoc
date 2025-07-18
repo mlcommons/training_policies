@@ -144,7 +144,7 @@ The closed division models and quality targets are:
 |Area |Problem |Model |Target |Latest version available
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v5.1
-| |Text to image |FLUX.1 |TBD |v5.1
+| |Text to image |FLUX.1 |0.586 Eval loss |v5.1
 |Language |Small LLM Pretraining |Llama31_8b |TBD |v5.1
 | |LLM pretraining |Llama31_405B |5.6 log perplexity |v5.1
 | |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v5.1
@@ -384,7 +384,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Area |Problem |Model|Evaluation frequency |Latest version available
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
-|       |Text to image |Flux.1 | TBD |v5.1
+|       |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS |v5.1
 |Language|Small LLM pretraining |Llama31_8b| TBD |v5.1
 |        |LLM pretraining |Llama31_405B| Every 46080 sequences. CEIL(46080 / global_batch_size) if 46080 is not divisible by GBS |v5.1
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations |v5.1
@@ -435,7 +435,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Area|Problem |Minimum Number of Runs |Latest version available
 
 |Vision |Object detection (light weight) |5 |v5.1
-| |FLUX.1 | TBD |v5.1
+|Text to Image |FLUX.1 |10 |v5.1
 |Language |Small LLM pretraining |TBD |v5.1
 | |LLM pretraining |3 |v5.1
 | |LLM Finetuning|10 |v5.1
@@ -541,14 +541,12 @@ The SWG must come to majority consensus to approve a submission that fails the R
 ** Caching: Graph caching is allowed, but feature caching is not allowed. 
 ** Sampler: Submitters are not expected to exactly match reference sampler implementation due to known framework differences, but must meet RCP criteria.
 
-* Stable Diffusion
+* Flux
 ** 10 runs per submission
-** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) if 512000 is not divisible by GBS.
-** The collected checkpoints may be evaluated freely (in order, out of order, some checkpoints may be skipped), provided that:
-1. FID and CLIP scores must to be submitted for all collected checkpoints (up to the first checkpoint with a passing score) for 1/10 of the runs.
-2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
-** evaluation is done offline, the time is not counted towards the submission time.
-** A passing score is FID<=90 and CLIP>=0.15
+** Checkpoint must be collected every 262,144 images. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS.
+** For the evaluation algorithm:
+*** Timestep values must be {0, 1/8, 2/8, 3/8, 4/8, 5/8, 6/8, 7/8}
+*** Each timestep value must be used an equal number of times
 
 * Bert
 
@@ -907,3 +905,12 @@ To extract submission convergence points, logs should report epochs as follows.
 
 * UNET3D
 ** In the case of UNET3D, due to large variance, 40 runs are required. Out of the 40 runs, the 4 fastest and 4 slowest are dropped. There can be maximum of 4 non-converging runs. A run is classified as non-converged if the target quality metric is not reached within `CEILING(10000*168/samples_in_epoch)` epochs. 
+
+* Stable Diffusion
+** 10 runs per submission
+** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) if 512000 is not divisible by GBS.
+** The collected checkpoints may be evaluated freely (in order, out of order, some checkpoints may be skipped), provided that:
+1. FID and CLIP scores must to be submitted for all collected checkpoints (up to the first checkpoint with a passing score) for 1/10 of the runs.
+2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
+** evaluation is done offline, the time is not counted towards the submission time.
+** A passing score is FID<=90 and CLIP>=0.15
