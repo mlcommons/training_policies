@@ -319,14 +319,14 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |llama2_70b_lora |adamw |opt_learning_rate_warmup_ratio | unconstrained |ratio of steps out of training for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From Habana, TODO Link) |v5.1
  |llama2_70b_lora |adamw |opt_learning_rate_training_steps | unconstrained |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From Habana, TODO Link) |v5.1
  |llama2_70b_lora |adamw |opt_base_learning_rate |unconstrained | base leraning rate |See PR (From Habana, TODO Link) |v5.1
- |flux |adamw |global_batch_size |unconstrained |The global batch size for training |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L198[reference_code] |v5.1
- |flux |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v5.1
- |flux |adamw |opt_adamw_beta_2 |0.95 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v5.1
- |flux |adamw |opt_adamw_epsilon |1e-08 |term added to the denominator to improve numerical stability |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L135[reference_code] |v5.1
- |flux |adamw |opt_adamw_weight_decay |0.1 |weight decay coefficient |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L282[reference_code] |v5.1
- |flux |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v5.1
- |flux |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v5.1
- |flux |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] | v5.1
+ |flux.1 |adamw |global_batch_size |unconstrained |The global batch size for training |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L198[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_beta_2 |0.95 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_epsilon |1e-08 |term added to the denominator to improve numerical stability |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L135[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_weight_decay |0.1 |weight decay coefficient |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L282[reference_code] |v5.1
+ |flux.1 |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v5.1
+ |flux.1 |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v5.1
+ |flux.1 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] | v5.1
  |ssd |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L80[reference code] |v5.1
  |ssd |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L87[reference code] |v5.1
  |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L89[reference code] |v5.1
@@ -541,9 +541,9 @@ The SWG must come to majority consensus to approve a submission that fails the R
 ** Caching: Graph caching is allowed, but feature caching is not allowed. 
 ** Sampler: Submitters are not expected to exactly match reference sampler implementation due to known framework differences, but must meet RCP criteria.
 
-* Flux
+* Flux.1
 ** 10 runs per submission
-** Checkpoint must be collected every 262,144 images. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS.
+** Evaluation must be run every 262,144 samples. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS.
 ** For the evaluation algorithm:
 *** Timestep values must be {0, 1/8, 2/8, 3/8, 4/8, 5/8, 6/8, 7/8}
 *** Each timestep value must be used an equal number of times
