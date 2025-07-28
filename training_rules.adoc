@@ -544,9 +544,6 @@ The SWG must come to majority consensus to approve a submission that fails the R
 * Flux.1
 ** 10 runs per submission
 ** Evaluation must be run every 262,144 samples. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS.
-** For the evaluation algorithm:
-*** Timestep values must be {0, 1/8, 2/8, 3/8, 4/8, 5/8, 6/8, 7/8}
-*** Each timestep value must be used an equal number of times
 
 * Bert
 
