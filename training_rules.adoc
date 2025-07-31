@@ -384,10 +384,10 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Area |Problem |Model|Evaluation frequency |Latest version available
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
-|       |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS |v5.1
+|       |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v5.1
 |Language|Small LLM pretraining |Llama31_8b| TBD |v5.1
-|        |LLM pretraining |Llama31_405B| Every 46080 sequences. CEIL(46080 / global_batch_size) if 46080 is not divisible by GBS |v5.1
-|        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations |v5.1
+|        |LLM pretraining |Llama31_405B| Every 46080 sequences. CEIL(46080 / global_batch_size) * global_batch_size if 46080 is not divisible by GBS |v5.1
+|        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences, CEIL(384 / global_batch_size) * global_batch_size steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations |v5.1
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v5.1
 |Graphs|Node classification|RGAT|Evaluate 20 times per epoch |v5.1
 |===
@@ -905,7 +905,7 @@ To extract submission convergence points, logs should report epochs as follows.
 
 * Stable Diffusion
 ** 10 runs per submission
-** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) if 512000 is not divisible by GBS.
+** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) * global_batch_size if 512000 is not divisible by GBS.
 ** The collected checkpoints may be evaluated freely (in order, out of order, some checkpoints may be skipped), provided that:
 1. FID and CLIP scores must to be submitted for all collected checkpoints (up to the first checkpoint with a passing score) for 1/10 of the runs.
 2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
