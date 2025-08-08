@@ -378,7 +378,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
 |       |Text to image |Flux.1 | TBD |v5.1
 |Language|Small LLM pretraining |Llama31_8b| TBD |v5.1
-|        |LLM pretraining |Llama31_405B| Every 18432 sequences; CEIL(18432 / global_batch_size) steps if 18432 is not divisible by GBS. Skipping first TBD evaluations |v5.1
+|        |LLM pretraining |Llama31_405B| Every 18432 sequences; CEIL(18432 / global_batch_size) steps if 18432 is not divisible by GBS. Skipping first `18432*CEILING(0.0026*global_batch_size+10)` evaluations |v5.1
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations |v5.1
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v5.1
 |Graphs|Node classification|RGAT|Evaluate 20 times per epoch |v5.1
