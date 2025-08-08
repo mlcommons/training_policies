@@ -12,7 +12,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### General
 
- 1. Reference repository code must run without error on reference hardware (DGX-A100, DGX-H100 or DGX-H200) on day of benchmark reference freeze. 
+ 1. Reference repository code must run without error on reference hardware (DGX-A100, DGX-H100, DGX-H200, DGX-B200) on day of benchmark reference freeze. 
  
      a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
@@ -208,7 +208,10 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
  | resnet | 67840.00 | 85.86 | 0.64 | 0.007 | 5 |
  | ssd | 256.00 | 4.00 | 0.00| 0.000 | 5 |
  | ssd | 4096.00 | 15.13 | 0.50 | 0.033 | 5 |
- | stable_diffusion | 512.00 | 5071.43 | 257.54 | 0.051 | 10 |
+ | flux.1 | 1024.00 | 8768716.8 | 592157.22 | 0.068 | 10 |
+ | flux.1 | 2048.00 | 10734796.8 | 616104.40 | 0.057 | | 10 |
+ | flux.1 | 4096.00 | 15623782.4 | 491531.50 | 0.031 | 10 |
+| stable_diffusion | 512.00 | 5071.43 | 257.54 | 0.051 | 10 |
  | stable_diffusion | 2048.00 | 1961.54 | 165.43 | 0.084 | 10 |
  | unet3d | 2.00 | 446764.14 | 97843.95 | 0.219 | 40 |
  | unet3d | 84.00 | 387860.87 | 69491.57 | 0.179 | 40 |

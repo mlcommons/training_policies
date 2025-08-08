@@ -144,7 +144,7 @@ The closed division models and quality targets are:
 |Area |Problem |Model |Target |Latest version available
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v5.1
-| |Text to image |FLUX.1 |TBD |v5.1
+| |Text to image |FLUX.1 |0.586 Eval loss |v5.1
 |Language |Small LLM Pretraining |Llama31_8b |TBD |v5.1
 | |LLM pretraining |Llama31_405B |5.6 log perplexity |v5.1
 | |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v5.1
@@ -319,6 +319,14 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |llama2_70b_lora |adamw |opt_learning_rate_warmup_ratio | unconstrained |ratio of steps out of training for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From Habana, TODO Link) |v5.1
  |llama2_70b_lora |adamw |opt_learning_rate_training_steps | unconstrained |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From Habana, TODO Link) |v5.1
  |llama2_70b_lora |adamw |opt_base_learning_rate |unconstrained | base leraning rate |See PR (From Habana, TODO Link) |v5.1
+ |flux.1 |adamw |global_batch_size |unconstrained |The global batch size for training |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L198[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_beta_2 |0.95 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_epsilon |1e-08 |term added to the denominator to improve numerical stability |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L135[reference_code] |v5.1
+ |flux.1 |adamw |opt_adamw_weight_decay |0.1 |weight decay coefficient |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L282[reference_code] |v5.1
+ |flux.1 |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v5.1
+ |flux.1 |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v5.1
+ |flux.1 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] | v5.1
  |ssd |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L80[reference code] |v5.1
  |ssd |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L87[reference code] |v5.1
  |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/single_stage_detector/ssd/train.py#L89[reference code] |v5.1
@@ -376,10 +384,10 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Area |Problem |Model|Evaluation frequency |Latest version available
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
-|       |Text to image |Flux.1 | TBD |v5.1
+|       |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v5.1
 |Language|Small LLM pretraining |Llama31_8b| TBD |v5.1
-|        |LLM pretraining |Llama31_405B| Every 18432 sequences; CEIL(18432 / global_batch_size) steps if 18432 is not divisible by GBS. Skipping first `18432*CEILING(0.0026*global_batch_size+10)` evaluations |v5.1
-|        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; CEIL(384 / global_batch_size) steps if 384 is not divisible by GBS. Skipping first FLOOR(0.125*global_batch_size+2) evaluations |v5.1
+|        |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v5.1
+|        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v5.1
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v5.1
 |Graphs|Node classification|RGAT|Evaluate 20 times per epoch |v5.1
 |===
@@ -427,7 +435,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Area|Problem |Minimum Number of Runs |Latest version available
 
 |Vision |Object detection (light weight) |5 |v5.1
-| |FLUX.1 | TBD |v5.1
+|Text to Image |FLUX.1 |10 |v5.1
 |Language |Small LLM pretraining |TBD |v5.1
 | |LLM pretraining |3 |v5.1
 | |LLM Finetuning|10 |v5.1
@@ -533,14 +541,9 @@ The SWG must come to majority consensus to approve a submission that fails the R
 ** Caching: Graph caching is allowed, but feature caching is not allowed. 
 ** Sampler: Submitters are not expected to exactly match reference sampler implementation due to known framework differences, but must meet RCP criteria.
 
-* Stable Diffusion
+* Flux.1
 ** 10 runs per submission
-** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) if 512000 is not divisible by GBS.
-** The collected checkpoints may be evaluated freely (in order, out of order, some checkpoints may be skipped), provided that:
-1. FID and CLIP scores must to be submitted for all collected checkpoints (up to the first checkpoint with a passing score) for 1/10 of the runs.
-2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
-** evaluation is done offline, the time is not counted towards the submission time.
-** A passing score is FID<=90 and CLIP>=0.15
+** Evaluation must be run every 262,144 samples. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS.
 
 * Bert
 
@@ -899,3 +902,12 @@ To extract submission convergence points, logs should report epochs as follows.
 
 * UNET3D
 ** In the case of UNET3D, due to large variance, 40 runs are required. Out of the 40 runs, the 4 fastest and 4 slowest are dropped. There can be maximum of 4 non-converging runs. A run is classified as non-converged if the target quality metric is not reached within `CEILING(10000*168/samples_in_epoch)` epochs. 
+
+* Stable Diffusion
+** 10 runs per submission
+** Checkpoint must be collected every 512,000 images. CEIL(512000 / global_batch_size) * global_batch_size if 512000 is not divisible by GBS.
+** The collected checkpoints may be evaluated freely (in order, out of order, some checkpoints may be skipped), provided that:
+1. FID and CLIP scores must to be submitted for all collected checkpoints (up to the first checkpoint with a passing score) for 1/10 of the runs.
+2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
+** evaluation is done offline, the time is not counted towards the submission time.
+** A passing score is FID<=90 and CLIP>=0.15
