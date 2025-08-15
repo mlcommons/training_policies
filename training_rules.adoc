@@ -145,7 +145,7 @@ The closed division models and quality targets are:
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v5.1
 | |Text to image |FLUX.1 |0.586 Eval loss |v5.1
-|Language |Small LLM Pretraining |Llama31_8b |TBD |v5.1
+|Language |Small LLM Pretraining |Llama31_8b |3.3 log perplexity |v5.1
 | |LLM pretraining |Llama31_405B |5.6 log perplexity |v5.1
 | |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v5.1
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v5.1
@@ -295,6 +295,20 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code] |v5.1
  |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code] |v5.1
  |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code] |v5.1
+ |llama31_8b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L301[reference code] |v5.1
+ |llama31_8b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
+ |llama31_8b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
+ |llama31_8b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
+ |llama31_8b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
+ |llama31_8b |adamw |dropout |0.0 |Disable all dropouts during training. |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v5.1
+ |llama31_8b |adamw |sequence_length |8192 |sequence length |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v5.1
+ |llama31_8b |adamw |opt_adamw_weight_decay |0.1 |weight decay |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
+ |llama31_8b |adamw |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v5.1
+ |llama31_8b |adamw |opt_learning_rate_warmup_steps |ceil(8000 * 1152 / global_batch_size) |steps taken for linear warmup. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L157[reference code] |v5.1
+ |llama31_8b |adamw |opt_learning_rate_decay_steps |ceil(1_200_000 * 1152 / global_batch_size) - ceil(8000 * 1152 / global_batch_size) |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L397[reference code] |v5.1
+ |llama31_8b |adamw |opt_init_checkpoint_step |0 |first step after loading initial checkpoint |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L295[reference code] |v5.1
+ |llama31_8b |adamw |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "Llama 3.1 learning rates" |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L153[reference code] |v5.1
+ |llama31_8b |adamw |opt_end_learning_rate |8e-7 |learning rate at the last step of decay period |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
  |llama31_405b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L301[reference code] |v5.1
  |llama31_405b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
  |llama31_405b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v5.1
@@ -385,7 +399,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 
 |Vision |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
 |       |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v5.1
-|Language|Small LLM pretraining |Llama31_8b| TBD |v5.1
+|Language|Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v5.1
 |        |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v5.1
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v5.1
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v5.1
@@ -436,7 +450,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 
 |Vision |Object detection (light weight) |5 |v5.1
 |Text to Image |FLUX.1 |10 |v5.1
-|Language |Small LLM pretraining |TBD |v5.1
+|Language |Small LLM pretraining |10 |v5.1
 | |LLM pretraining |3 |v5.1
 | |LLM Finetuning|10 |v5.1
 |Commerce |Recommendation |10 |v5.1
@@ -498,7 +512,7 @@ To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting | Latest version available
 
-| Llama31_8b | Training sample (integer) | v5.1
+| Llama31_8b | Training sample starting from 0 (integer) | v5.1
 | Llama31_405B | Training samples starting from 0 (integer) | v5.1
 | Llama2_70B_LoRA | Training sample (integer) | v5.1
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
