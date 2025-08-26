@@ -189,11 +189,13 @@ OPEN: Any random number generation may be used. The seed is not expected to be l
 CLOSED: The numerical formats fp64, fp32, tf32, fp16, fp8, mxfp8, mxfp4, nvfp4, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Any numerically safe techniques needed to compensate for different precision may be used, provided they leave the real-valued mathematical function of the model, i.e. the function the model would compute at infinite precision, unchanged. 
 
 Some examples of numerically safe techniques that are allowed include:  
+
 * Scaling 
 * Orthogonal transformations on tensors such as https://en.wikipedia.org/wiki/Hadamard_transform[`Hadamard Transform`]   
 * https://royalsocietypublishing.org/doi/epdf/10.1098/rsos.211631[`Stochastic rounding`] 
  
 Some examples of techniques that are _not_ allowed under this rule: 
+
 * Normalization or gradient clipping different from the reference model 
 * Increasing the number of trainable parameters in the model 
 
