@@ -191,7 +191,7 @@ CLOSED: The numerical formats fp64, fp32, tf32, fp16, fp8, nvfp4, bfloat16, Grap
 Some examples of numerically safe techniques that are allowed include:  
 
 * Scaling, such as per-tensor or per-block 
-* Orthogonal pre/post transformations, such as https://en.wikipedia.org/wiki/Hadamard_transform[`Hadamard Transform`]s around a linear operator   
+* Orthogonal pre/post transformations, such as https://en.wikipedia.org/wiki/Hadamard_transform[`Hadamard Transforms`] around a linear operator   
 * https://royalsocietypublishing.org/doi/epdf/10.1098/rsos.211631[`Stochastic rounding`] 
  
 Some examples of techniques that are _not_ allowed under this rule: 
