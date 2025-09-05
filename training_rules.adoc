@@ -186,7 +186,7 @@ If any run logs more than one seed, a warning is raised by the package checker. 
 OPEN: Any random number generation may be used. The seed is not expected to be logged.
 
 === Numerical formats
-CLOSED: The numerical formats fp64, fp32, tf32, fp16, fp8, nvfp4, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Any numerically safe techniques needed to compensate for different precision may be used, provided they leave the real-valued mathematical function of the model, i.e. the function the model would compute at infinite precision, unchanged. 
+CLOSED: The numerical formats fp64, fp32, tf32, fp16, fp8, nvfp4, mxfp4, bfloat16, Graphcore FLOAT 16.16, int8, uint8, int4, and uint4 are pre-approved for use. Additional formats require explicit approval. Any numerically safe techniques needed to compensate for different precision may be used, provided they leave the real-valued mathematical function of the model, i.e. the function the model would compute at infinite precision, unchanged. 
 
 Reference Convergence Points must be obtained using FP32 precision, FP32 emulation with explanation of the methodology for emulation, or BF16 precision.
 
