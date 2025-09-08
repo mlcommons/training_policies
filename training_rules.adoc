@@ -194,7 +194,7 @@ Some examples of numerically safe techniques that are allowed include but are no
 * Orthogonal pre/post transformations, such as https://en.wikipedia.org/wiki/Hadamard_transform[`Hadamard Transforms`] around a linear operator   
 * Rounding, such as https://royalsocietypublishing.org/doi/epdf/10.1098/rsos.211631[`Stochastic rounding`] 
 
- Some examples of techniques that are _not_ allowed under this rule: 
+Some examples of techniques that are _not_ allowed under this rule: 
 
 * Normalization or gradient clipping different from the reference model 
 * Increasing the number of trainable parameters in the model 
