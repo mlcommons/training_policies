@@ -190,31 +190,34 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  3. To measure variance, we can use Coefficient of Variation (CV) which is a statistical measure of the dispersion of data points in a data series around the mean. It is a useful statistic for comparing the degree of variation from one data series to another, even if the means are drastically different from one another. Coefficient of Variation (CV) = standard deviation / mean. If CV is a lower number, then there is less variation, so we can choose a small N. The data below from other benchmarks can be used as a baseline to help pick N.
 
-     a. Data obtained from - https://github.com/mlcommons/logging/tree/master/mlperf_logging/rcp_checker/training_3.1.0 
+     a. Data obtained from - https://github.com/mlcommons/logging/tree/master/mlperf_logging/rcp_checker/training_5.1.0 
 
- | Benchmark | GBS | Mean of epochs to converge | Std for epochs to converge | Coefficient of variance (CV) | N |
- | ------- | ------- | ------- | ------- | ------- | ------- |
- | bert | 256.00 | 2552704.00 | 218406.13 | 0.086 | 10 |
- | bert | 16384.00 | 5504307.20 | 144642.71 | 0.026 | 10 |
- | dlrm_dcnv2 | 32768.00 | 0.71 | 0.02 | 0.030 | 10 |
- | dlrm_dcnv2 | 135168.00 | 0.93 | 0.04 | 0.038 | 10 |
- | gpt3 | 1536.00 | 1199570944.00 | 45174036.58 | 0.038 | 3 |
- | gpt3 | 8192.00 | 1627389952.00 | 23726566.41 | 0.015 | 3 |
- | maskrcnn | 8.00 | 12.70 | 0.46 | 0.036 | 5 |
- | maskrcnn | 272.00 | 17.10 | 0.54 | 0.031 | 5 |
- | rnnt | 512.00 | 42.05 | 3.69 | 0.088 | 10 |
- | rnnt | 6144.00 | 96.10 | 6.27 | 0.065 | 10 |
- | resnet | 1632.00 | 35.00 | 1.08 | 0.031 | 5 |
- | resnet | 67840.00 | 85.86 | 0.64 | 0.007 | 5 |
- | ssd | 256.00 | 4.00 | 0.00| 0.000 | 5 |
- | ssd | 4096.00 | 15.13 | 0.50 | 0.033 | 5 |
- | flux.1 | 1024.00 | 8768716.8 | 592157.22 | 0.068 | 10 |
- | flux.1 | 2048.00 | 10734796.8 | 616104.40 | 0.057 | | 10 |
- | flux.1 | 4096.00 | 15623782.4 | 491531.50 | 0.031 | 10 |
-| stable_diffusion | 512.00 | 5071.43 | 257.54 | 0.051 | 10 |
- | stable_diffusion | 2048.00 | 1961.54 | 165.43 | 0.084 | 10 |
- | unet3d | 2.00 | 446764.14 | 97843.95 | 0.219 | 40 |
- | unet3d | 84.00 | 387860.87 | 69491.57 | 0.179 | 40 |
+| Benchmark | GBS | Mean of epochs to converge | Std for epochs to converge | Coefficient of variance (CV) | N |
+| ------- | ------- | ------- | ------- | ------- | ------- |
+| llama31_405b | 1152 | 313344 | 11657.42037 | 0.04 | 3 |
+| llama31_405b | 2304 | 368640 | 11657.42037 | 0.03 | 3 |
+| llama31_405b | 4608 | 488448 | 15421.31761 | 0.03 | 3 |
+| flux1 | 512 | 7169638.4 | 213051.6904 | 0.03 | 10 |
+| flux1 | 2048 | 10315366.4 | 603051.1624 | 0.06 | 10 |
+| flux1 | 4096 | 15348531.2 | 513660.0262 | 0.03 | 10 |
+| llama2_70b_lora | 8 | 3187.2 | 307.7048483 | 0.10 | 10 |
+| llama2_70b_lora | 16 | 4051.2 | 422.0323759 | 0.10 | 10 |
+| llama2_70b_lora | 128 | 11289.6 | 866.7465118 | 0.08 | 10 |
+| bert | 256 | 2552704 | 224079.9655 | 0.09 | 10 |
+| bert | 448 | 2410629.565 | 201828.8164 | 0.08 | 10 |
+| bert | 16384 | 5504307.2 | 148400.2887 | 0.03 | 10 |
+| rgat | 4096 | 0.79 | 0.0347926187 | 0.04 | 10 |
+| rgat | 16384 | 0.86 | 0.04472135955 | 0.05 | 10 |
+| rgat | 262144 | 2.465 | 0.1170919567 | 0.05 | 10 |
+| dlrm_dcnv2 | 32768 | 0.7066666667 | 0.02170862427 | 0.03 | 10 |
+| dlrm_dcnv2 | 65536 | 0.7933333333 | 0.06260623156 | 0.08 | 10 |
+| dlrm_dcnv2 | 160000 | 0.9575 | 0.03725799102 | 0.04 | 10 |
+| retinanet | 256 | 4 | 0 | 0.00 | 5 |
+| retinanet | 320 | 4.15 | 0.3663475485 | 0.09 | 5 |
+| retinanet | 4096 | 15.13333333 | 0.5163977795 | 0.03 | 5 |
+| llama31_8b | 16 | 161587.2 | 4501.678676 | 0.03 | 10 |
+| llama31_8b | 64 | 226713.6 | 10899.96237 | 0.05 | 10 |
+| llama31_8b | 128 | 345907.2 | 24984.89317 | 0.07 | 10 |
  
  ![plot](./images/coefficient_of_variance.png "Coefficient of variance (CV) and number of submission runs (N) for different benchmarks")
 

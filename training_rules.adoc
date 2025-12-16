@@ -447,7 +447,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |===
 |Area|Problem |Minimum Number of Runs |Latest version available
 
-|Vision|Text to Image |FLUX.1 |10 |v6.0
+|Vision|Text to Image |10 |v6.0
 |Language |Small LLM pretraining |10 |v6.0
 | |LLM pretraining |3 |v6.0
 | |LLM Finetuning|10 |v6.0
