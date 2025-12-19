@@ -12,7 +12,7 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
  ### General
 
- 1. Reference repository code must run without error on reference hardware (DGX-A100, DGX-H100, DGX-H200, DGX-B200) on day of benchmark reference freeze. 
+ 1. Reference repository code must run without error on a reference platform listed below on the day of benchmark reference freeze. Reference owners are encouraged to specify which platform was used for reference code development in the reference README.
  
      a. The Reference Platform(s) will be reviewed and updated as part of the MLPerf benchmark roadmapping process.
 
@@ -40,6 +40,21 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
  5. This document applies to ***new*** references, in v1.0 and after.  Existing references from v0.7 and earlier should try to adhere as well, but are not required to.
 
      a. For example, Mini-Go was a v0.7 benchmark so it does not need to adhere to the new gradient accumulation requirement.
+
+6. Reference Platforms list:
+
+     a.  Server with NVIDIA A100-SXM GPUs such as DGX-A100
+   
+     b.  Server with NVIDIA H100-SXM GPUs such as DGX-H100
+   
+     c.  Server with NVIDIA H200-SXM GPUs such as DGX-H200
+   
+     d.  Server with NVIDIA B200-SXM GPUs such as DGX-B200
+   
+     e.  Server with AMD Instinct MI355X GPUs 
+  
+
+    
 
  ### Hyperparameters & thresholds:
 
