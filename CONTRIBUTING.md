@@ -43,15 +43,13 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
 
 6. Reference Platforms list:
 
-     a.  Server with NVIDIA A100-SXM GPUs such as DGX-A100
+     a.  NVIDIA DGX A100: 8x NVIDIA A100 80GB GPUs, 2x AMD Rome 7742 CPUs, 2TB System Memory,  8x SinglePort NVIDIA ConnectX-7
+
+     b.  NVIDIA DGX H100: 8x NVIDIA H100 80GB GPUs, 2x Intel Xeon 8480C CPUs, 2TB System Memory, 8x SinglePort NVIDIA ConnectX-7
    
-     b.  Server with NVIDIA H100-SXM GPUs such as DGX-H100
+     c.  NVIDIA DGX H200: 8x NVIDIA H200 141GB GPUs, 2x Intel Xeon 8480C CPUs, 2TB System Memory, 8x SinglePort NVIDIA ConnectX-7
    
-     c.  Server with NVIDIA H200-SXM GPUs such as DGX-H200
-   
-     d.  Server with NVIDIA B200-SXM GPUs such as DGX-B200
-   
-     e.  Server with AMD Instinct MI355X GPUs 
+     e.  A server with 8xAMD Instinct MI355X 288GB GPUs, 2x AMD EPYC "Turin" CPU 
   
 
     
