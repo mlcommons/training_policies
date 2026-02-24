@@ -437,7 +437,7 @@ Submitters must notify the review committee of their intent to resubmit logs by 
 == Run Results
 A run result consists of a wall-clock timing measurement for a contiguous period that includes model initialization in excess of a maximum initialization time, any data preprocessing required to be on the clock, using the dataset to train the model, and quality evaluation unless specified otherwise for the benchmark.
 
-Prior to starting the clock, a system may use a maximum model initialization time of 30 minutes for _Closed_ division and 4 hours for _Open_ division. Model initialization time begins when the system first begins to construct or execute the model. This maximum initialization time is intended to ensure that model initialization is not disproportionate on large systems intended to run much larger models, and may be adjusted in the future with sufficient evidence.
+Prior to starting the clock, a system may use a maximum model initialization time of 30 minutes for _Closed_ division and 4 hours for _Open_ division. Model initialization time begins when the system first begins to construct or execute the model. This maximum initialization time is intended to ensure that model initialization is not disproportionate on large systems intended to run much larger models, and may be adjusted in the future with sufficient evidence.  In keeping with common industry practice, previously produced persistent JIT caches may be used to reduce model initialization time.
 
 The clock must start before any part of the system touches the dataset or when the maximum model initialization time is exceeded. The clock may be stopped as soon as any part of the system determines target accuracy has been reached. The clock may not be paused during the run.
 
