@@ -155,16 +155,18 @@ The Open division allows using arbitrary training data, preprocessing, model, an
 Open division benchmarks must be referred to using the benchmark name plus the term Open, e.g. “for the Recommendation Open benchmark, the system achieved a result of 7.2.”
 
 === Retired Division
-The MLPerf Training benchmark suite is designed to reflect current industry trends. However, the Retired Division addresses continued, necessary interest—such as for ongoing RFPs—in public MLPerf training results for benchmarks that are no longer active. This category is intended for limited, essential use and discourages high-volume or competitive submissions. The WG should monitor usage and consider either reinstating the benchmark or restricting the category's use if too many submissions occur for a specific retired benchmark.
+The MLPerf Training benchmark suite is designed to reflect current industry trends. However, the Retired Division addresses continued, necessary interest (such as for ongoing RFPs) in public MLPerf training results for benchmarks that are no longer active. This category is intended for limited, essential use and discourages high-volume or competitive submissions. The WG should monitor usage and consider either reinstating the benchmark or restricting the category's use if too many submissions occur for a specific retired benchmark.
 
-The retired division is governed by all existing closed division rules, with the sole modification being the retirement of the benchmark. These are additional rules also apply
+The retired division is governed by all existing closed division rules, with the sole modification being the retirement of the benchmark. These additional rules also apply
 
-* Since reviewing retired benchmarks is an extra overhead, all mlperf logging checkers from the <round-of-retirement> should be used to verify the retired benchmark results. If the <round-of-retirement> logging checkers fail for a retired division submission, the submission will be rejected.
+* Since reviewing retired benchmarks is an extra overhead, all mlperf logging checkers from the <round-of-retirement>* should be used to verify the retired benchmark results. If the <round-of-retirement> logging checkers fail for a retired division submission, the submission will be rejected.
 * No new RCPs can be added for retired benchmarks, no changes to the reference code and no modifications will be allowed to the logging checkers.
 * Retired division submissions CANNOT be compared to any other official MLPerf Training results from the current round or any previous rounds in any public communications (including but not limited to press statements, analyst discussions, website, blogs) to ensure fairness.
-* The retired division submissions will be displayed in a separate table in the final results. This will ensure that the submission gets a submitter ID and a place in the results table under the right benchmark column. The submission should be submitted under the division retired_<round-of-retirement>. For example, if submitting Stable Diffusion v2 which was retired in v5.0 during v5.1, the division would be "retired_v5.0" for the submission.
+* The retired division submissions will not be displayed in the final results table to avoid confusion around result interpretability. It will get a submitter ID and it should be submitted under the division retired_<round-of-retirement>*. For example, if submitting Stable Diffusion v2 (v5.0 was the last round when the benchmark was in the suite) in round v6.0, the division for the submission should be "retired_v5.0".
 * Retired division results can only be submitted on Available category systems.
-* To reduce perpetual maintenance of retired benchmarks, a benchmark has a limited span of three years after it is retired during which it can receive retired division submissions. Three years after retiring a benchmark, no more submissions can be made to it in the retired division and such submissions would be rejected. (Three years is chosen based on typical RFP duration and can be modified by the WG if necessary).
+* To reduce perpetual maintenance of retired benchmarks, a benchmark has a limited span of three years (or 6 rounds, which ever is longer) after it is retired during which it can receive retired division submissions. Three years after retiring a benchmark, no more submissions can be made to it in the retired division and such submissions would be rejected. (Three years is chosen based on typical RFP duration and can be modified by the WG if necessary).
+
+*<round-of-retirement> is the last round when the benchmark was part of the benchmark suite before it was retired
 
 == Basics
 
