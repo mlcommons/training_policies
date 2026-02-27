@@ -357,9 +357,9 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |TODO |v6.0
  |deepseekv3_671b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_weight_decay |0.1 |weight decay |TODO |v6.0
- |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |4 |steps taken for linear warmup. |TODO |v6.0
+ |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |constrained based on global_batch_size |steps taken for linear warmup. |TODO |v6.0
  |deepseekv3_671b |adamw |opt_learning_rate_decay_steps |12000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |TODO |v6.0
- |deepseekv3_671b |adamw |opt_base_learning_rate |0.000024 * sqrt(global_batch_size / 16384) |base learning rate |TODO |v6.0
+ |deepseekv3_671b |adamw |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "DeepSeek-V3-671B learning rates" |TODO |v6.0
  |deepseekv3_671b |adamw |sequence_length |4096 |sequence length |TODO |v6.0
  |deepseekv3_671b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |TODO |v6.0
  |deepseekv3_671b |adamw |max_steps |12000 |maximum number of steps |TODO |v6.0
@@ -384,6 +384,23 @@ Since training large language models is very expensive, the task force aims to l
 
 * GBS<1152 or GBS>9216 - new RCP needs to be generated, reach out to the task force
 * GBS within range but not listed: opt_base_learning_rate = 8e-5 * (GBS / 1152), rounded to the **8th** decimal place. 
+
+If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+
+==== DeepSeek-V3-671B hyperparameter constraints
+
+Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding learning rates are fixed as follows.
+
+|===
+ |global_batch_size |opt_base_learning_rate |opt_learning_rate_warmup_steps
+
+ |15360 |0.000023238 |4
+ |16384 |0.000024 |4
+ |18432 |0.000025456 |4
+|===
+
+* GBS<15360 - not allowed
+* GBS within range but not listed: opt_base_learning_rate = 0.000024 * sqrt(GBS / 16384), rounded to the **9th** decimal place.
 
 If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
 
