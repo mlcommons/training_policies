@@ -49,10 +49,11 @@ MLCommons project work is tracked with issue trackers and pull requests. Modify 
    
      c.  NVIDIA DGX H200: 8x NVIDIA H200 141GB GPUs, 2x Intel Xeon 8480C CPUs, 2TB System Memory, 8x SinglePort NVIDIA ConnectX-7
    
-     e.  A server with 8xAMD Instinct MI355X 288GB GPUs, 2x AMD EPYC "Turin" CPU 
-  
+     d.  A server with 8xAMD Instinct MI355X 288GB GPUs, 2x AMD EPYC "Turin" CPU
 
-    
+     e.  NVIDIA GB300 NVL72: 72x NVIDIA GB300 288GB GPUs, 36x Grace CPUs, 17TB System Memory, NVIDIA ConnectX-7
+
+
 
  ### Hyperparameters & thresholds:
 
