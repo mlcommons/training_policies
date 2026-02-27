@@ -81,6 +81,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Language |Small LLM pretraining |c4/en/3.0.1 |v6.0
 | |LLM pretraining |c4/en/3.0.1 |v6.0
 | |LLM finetuning |SCROLLS GovReport |v6.0
+| |LLM MoE Pretraining |c4/en/3.0.1 |v6.0
 |Commerce |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant) |v6.0
 
 |===
@@ -144,6 +145,7 @@ The closed division models and quality targets are:
 |Language |Small LLM Pretraining |Llama31_8b |3.3 log perplexity |v6.0
 | |LLM pretraining |Llama31_405B |5.6 log perplexity |v6.0
 | |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v6.0
+| |LLM MoE Pretraining |DeepSeek_V3 |3.6 log perplexity |v6.0
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v6.0
 |===
 
@@ -349,6 +351,20 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |flux.1 |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v6.0
  |flux.1 |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v6.0
  |flux.1 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] |v6.0
+ |deepseek_v3 |adamw |global_batch_size |unconstrained |batch size in sequences |TODO |v6.0
+ |deepseek_v3 |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |TODO |v6.0
+ |deepseek_v3 |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |TODO |v6.0
+ |deepseek_v3 |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |TODO |v6.0
+ |deepseek_v3 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |TODO |v6.0
+ |deepseek_v3 |adamw |opt_adamw_weight_decay |0.1 |weight decay |TODO |v6.0
+ |deepseek_v3 |adamw |opt_learning_rate_warmup_steps |unconstrained |steps taken for linear warmup. |TODO |v6.0
+ |deepseek_v3 |adamw |opt_learning_rate_decay_steps |1_200_000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |TODO |v6.0
+ |deepseek_v3 |adamw |opt_base_learning_rate |unconstrained |base learning rate |TODO |v6.0
+ |deepseek_v3 |adamw |opt_end_learning_rate |opt_base_learning_rate * 0.1 |learning rate at the last step of decay period |TODO |v6.0
+ |deepseek_v3 |adamw |dropout |0.0 |Disable all dropouts during training. |TODO |v6.0
+ |deepseek_v3 |adamw |sequence_length |4096 |sequence length |TODO |v6.0
+ |deepseek_v3 |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |TODO |v6.0
+ |deepseek_v3 |adamw |max_steps |1200000 |maximum number of steps |TODO |v6.0
 |===
 For the tunable hyperparameters used in the past for deprecated benchmarks see <<Deprecated benchmarks hyperparameters>>
 
@@ -402,6 +418,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Language|Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.0
 |        |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v6.0
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.0
+|        |LLM MoE Pretraining |DeepSeek_V3| Every 12000 sequences; `CEIL(12000 / global_batch_size) * global_batch_size` steps if 12000 is not divisible by GBS. |v6.0
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v6.0
 |===
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
@@ -450,6 +467,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Vision|Text to Image |10 |v6.0
 |Language |Small LLM pretraining |10 |v6.0
 | |LLM pretraining |3 |v6.0
+| |LLM MoE Pretraining |3 |v6.0
 | |LLM Finetuning|10 |v6.0
 |Commerce |Recommendation |10 |v6.0
 |===
@@ -514,6 +532,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | Llama2_70B_LoRA | Training sample (integer) | v6.0
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v6.0
 | FLUX.1 | Training sample (integer) | v6.0
+| DeepSeek_V3 | Training samples starting from 0 (integer) | v6.0
 |===
 Refer to epoch reporting for deprecated benchmarks at <<Epoch reporting for deprecated benchmarks>>
 
