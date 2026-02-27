@@ -389,20 +389,14 @@ If a new learning rate is needed for any GBS point, request new RCPs from the ta
 
 ==== DeepSeek-V3-671B hyperparameter constraints
 
-Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding learning rates are fixed as follows.
-
-|===
- |global_batch_size |opt_base_learning_rate |opt_learning_rate_warmup_steps
-
- |15360 |0.000023238 |4
- |16384 |0.000024 |4
- |18432 |0.000025456 |4
-|===
+To closely follow the training recipe from the https://arxiv.org/html/2412.19437v2[DeepSeek-v3 Technical report] which employs a batch size scheduling strategy, where the batch size is gradually increased from 3072 to 15360 in the training of the first 469B tokens, and then keeps 15360 in the remaining training of 4.8T tokens, the benchmark enforces all submissions to use a GBS of atleast 15360. This ensures that the benchmark is representative of DeepSeek-v3 pretraining while maintaining fairness because the task force experiments showed that convergence in the benchmarking region can be much faster with GBS << 15360. Also, since training large language models is very expensive, the task force aims to limit hyperparameter searches by fixing the max learning rate to be used with each GBS.
 
 * GBS<15360 - not allowed
-* GBS within range but not listed: opt_base_learning_rate = 0.000024 * sqrt(GBS / 16384), rounded to the **9th** decimal place.
+* GBS>=15360: opt_base_learning_rate = 0.000024 * sqrt(GBS / 16384), rounded to the **9th** decimal place.
 
-If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+If a new learning rate is needed for any GBS point and you cannot run the reference code, request new RCPs from the task force or normalize the score if permissible.
+
+Given the very large GBS, the benchmark is setup to evaluate after each training GBS step (instead of evaluation after a predetermined number of samples are trained like in other MLPerf training benchmarks) by reducing the cost of evaluation (by limiting the number of evaluation samples to just 1024).
 
 === Hyperparameter Borrowing
 
