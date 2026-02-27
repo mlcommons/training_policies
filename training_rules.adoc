@@ -357,9 +357,9 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |TODO |v6.0
  |deepseekv3_671b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_weight_decay |0.1 |weight decay |TODO |v6.0
- |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |constrained based on global_batch_size |steps taken for linear warmup. |TODO |v6.0
+ |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |4 |steps taken for linear warmup. |TODO |v6.0
  |deepseekv3_671b |adamw |opt_learning_rate_decay_steps |12000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |TODO |v6.0
- |deepseekv3_671b |adamw |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "DeepSeek-V3-671B learning rates" |TODO |v6.0
+ |deepseekv3_671b |adamw |opt_base_learning_rate |0.000024 * sqrt(global_batch_size / 16384) |base learning rate |TODO |v6.0
  |deepseekv3_671b |adamw |sequence_length |4096 |sequence length |TODO |v6.0
  |deepseekv3_671b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |TODO |v6.0
  |deepseekv3_671b |adamw |max_steps |12000 |maximum number of steps |TODO |v6.0
