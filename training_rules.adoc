@@ -78,7 +78,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |Area|Problem |Dataset |Latest version available
 
 |Vision |Text to Image |CC12M |v6.0
-|Language | GPT-OSS-20B pretraining |c4/en/3.0.1 |v6.0
+|Language | Small LLM MoE pretraining |c4/en/3.0.1 |v6.0
 | |Small LLM pretraining |c4/en/3.0.1 |v6.0
 | |LLM pretraining |c4/en/3.0.1 |v6.0
 | |LLM finetuning |SCROLLS GovReport |v6.0
@@ -142,7 +142,7 @@ The closed division models and quality targets are:
 |Area |Problem |Model |Target |Latest version available
 
 |Vision |Text to image |FLUX.1 |0.586 Eval loss |v6.0
-|Language | GPT-OSS-20B pretraining | GPT_OSS_20B | 3.34 log perplexity |v6.0
+|Language | Small LLM MoE pretraining | GPT_OSS_20B | 3.34 log perplexity |v6.0
 |  |Small LLM Pretraining |Llama31_8b |3.3 log perplexity |v6.0
 | |LLM pretraining |Llama31_405B |5.6 log perplexity |v6.0
 | |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v6.0
@@ -415,7 +415,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |Area |Problem |Model|Evaluation frequency |Latest version available
 
 |Vision |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v6.0
-|Language | GPT-OSS-20B pretraining | GPT_OSS_20B| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.0
+|Language | Small LLM MoE pretraining | GPT_OSS_20B| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.0
 |        |Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.0
 |        |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v6.0
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.0
@@ -465,7 +465,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Area|Problem |Minimum Number of Runs |Latest version available
 
 |Vision|Text to Image |10 |v6.0
-|Language | GPT-OSS-20B pretraining | 10 | v6.0
+|Language | Small LLM MoE pretraining | 10 | v6.0
 | |Small LLM pretraining |10 |v6.0
 | |LLM pretraining |3 |v6.0
 | |LLM Finetuning|10 |v6.0
