@@ -354,7 +354,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |deepseekv3_671b |adamw |global_batch_size |unconstrained |batch size in sequences |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |TODO |v6.0
- |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |TODO |v6.0
+ |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |TODO |v6.0
  |deepseekv3_671b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_weight_decay |0.1 |weight decay |TODO |v6.0
  |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |unconstrained |steps taken for linear warmup. |TODO |v6.0
