@@ -367,7 +367,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |flux.1 |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v6.0
  |flux.1 |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v6.0
  |flux.1 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] |v6.0
- |deepseekv3_671b |adamw |global_batch_size |unconstrained |batch size in sequences |TODO |v6.0
+ |deepseekv3_671b |adamw |global_batch_size |>=15360 |batch size in sequences |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |TODO |v6.0
  |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |TODO |v6.0
