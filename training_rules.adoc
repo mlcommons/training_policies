@@ -82,6 +82,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |Small LLM pretraining |c4/en/3.0.1 |v6.0
 | |LLM pretraining |c4/en/3.0.1 |v6.0
 | |LLM finetuning |SCROLLS GovReport |v6.0
+| |LLM MoE Pretraining |c4/en/3.0.1 |v6.0
 |Commerce |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant) |v6.0
 
 |===
@@ -146,6 +147,7 @@ The closed division models and quality targets are:
 |  |Small LLM Pretraining |Llama31_8b |3.3 log perplexity |v6.0
 | |LLM pretraining |Llama31_405B |5.6 log perplexity |v6.0
 | |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v6.0
+| |LLM MoE Pretraining |deepseekv3_671b |3.6 log perplexity |v6.0
 |Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v6.0
 |===
 
@@ -365,6 +367,18 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |flux.1 |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v6.0
  |flux.1 |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v6.0
  |flux.1 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] |v6.0
+ |deepseekv3_671b |adamw |global_batch_size |>=15360 |batch size in sequences |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L45[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L112[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L113[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L176[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L118[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_adamw_weight_decay |0.1 |weight decay |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L115[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |4 |steps taken for linear warmup. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L62[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_learning_rate_decay_steps |12000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L82[reference_code] |v6.0
+ |deepseekv3_671b |adamw |opt_base_learning_rate |0.000024 * sqrt(global_batch_size / 16384) |base learning rate |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L63[reference_code] |v6.0
+ |deepseekv3_671b |adamw |sequence_length |4096 |sequence length |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/v0.3.0/src/megatron/bridge/models/deepseek/deepseek_provider.py#L62[reference_code] |v6.0
+ |deepseekv3_671b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L94[reference_code] |v6.0
+ |deepseekv3_671b |adamw |max_steps |12000 |maximum number of steps |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L61[reference_code] |v6.0
 |===
 For the tunable hyperparameters used in the past for deprecated benchmarks see <<Deprecated benchmarks hyperparameters>>
 
@@ -386,6 +400,23 @@ Since training large language models is very expensive, the task force aims to l
 
 * GBS<1152 or GBS>9216 - new RCP needs to be generated, reach out to the task force
 * GBS within range but not listed: opt_base_learning_rate = 8e-5 * (GBS / 1152), rounded to the **8th** decimal place. 
+
+If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+
+==== DeepSeek-V3-671B hyperparameter constraints
+
+Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding learning rates are fixed as follows.
+
+|===
+ |global_batch_size |opt_base_learning_rate |opt_learning_rate_warmup_steps
+
+ |15360 |0.000023238 |4
+ |16384 |0.000024 |4
+ |18432 |0.000025456 |4
+|===
+
+* GBS<15360 - not allowed
+* GBS within range but not listed: opt_base_learning_rate = 0.000024 * sqrt(GBS / 16384), rounded to the **9th** decimal place.
 
 If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
 
@@ -419,6 +450,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |        |Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.0
 |        |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v6.0
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.0
+|        |LLM MoE Pretraining |deepseekv3_671b| Every step. |v6.0
 |Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL)) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v6.0
 |===
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
@@ -468,6 +500,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 |Language | Small LLM MoE pretraining | 10 | v6.0
 | |Small LLM pretraining |10 |v6.0
 | |LLM pretraining |3 |v6.0
+| |LLM MoE Pretraining |3 |v6.0
 | |LLM Finetuning|10 |v6.0
 |Commerce |Recommendation |10 |v6.0
 |===
@@ -532,6 +565,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | Llama2_70B_LoRA | Training sample (integer) | v6.0
 | DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v6.0
 | FLUX.1 | Training sample (integer) | v6.0
+| deepseekv3_671b | Training samples starting from 0 (integer) | v6.0
 |===
 Refer to epoch reporting for deprecated benchmarks at <<Epoch reporting for deprecated benchmarks>>
 
