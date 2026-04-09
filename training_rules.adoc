@@ -527,6 +527,18 @@ An example could be for a benchmark with N=5 runs, a submitter could ahead of ti
 
 The score of an MLPerf submission may be scaled if the training committee decides so during the review period. This scaling may be, but not limited to failing to meet the reference convergence limits imposed by the Reference Convergence Points (see following section). To facilitate the automatic generation of the scaled score the scaling factor must be provided in a json file under the name scaling.json in the directory whose scores are going to be scaled.
 
+=== Additional disclosure
+
+Results need to be informative and provide basic information about how they were run and convergence without needing to run additional scripts or consulting conmfigurational files. Specifically, the results the following must be disclosed as a part of each result
+
+* Smallest (most compact) numerical precision used to accelerate training 
+
+* Parallelization techniques employed, such as CP8, PP4, or TP1
+
+* RCP checker output
+
+Additionally, configuration files must be named so that they can easily be matched with output files. 
+
 == Reference Convergence Points (RCPs)
 
 Reference Convergence Points are used to ensure that the convergence of the submission does not deviate from the convergence of the reference. We are interested in avoiding cases where the submission convergence is faster than the reference. Reference implementation convergence sets a lower bound on epoch convergence that a valid submission should not beat. From a statistical standpoint if the submission mean epochs to converge is significantly lower than the reference mean epochs to converge, then submission convergence points belong to a different population than the reference convergence points, and thus the submission should not be accepted. Compliance to reference convergence points is validated as follows
