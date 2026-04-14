@@ -378,7 +378,7 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |deepseekv3_671b |adamw |opt_base_learning_rate |0.000024 * sqrt(global_batch_size / 16384) |base learning rate |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L63[reference_code] |v6.0
  |deepseekv3_671b |adamw |sequence_length |4096 |sequence length |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/v0.3.0/src/megatron/bridge/models/deepseek/deepseek_provider.py#L62[reference_code] |v6.0
  |deepseekv3_671b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L94[reference_code] |v6.0
- |deepseekv3_671b |adamw |max_steps |12000 |maximum number of steps |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L61[reference_code] |v6.0
+ |deepseekv3_671b |adamw |max_steps |unconstrained |maximum number of steps |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L61[reference_code] |v6.0
 |===
 For the tunable hyperparameters used in the past for deprecated benchmarks see <<Deprecated benchmarks hyperparameters>>
 
