@@ -523,6 +523,9 @@ As a more computationally efficient method of validating that a submission is cl
 
 An example could be for a benchmark with N=5 runs, a submitter could ahead of time pick M=10, launch 10 runs on their compute resources, sort the 10 runs by their launch time stamp, then take a sliding window of 5 consecutive runs over those 10 runs.  That sliding window would create 6 possible sets of 5 runs.  Each of those 6 sets would be olympically scored, and the set with the median runtime would be submitted as that submitter's score.  Any failed runs within those 10 runs would count as infinity time and need to be included in the olympic scoring (could be thrown away as the slowest score).  It is recommended that a submitter keep the logs for all M runs, because the review committee may ask for the submitter to share the M logs during the review period.
 
+While cherry-picking cannot always be conclusively proven, if it is suspected during the review period — based, for example, on inconsistencies in log files or significant deviations from results obtained on equivalent hardware and software — the review chairs may request a new set of runs or require withdrawal of any result deemed to be in violation.
+
+
 === Score scaling
 
 The score of an MLPerf submission may be scaled if the training committee decides so during the review period. This scaling may be, but not limited to failing to meet the reference convergence limits imposed by the Reference Convergence Points (see following section). To facilitate the automatic generation of the scaled score the scaling factor must be provided in a json file under the name scaling.json in the directory whose scores are going to be scaled.
