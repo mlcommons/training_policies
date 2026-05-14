@@ -707,6 +707,14 @@ For v5.0's Llama 3.1 405B benchmark only, we allow submissions that converge 1 e
 
 Evaluation: In v5.0, we did few sparse evaluation every `46080` sequences. `CEIL(46080 / global_batch_size) * global_batch_size` if `46080` is not divisible by GBS. This infrequent evaluation schedule meant that if convergence was reached just after an evaluation, training would continue for an additional `46080` sequences, resulting in a 12-16% increase in total training time. To address this, after v5.0, the evaluation frequency was increased to reduce this overhead, while still keeping the overall evaluation cost low by skipping the initial few evaluations.
 
+== Appendix: v6.0 Specific Rules
+
+=== Small LLM MoE pretraining  (GPT-OSS 20B)
+
+According to the hyperparameter rules for GPT-OSS-20B, `opt_end_learning_rate` should be `0.1 * opt_base_learning_rate`. But due to a bug in the reference implementation where the default value (`4e-5`) was set for `opt_end_learning_rate`, all the RCPs for GPT-OSS-20B use `opt_end_learning_rate = 4e-5` instead of `opt_end_learning_rate = opt_base_learning_rate * 0.1`
+
+Since we are close to submissions and do not expect convergence to be drastically impacted by either of the `opt_end_learning_rate` values, just for v6.0 only, we will allow submissions that use either opt_end_learning_rate = 4e-5 or opt_end_learning_rate = opt_base_learning_rate * 0.1 as long as they PASS the current RCPs. 
+
 == Appendix: RCP Examples
 
 The RCP checking process is best illustrated with the following examples:
