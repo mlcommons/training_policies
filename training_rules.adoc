@@ -4,7 +4,7 @@
 :sectnums:
 
 = MLPerf Training Rules
-Dec 9, 2025
+Jul 24, 2026
 
 == Overview
 This document describes how to implement the MLPerf® Training Suite using an ML framework and how to use that implementation to measure the performance of an ML software framework or hardware.
@@ -67,7 +67,7 @@ The framework and system should not detect and behave differently for benchmarks
 === Pre-training is not allowed
 Unless part of the definition of a benchmark, the implementation should not encode any information about the content of the dataset or a successful model’s state in any form. High-level statistical information about the dataset, such as distribution of sizes, may be used.
 
-For Llama31_405B, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
+For DeepSeekv3, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
 
 For benchmarks which are defined as starting from a fixed set of weights, such as a checkpoint or backbone, the implementation should start from the weights provided in the benchmark reference definition, or if that is not posssible, provide  information and code sufficient for reproducing how those starting weights were obtained.
 
@@ -77,13 +77,13 @@ The benchmark suite consists of the benchmarks shown in the following table.
 |===
 |Area|Problem |Dataset |Latest version available
 
-|Vision |Text to Image |CC12M |v6.0
-|Language | Small LLM MoE pretraining |c4/en/3.0.1 |v6.0
-| |Small LLM pretraining |c4/en/3.0.1 |v6.0
-| |LLM pretraining |c4/en/3.0.1 |v6.0
-| |LLM finetuning |SCROLLS GovReport |v6.0
-| |LLM MoE Pretraining |c4/en/3.0.1 |v6.0
-|Commerce |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant) |v6.0
+|Vision |Text to Image |CC12M |v6.1
+|Language | Small LLM MoE pretraining |c4/en/3.0.1 |v6.1
+| |Small LLM pretraining |c4/en/3.0.1 |v6.1
+| |LLM finetuning |SCROLLS GovReport |v6.1
+| |LLM MoE pretraining |c4/en/3.0.1 |v6.1
+| |LLM post training |R2E-Gym-Subset (easy split) |v6.1
+|Commerce |Recommendation |Yambda |v6.1
 
 |===
 
@@ -142,13 +142,13 @@ The closed division models and quality targets are:
 |===
 |Area |Problem |Model |Target |Latest version available
 
-|Vision |Text to image |FLUX.1 |0.586 Eval loss |v6.0
-|Language | Small LLM MoE pretraining | GPT_OSS_20B | 3.34 log perplexity |v6.0
-|  |Small LLM Pretraining |Llama31_8b |3.3 log perplexity |v6.0
-| |LLM pretraining |Llama31_405B |5.6 log perplexity |v6.0
-| |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v6.0
-| |LLM MoE Pretraining |deepseekv3_671b |3.6 log perplexity |v6.0
-|Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v6.0
+|Vision |Text to image |FLUX.1 |0.586 Eval loss |v6.1
+|Language | Small LLM MoE pretraining | GPT_OSS_20B | 3.34 log perplexity |v6.1
+|  |Small LLM pretraining |Llama31_8b |3.3 log perplexity |v6.1
+| |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v6.1
+| |LLM MoE pretraining |deepseekv3_671b |3.6 log perplexity |v6.1
+| |LLM post training |Qwen3.5-397B-A17B |0.69 pass@4 |v6.1
+|Commerce |Recommendation |dlrm_v4_hstu |TBD |v6.1
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Recommendation Closed benchmark, the system achieved a result of 7.2.”
@@ -250,7 +250,7 @@ CLOSED: the training and test data must be traversed in the same conceptual orde
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once. Modifications to data order and/or batching must be presented to the SWG group in advance of the submission deadline for approval if they could affect the ability to borrow hyperparameters and/or approximately follow the learning rate schedule defined by the RCPs.
 
-In the case of DLRMv2 benchmark, training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
+In the case of dlrm_v4_hstu benchmark, training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
 
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
@@ -298,110 +298,104 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
 |===
  |Model |Optimizer |Name |Constraint |Definition |Reference Code |Latest version available
 
- |dlrmv2 |adagrad |global_batch_size |unconstrained |global batch size |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L705-L708[reference code] |v6.0
- |dlrmv2 |adagrad |opt_base_learning_rate |unconstrained |learning rate (for both dense layers and embeddings) |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code] |v6.0
- |dlrmv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |learning rate decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L73[reference code] |v6.0
- |dlrmv2 |adagrad |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L76[reference code] |v6.0
- |dlrmv2 |adagrad |opt_adagrad_initial_accumulator_value |0.0 |adagrad initial accumulator value |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L74[reference code] |v6.0
- |dlrmv2 |adagrad |opt_adagrad_epsilon |1e-8 |adagrad epsilon |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L75[reference code] |v6.0
- |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code] |v6.0
- |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code] |v6.0
- |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code] |v6.0
- |gpt_oss_20b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L53[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L66[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L67[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L68[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link:https://github.com/mlcommons/training/tree/master/gpt-oss-20b/primus[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_adamw_weight_decay |0.1 |weight decay |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L63[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_learning_rate_warmup_steps |unconstrained |steps taken for linear warmup. |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L60[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_learning_rate_decay_steps |1_200_000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps). |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L61[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_base_learning_rate |unconstrained |base learning rate (after warmup); end LR = opt_base_learning_rate * 0.1 per opt_end_learning_rate |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L58[reference code] |v6.0
- |gpt_oss_20b |adamw |opt_end_learning_rate |opt_base_learning_rate * 0.1 |learning rate at the last step of decay period |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L59[reference code] |v6.0
- |gpt_oss_20b |adamw |dropout |0.0 |Disable all dropouts during training. |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L75[reference code] |v6.0
- |gpt_oss_20b |adamw |sequence_length |8192 |sequence length |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L55[reference code] |v6.0
- |gpt_oss_20b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |link:https://github.com/mlcommons/training/tree/master/gpt-oss-20b/primus[reference code] |v6.0
- |gpt_oss_20b |adamw |max_steps |1200000 | maximum number of steps |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L52[reference code] |v6.0
- |llama31_8b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L304[reference code] |v6.0
- |llama31_8b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.0
- |llama31_8b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.0
- |llama31_8b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.0
- |llama31_8b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.0
- |llama31_8b |adamw |opt_adamw_weight_decay |0.1 |weight decay |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.0
- |llama31_8b |adamw |opt_learning_rate_warmup_steps |unconstrained |steps taken for linear warmup. |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L156[reference code] |v6.0
- |llama31_8b |adamw |opt_learning_rate_decay_steps |1_200_000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps). |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L421[reference code] |v6.0
- |llama31_8b |adamw |opt_base_learning_rate |unconstrained |refer to next table in section "Llama 3.1 learning rates" |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L306[reference code] |v6.0
- |llama31_8b |adamw |opt_end_learning_rate |opt_base_learning_rate * 0.1 |learning rate at the last step of decay period |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L157[reference code] |v6.0
- |llama31_8b |adamw |dropout |0.0 |Disable all dropouts during training. |link:https://github.com/mlcommons/training/blob/master/small_llm_pretraining/nemo[reference code] |v6.0
- |llama31_8b |adamw |sequence_length |8192 |sequence length |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L357[reference code] |v6.0
- |llama31_8b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |link:https://github.com/mlcommons/training/blob/master/small_llm_pretraining/nemo[reference code] |v6.0
- |llama31_8b |adamw |max_steps |1200000 | maximum number of steps |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L310[reference code] |v6.0
- |llama31_405b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L301[reference code] |v6.0
- |llama31_405b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
- |llama31_405b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
- |llama31_405b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
- |llama31_405b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
- |llama31_405b |adamw |dropout |0.0 |Disable all dropouts during training. |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v6.0
- |llama31_405b |adamw |sequence_length |8192 |sequence length |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v6.0
- |llama31_405b |adamw |opt_adamw_weight_decay |0.1 |weight decay |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
- |llama31_405b |adamw |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v6.0
- |llama31_405b |adamw |opt_learning_rate_warmup_steps |ceil(8000 * 1152 / global_batch_size) |steps taken for linear warmup. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L157[reference code] |v6.0
- |llama31_405b |adamw |opt_learning_rate_decay_steps |ceil(1_200_000 * 1152 / global_batch_size) - ceil(8000 * 1152 / global_batch_size) |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L397[reference code] |v6.0
- |llama31_405b |adamw |opt_init_checkpoint_step |0 |first step after loading initial checkpoint |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L295[reference code] |v6.0
- |llama31_405b |adamw |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "Llama 3.1 learning rates" |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L153[reference code] |v6.0
- |llama31_405b |adamw |opt_end_learning_rate |8e-7 |learning rate at the last step of decay period |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
- |llama2_70b_lora |adamw |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |opt_gradient_clip_norm |fixed to referance (0.3) | Gradients are clipped above this norm threshold. |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |lora_dropout |0.1 |fixed to reference (0.1). |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |sequence_length |8196 |the sequence length - fixed to reference |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |lora_alpha |fixed to referance (32) | scaling factor for the LoRA weight matrices |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |opt_weight_decay |fixed to referance (0.0001) |weight decay |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |opt_learning_rate_warmup_ratio | unconstrained |ratio of steps out of training for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |opt_learning_rate_training_steps | unconstrained |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From Habana, TODO Link) |v6.0
- |llama2_70b_lora |adamw |opt_base_learning_rate |unconstrained | base leraning rate |See PR (From Habana, TODO Link) |v6.0
- |flux.1 |adamw |global_batch_size |unconstrained |The global batch size for training |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L198[reference_code] |v6.0
- |flux.1 |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v6.0
- |flux.1 |adamw |opt_adamw_beta_2 |0.95 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v6.0
- |flux.1 |adamw |opt_adamw_epsilon |1e-08 |term added to the denominator to improve numerical stability |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L135[reference_code] |v6.0
- |flux.1 |adamw |opt_adamw_weight_decay |0.1 |weight decay coefficient |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L282[reference_code] |v6.0
- |flux.1 |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v6.0
- |flux.1 |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v6.0
- |flux.1 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] |v6.0
- |deepseekv3_671b |adamw |global_batch_size |>=15360 |batch size in sequences |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L45[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L112[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L113[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L176[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L118[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_adamw_weight_decay |0.1 |weight decay |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L115[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |4 |steps taken for linear warmup. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L62[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_learning_rate_decay_steps |12000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L82[reference_code] |v6.0
- |deepseekv3_671b |adamw |opt_base_learning_rate |0.000024 * sqrt(global_batch_size / 16384) |base learning rate |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L63[reference_code] |v6.0
- |deepseekv3_671b |adamw |sequence_length |4096 |sequence length |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/v0.3.0/src/megatron/bridge/models/deepseek/deepseek_provider.py#L62[reference_code] |v6.0
- |deepseekv3_671b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L94[reference_code] |v6.0
- |deepseekv3_671b |adamw |max_steps |unconstrained |maximum number of steps |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L61[reference_code] |v6.0
+ |gpt_oss_20b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L53[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L66[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L67[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L68[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link:https://github.com/mlcommons/training/tree/master/gpt-oss-20b/primus[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_adamw_weight_decay |0.1 |weight decay |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L63[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_learning_rate_warmup_steps |unconstrained |steps taken for linear warmup. |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L60[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_learning_rate_decay_steps |1_200_000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps). |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L61[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_base_learning_rate |unconstrained |base learning rate (after warmup); end LR = opt_base_learning_rate * 0.1 per opt_end_learning_rate |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L58[reference code] |v6.1
+ |gpt_oss_20b |adamw |opt_end_learning_rate |opt_base_learning_rate * 0.1 |learning rate at the last step of decay period |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L59[reference code] |v6.1
+ |gpt_oss_20b |adamw |dropout |0.0 |Disable all dropouts during training. |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L75[reference code] |v6.1
+ |gpt_oss_20b |adamw |sequence_length |8192 |sequence length |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L55[reference code] |v6.1
+ |gpt_oss_20b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |link:https://github.com/mlcommons/training/tree/master/gpt-oss-20b/primus[reference code] |v6.1
+ |gpt_oss_20b |adamw |max_steps |1200000 | maximum number of steps |link:https://github.com/mlcommons/training/blob/4e3737bd2423bcfa05a394e5abc01d95c9e1e436/gpt-oss-20b/primus/conf/gpt_oss_20B-pretrain.yaml#L52[reference code] |v6.1
+ |llama31_8b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L304[reference code] |v6.1
+ |llama31_8b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.1
+ |llama31_8b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.1
+ |llama31_8b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.1
+ |llama31_8b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.1
+ |llama31_8b |adamw |opt_adamw_weight_decay |0.1 |weight decay |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L154[reference code] |v6.1
+ |llama31_8b |adamw |opt_learning_rate_warmup_steps |unconstrained |steps taken for linear warmup. |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L156[reference code] |v6.1
+ |llama31_8b |adamw |opt_learning_rate_decay_steps |1_200_000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps). |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L421[reference code] |v6.1
+ |llama31_8b |adamw |opt_base_learning_rate |unconstrained |refer to next table in section "Llama 3.1 learning rates" |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L306[reference code] |v6.1
+ |llama31_8b |adamw |opt_end_learning_rate |opt_base_learning_rate * 0.1 |learning rate at the last step of decay period |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L157[reference code] |v6.1
+ |llama31_8b |adamw |dropout |0.0 |Disable all dropouts during training. |link:https://github.com/mlcommons/training/blob/master/small_llm_pretraining/nemo[reference code] |v6.1
+ |llama31_8b |adamw |sequence_length |8192 |sequence length |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L357[reference code] |v6.1
+ |llama31_8b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |link:https://github.com/mlcommons/training/blob/master/small_llm_pretraining/nemo[reference code] |v6.1
+ |llama31_8b |adamw |max_steps |1200000 | maximum number of steps |link:https://github.com/mlcommons/training/blob/46bbcb7c1881ce7b6eca917b19621c375dcc3240/small_llm_pretraining/nemo/pretrain_llama31.py#L310[reference code] |v6.1
+ |llama2_70b_lora |adamw |global_batch_size |unconstrained |batch size in sequences |See PR (From NV and Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |opt_gradient_clip_norm |fixed to referance (0.3) | Gradients are clipped above this norm threshold. |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |lora_dropout |0.1 |fixed to reference (0.1). |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |sequence_length |8196 |the sequence length - fixed to reference |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |lora_alpha |fixed to referance (32) | scaling factor for the LoRA weight matrices |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |opt_weight_decay |fixed to referance (0.0001) |weight decay |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |opt_learning_rate_warmup_ratio | unconstrained |ratio of steps out of training for linear warmup during initial checkpoint generation. This only affects the learning rate curve in the benchmarking region. |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |opt_learning_rate_training_steps | unconstrained |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |See PR (From Habana, TODO Link) |v6.1
+ |llama2_70b_lora |adamw |opt_base_learning_rate |unconstrained | base leraning rate |See PR (From Habana, TODO Link) |v6.1
+ |flux.1 |adamw |global_batch_size |unconstrained |The global batch size for training |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L198[reference_code] |v6.1
+ |flux.1 |adamw |opt_adamw_beta_1 |0.9 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v6.1
+ |flux.1 |adamw |opt_adamw_beta_2 |0.95 |coefficients used for computing running averages of gradient and its square |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L281[reference_code] |v6.1
+ |flux.1 |adamw |opt_adamw_epsilon |1e-08 |term added to the denominator to improve numerical stability |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L135[reference_code] |v6.1
+ |flux.1 |adamw |opt_adamw_weight_decay |0.1 |weight decay coefficient |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/components/optimizer.py#L282[reference_code] |v6.1
+ |flux.1 |adamw |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L132[reference_code] |v6.1
+ |flux.1 |adamw |opt_learning_rate_warmup_steps |unconstrained |number of steps for learning rate to warm up |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L157[reference_code] |v6.1
+ |flux.1 |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link: https://github.com/pytorch/torchtitan/blob/3d7ea4b6b7e5cd2decf11a1c37581d1cd3678fe0/torchtitan/config_manager.py#L204[reference_code] |v6.1
+ |deepseekv3_671b |adamw |global_batch_size |>=15360 |batch size in sequences |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L45[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L112[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L113[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L176[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L118[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_adamw_weight_decay |0.1 |weight decay |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/cf15864f8e3ccd5da25282144c2d95cc208d2e2a/src/megatron/bridge/recipes/utils/optimizer_utils.py#L115[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_learning_rate_warmup_steps |4 |steps taken for linear warmup. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L62[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_learning_rate_decay_steps |12000 - opt_learning_rate_warmup_steps |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L82[reference_code] |v6.1
+ |deepseekv3_671b |adamw |opt_base_learning_rate |0.000024 * sqrt(global_batch_size / 16384) |base learning rate |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L63[reference_code] |v6.1
+ |deepseekv3_671b |adamw |sequence_length |4096 |sequence length |https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/v0.3.0/src/megatron/bridge/models/deepseek/deepseek_provider.py#L62[reference_code] |v6.1
+ |deepseekv3_671b |adamw |gradient_accumulation_steps |unconstrained |Number of fwd/bwd steps between optimizer step. |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/pretrain_deepseek_v3_671b.py#L94[reference_code] |v6.1
+ |deepseekv3_671b |adamw |max_steps |unconstrained |maximum number of steps |https://github.com/mlcommons/training/blob/daff3992f09b00326d404eaedf575727ff078170/llm_moe_pretraining/nemo/run_deepseek_v3_671b.sh#L61[reference_code] |v6.1
+ |qwen35_397b_grpo |adamw |global_batch_size |must equal num_prompts_per_step * num_generations_per_prompt |global batch size in problems (prompts) per training step |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |num_prompts_per_step |unconstrained positive integer; must satisfy global_batch_size = num_prompts_per_step * num_generations_per_prompt |number of prompts (problems) sampled per training step |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |num_generations_per_prompt |16 |GRPO group size; number of independent trajectories generated per prompt |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |loss_fn.truncated_importance_sampling_ratio |1.002 |upper bound for truncated importance sampling correction |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml#L69[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |loss_fn.truncated_importance_sampling_ratio_min |0.999 |lower bound for truncated importance sampling correction |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml#L70[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_adamw_beta_2 |0.999 |AdamW beta2 |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_adamw_epsilon |1e-8 |AdamW epsilon |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_adamw_weight_decay |0.0 |weight decay |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_name |`adamw` |optimizer name; fixed |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_gradient_clip_norm |0.125 * sqrt(256 / global_batch_size) |gradients are clipped above this norm threshold |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_base_learning_rate |1.0e-6 * sqrt(global_batch_size / 256) |base learning rate |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_learning_rate_warmup_steps |0 |no linear warmup |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |opt_learning_rate_decay_schedule |constant |learning rate schedule; no decay |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |init_checkpoint_step |0 |first step after loading the pretrained Qwen3.5-397B-A17B checkpoint |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |max_steps |unconstrained |maximum number of training steps |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |max_sequence_length |65536 |maximum sequence length (context + response); also caps max response length |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |eval_samples |256 (TBD pending legal review) |number of held-out R2E-Gym validation tasks; fixed; pass@4 uses `num_val_generations_per_prompt = 4`, so the resulting number of validation rollouts is 1024 (`256 × 4`) |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |agent_max_turns |30 |maximum agent turns per rollout (reference config key `env.nemo_gym.swe_agents_*.responses_api_agents.swe_agents.agent_max_turns`); fixed |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |generation_training_rollout_temperature |1.0 |temperature used for training-time rollouts; fixed |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |generation_training_rollout_top_p |1.0 |top_p used for training-time rollouts; fixed |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |generation_training_rollout_top_k |`null` (disabled) |top_k used for training-time rollouts; the reference sets `policy.generation.top_k: null`, so top_k sampling is disabled |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |generation_validation_rollout_temperature |0.1 |temperature used for validation-time rollouts (pass@4 requires stochastic sampling); fixed |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |generation_validation_rollout_top_p |0.95 |top_p used for validation-time rollouts; fixed |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |data.shuffle |false |the training-data shuffle flag must be off, fixing the global traversal order of training problems to ensure a stable solve rate and convergence curve; within a training step, prompts may still finish generation in any order as their trajectories complete |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |grpo.use_dynamic_sampling |false |dynamic sampling is the reference switch for oversampling (drawing more than num_generations_per_prompt rollouts and discarding unfinished or errored generations); it must be disabled so that submitters use exactly num_generations_per_prompt generations per prompt |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |grpo.async_grpo.max_trajectory_age_steps |tunable positive integer, *not borrowable* |staleness knob: number of policy updates between the time a rollout is generated and the time its trajectory is used for the policy update; each submitter must choose their own value and it cannot be borrowed via Hyperparameter Borrowing |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |env.nemo_gym.swe_agents_*.responses_api_agents.swe_agents.agent_cls |`CodeActAgent` |the OpenHands agent class driving the sandbox must be `CodeActAgent`; the agent control loop is part of the fixed sandbox contract |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |env.nemo_gym.swe_agents_*.responses_api_agents.swe_agents.agent_framework_commit |fixed to reference (`0d766ad06b2be64a42e6f0175b9ebcc4a06599d9`) |the OpenHands framework commit baked into the sandbox image must match the reference, so that the tool specification available to the model is identical across submissions |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |env.nemo_gym.swe_agents_*.responses_api_agents.swe_agents.agent_prompt_overrides |fixed to reference `user_prompt.j2` and `system_prompt.j2` |the injected system/user prompt templates are part of the model context that becomes training data and are treated as equivalent to the dataset; sandbox may run on CPUs of any architecture and does not need to be colocated with training/generation, but any dedicated CPU capacity used for the sandbox counts against the overall submission scale |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |env.nemo_gym.swe_agents_*.responses_api_agents.swe_agents.diversify_tool_names |false |tool-name diversification is part of the fixed sandbox contract and must be off |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |partial_rollouts |disallowed (no reference config key) |saving straggler rollouts into a buffer and restarting them in a later batch is not allowed; there is no reference config knob for this, and it may be reconsidered in future rounds once sandbox environments support persistent partial trajectory state |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |grpo.async_grpo.in_flight_weight_updates |allowed (`true` or `false`) |whether policy weight updates on generation workers occur without stalling ongoing rollouts; permitted to be enabled by submitters (reference RCPs use `false`) |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |lora |disallowed (no reference config key) |LoRA-based GRPO is not allowed because it changes the model architecture and reduces the active parameter count; submitters must perform full-parameter GRPO |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |qwen35_397b_grpo |adamw |policy.megatron_cfg.draft.enabled |false |the Megatron draft-model speculative-decoding path must be disabled; speculative decoding requires model changes (draft model or additional prediction head) that the reference implementation does not support |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
 |===
 For the tunable hyperparameters used in the past for deprecated benchmarks see <<Deprecated benchmarks hyperparameters>>
 
 OPEN: Hyperparameters and optimizer may be freely changed. 
 
-
-==== Llama 3.1 405b hyperparameter constraints
-
-Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding batch sizes are fixed as follows.
-
-|===
- |global_batch_size |opt_base_learning_rate
-
- |1152 |8e-5
- |2304 |16e-5
- |4608 |32e-5
- |9216 |64e-5
-|===
-
-* GBS<1152 or GBS>9216 - new RCP needs to be generated, reach out to the task force
-* GBS within range but not listed: opt_base_learning_rate = 8e-5 * (GBS / 1152), rounded to the **8th** decimal place. 
-
-If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
 
 ==== DeepSeek-V3-671B hyperparameter constraints
 
@@ -420,6 +414,26 @@ Since training large language models is very expensive, the task force aims to l
 
 If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
 
+==== qwen35_397b_grpo hyperparameter constraints
+
+Since GRPO post training of a 397B-parameter mixture-of-experts model is very expensive, the task force aims to limit hyperparameter searches. Closed division submitters must use the reference GRPO loss function documented at link:https://docs.nvidia.com/nemo/rl/0.2.1/guides/grpo.html#loss[NeMo RL GRPO loss]. The base learning rate and gradient clipping norm are constrained by the global batch size (GBS), and the reference set of GBS points is fixed as follows.
+
+|===
+ |global_batch_size |opt_base_learning_rate |opt_gradient_clip_norm |num_prompts_per_step |num_generations_per_prompt
+
+ |256 |1.0e-6 |0.125 |16 |16
+ |512 |1.4142135624e-6 |0.08838834765 |32 |16
+ |1024 |2.0e-6 |0.0625 |64 |16
+|===
+
+* GBS within range but not listed: opt_base_learning_rate = 1.0e-6 * sqrt(GBS / 256), rounded to the **10th** decimal place; opt_gradient_clip_norm = 0.125 * sqrt(256 / GBS), rounded to the **11th** decimal place.
+* GBS<256 or GBS>1024 - Apply above formula as long as RCP checker passes. If there are issues, reach out to the task force for new RCPs to be generated. 
+* GBS must always satisfy global_batch_size = num_prompts_per_step * num_generations_per_prompt with num_generations_per_prompt fixed to 16.
+
+If a new learning rate or clip norm is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+
+Refer to the `qwen35_397b_grpo` compliance checker configuration at link:https://github.com/mlcommons/logging/blob/master/mlperf_logging/compliance_checker/training_6.1.0/closed_qwen35_397b_grpo.yaml[closed_qwen35_397b_grpo.yaml] and the reference convergence points at link:https://github.com/mlcommons/logging/blob/master/mlperf_logging/rcp_checker/training_6.1.0/rcps_qwen35_397b_grpo.json[rcps_qwen35_397b_grpo.json].
+
 === Hyperparameter Borrowing
 
 Submitters are expected to use their best efforts to submit with optimal hyperparameters for their system.  The intent of Hyperparameter Borrowing is to allow a submitter to update their submission to reflect what they would have submitted had they known about more optimal hyperparameters before submitting, without knowing any other info (ie the performance of other submissions).
@@ -430,7 +444,7 @@ With evidence that the resulting model, using the same batch size as the other s
 
 A resubmission of a benchmark with borrowed hyperparameters must use the same software (with the exceptions listed in the Software Adoption section of this document), system and system configuration (accelerators, NICs etc) as the original submission.  The largest scale submission for a benchmark from a given system may be resubmitted with borrowed hyperparameters using a change of scale on that system, but only if the new scale is either larger, or enables the resubmission to achieve a faster run result.  In addition, the new scale must not be larger than the largest scale used in an original submission of at least one of the benchmarks on that system in this round.
 
-Since the hyperparameters are fixed for Llama31_405B, hyperparameter borrowing is not allowed.
+Since the hyperparameters are fixed for qwen35_397b_grpo and Deepseekv3, hyperparameter borrowing is not allowed for qwen35_397b_grpo and Deepseekv3.
 
 === Loss function
 CLOSED: The same loss function used in the reference implementation must be used.
@@ -445,13 +459,13 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |===
 |Area |Problem |Model|Evaluation frequency |Latest version available
 
-|Vision |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v6.0
-|Language | Small LLM MoE pretraining | GPT_OSS_20B| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.0
-|        |Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.0
-|        |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v6.0
-|        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.0
-|        |LLM MoE Pretraining |deepseekv3_671b| First evaluation at `GBS * FLOOR(42 + 24576 / GBS)` samples; every step thereafter. |v6.0
-|Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL)) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v6.0
+|Vision |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v6.1
+|Language | Small LLM MoE pretraining | GPT_OSS_20B| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
+|        |Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
+|        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.1
+|        |LLM MoE pretraining |deepseekv3_671b| First evaluation at `GBS * FLOOR(42 + 24576 / GBS)` samples; every step thereafter. |v6.1
+|        |LLM post training |qwen35_397b_grpo| First evaluation at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples; every training step (i.e., every `global_batch_size` samples) thereafter. |v6.1
+|Commerce|Recommendation |dlrm_v4_hstu|TBD |v6.1
 |===
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
 
@@ -464,7 +478,7 @@ The CLOSED division allows limited exemptions to mathematical equivalence betwee
 
 * Different methods can be used to add color jitter as long as the methods are of a similar distribution and magnitude to the reference.
 
-* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch. Additionally, in the case of DLRMv2 benchmark, the last partial training batch may be dropped.
+* If data set size is not evenly divisible by batch size, one of several techniques may be used. The last batch in an epoch may be composed of the remaining samples in the epoch, may be padded, or may be a mixed batch composed of samples from the end of one epoch and the start of the next. If the mixed batch technique is used, quality for the ending epoch must be evaluated after the mixed batch. If the padding technique is used, the first batch may be padded instead of the last batch.
 
 * Values introduced for padding purposes may be reflected in batch norm computations.
 
@@ -496,13 +510,13 @@ Each benchmark result is based on a set of run results. The number of results fo
 |===
 |Area|Problem |Minimum Number of Runs |Latest version available
 
-|Vision|Text to Image |10 |v6.0
-|Language | Small LLM MoE pretraining | 10 | v6.0
-| |Small LLM pretraining |10 |v6.0
-| |LLM pretraining |3 |v6.0
-| |LLM MoE Pretraining |3 |v6.0
-| |LLM Finetuning|10 |v6.0
-|Commerce |Recommendation |10 |v6.0
+|Vision|Text to Image |10 |v6.1
+|Language | Small LLM MoE pretraining | 10 | v6.1
+| |Small LLM pretraining |10 |v6.1
+| |LLM MoE pretraining |3 |v6.1
+| |LLM finetuning |10 |v6.1
+| |LLM post training |3* |v6.1
+|Commerce |Recommendation |TBD |v6.1
 |===
 For the minimum number of runs that were required for deprecated benchmarks see <<Deprecated benchmarks results>>
 
@@ -510,6 +524,8 @@ Each benchmark result is computed by dropping the fastest and slowest runs, then
 
 
 Each benchmark result should be normalized by dividing the reference result for the corresponding reference implementation by the benchmark result. This normalization produces higher numbers for better results, which better aligns with human intuition.
+
+*LLM post training benchmark sees very high evaluation variance because eval is non-deterministic and GRPO training is very sensitive to changes. To mitigate the impact of this on the benchmark and keep submission costs in check, the LLM post training benchmark does late eval to hide variance and keep minimum number of submission runs low.
 
 === Scoring
 
@@ -536,7 +552,7 @@ Reference Convergence Points are used to ensure that the convergence of the subm
 * Reference implementations provide at least 2N epoch convergence numbers, where N is the number of submission runs needed for each benchmark. Since convergence is affected by batch size (larger batch size means slower convergence), reference implementations provide convergence data for a few different batch sizes.
 * After a set of Reference Convergence Points is gathered, we find the minimal set of these points that are needed for the fastest possible convergence. For example, if the RCP for batch size 128 is at 10 epochs, the RCP for batch size 256 is at 20 epochs, and the RCP for batch size 512 is also at 20 epochs, then we prune the RCP at the 256 batch size. Based on the assumption that convergence increases with batch size, we expect to be able to converge faster than 20 epochs at batch size 256. In practice we prune ALL RCP points that have slower convergence than the linear interpolation at the same batch size of any two surrounding points. Eventually we end up with a pruned set of RCPs which defines the fastest possible convergence of the reference code as a function of batch size.
 * A potential submitter can request generation of new RCPs by suggesting a better set of hparams to the WG or generate new RCPs by running the reference themselves. A request for a new RCP run should be backed by at least one run on either the submitter’s code or the reference code proving faster convergence. A request to generate RCPs should be made in the Training WG meeting at least 8 weeks before submission deadline and the reference owner (or a volunteer appointed by WG) should provide the RCP at least 4 weeks before submission deadline. Subject to WG's approval, requester's set of convergence points (2N runs) may act as temporary RCPs for that round if the RCP request is not met by a timely response.
-* For Llama31_405B, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and the reference owner (NVIDIA) should provide RCPs (2N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
+* For DeepSeekv3 and qwen35_397b_grpo, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and the reference owner (NVIDIA) should provide RCPs (2N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
 * Using the mean and standard deviation of the reference convergence we apply a 1-sided independent two-sample Student's t-test with unequal sample sizes, similar variances with p-value=0.05 (explained link:https://en.wikipedia.org/wiki/Student%27s_t-test#Equal_or_unequal_sample_sizes,_similar_variances_(1/2_%3C_sX1/sX2_%3C_2)[here]) to find the maximum acceptable speedup for submission convergence.
 * At submission time, the submission is matched to an RCP based on the submission batch size.
 ** If there is an RCP for that batch size then mean epochs to converge of the submission is extracted from submission logs. If this does not violate the maximum acceptable speedup condition when compared to the reference then the submission is accepted, otherwise it may be rejected.
@@ -554,20 +570,20 @@ Submitters are encouraged to run the RCP checker script prior to their submissio
 
 If a submission fails the RCP test, such as S2 in the Appendix, they have the option to submit with the --rcp-bypass parameter. To submit with the --rcp-bypass when submitting using the submission UI, create a file called package_checker_params in the root directory / system directory / benchmark results directory of your submission and put the flags you want to use there. This will allow the submission to upload, but the submitter MUST notify the results chair, and prepare for the audit process described in the next section where at review time the submitter should be able to justify why their submission is valid while it failed the RCP test.
 
-If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 24h after the submission deadline (Exception is GPT3 and Llama31_405B: where RCPs are due 5 weeks before the submission deadline). RCPs are added by making a pull request into the RCP library in the logging repository. Since the RCP may arrive after the submission deadline, the submitter can use the --rcp_bypass parameter again to have their submission accepted.
+If a submission is missing the RCP for the batch size they are submitting, such as S4 and S6 in the Appendix they must provide the missing convergence points by making a PR in the logger. All missing RCPs are due 7 days before the submission deadline. (Exception is Deepseekv3 and qwen35_397b_grpo: where RCPs are due 5 weeks before the submission deadline) RCPs are added by making a pull request into the RCP library in the logging repository.
 
 During hyperparameter borrowing, borrowers can use hyperparameters from submissions that passed or failed the RCP test. If their submission fails to pass the RCP test they can have it upload by using --rcp-bypass and then prepare for the audit decribed in the next section.
 
 To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting | Latest version available
-| GPT_OSS_20B | Training samples starting from 0 (integer) | v6.0
-| Llama31_8b | Training sample starting from 0 (integer) | v6.0
-| Llama31_405B | Training samples starting from 0 (integer) | v6.0
-| Llama2_70B_LoRA | Training sample (integer) | v6.0
-| DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v6.0
-| FLUX.1 | Training sample (integer) | v6.0
-| deepseekv3_671b | Training samples starting from 0 (integer) | v6.0
+| GPT_OSS_20B | Training samples starting from 0 (integer) | v6.1
+| Llama31_8b | Training sample starting from 0 (integer) | v6.1
+| Llama2_70B_LoRA | Training sample (integer) | v6.1
+| FLUX.1 | Training sample (integer) | v6.1
+| deepseekv3_671b | Training samples starting from 0 (integer) | v6.1
+| qwen35_397b_grpo | Training samples starting from 0 (integer) | v6.1
+| dlrm_v4_hstu | TBD | v6.1
 |===
 Refer to epoch reporting for deprecated benchmarks at <<Epoch reporting for deprecated benchmarks>>
 
@@ -616,9 +632,9 @@ If a submission fails the RCP checker, but there is evidence from this submissio
 
 ** --rcp-bert-train-samples log compliance parameter: For all benchmarks other than Bert, convergence for RCP purposes is reported in the last eval_accuracy line of the log file. For Bert, submitters are allowed to add an extra log line with key set to train_samples and value the number of samples to converge. If that is the case, the package compliance checker should be run with the --rcp-bert-train-samples command line parameter.
 
-* DLRMv2 (DCNv2)
+* dlrm_v4_hstu
 
-** Because DLRMv2 (DCNv2) benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
+** Because dlrm_v4_hstu benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
 
 == Appendix: Examples of Compliant Optimizers
 
@@ -762,6 +778,7 @@ Note _utilization_ is not an official MLPerf metric.
 
 |Language |Large language model |c4/en/3.0.1 |v4.1
 | |NLP |Wikipedia 2020/01/01 |v5.0
+| |LLM pretraining |c4/en/3.0.1 |v6.0
 |Vision |Image classification |ImageNet |v4.0
 | |Image segmentation (medical) |KiTS19 |v4.0
 | |Text to Image |LAION-400M-filtered |v5.0
@@ -769,6 +786,7 @@ Note _utilization_ is not an official MLPerf metric.
 | |Object detection (light weight) |A subset of OpenImages |v5.1
 |Language |Speech recognition |LibriSpeech |v3.1
 |Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant) |v2.1
+| |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant) |v6.0
 |Graphs |Node classification |IGBH-Full |v5.1
 
 |===
@@ -779,6 +797,7 @@ Note _utilization_ is not an official MLPerf metric.
 
 |Language |Large Language Model |GPT3 |2.69 log perplexity |v4.1
 | |NLP |BERT |0.720 Mask-LM accuracy |v5.0
+| |LLM pretraining |Llama31_405B |5.6 log perplexity |v6.0
 |Vision |Image classification |ResNet-50 v1.5 |75.90% classification |v4.0
 | |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score |v4.0
 | |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15 |v5.0
@@ -786,6 +805,7 @@ Note _utilization_ is not an official MLPerf metric.
 | |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v5.1
 |Language | Speech recognition | RNN-T | 0.058 Word Error Rate |v3.1
 |Graphs |Node classification |RGAT |72.0 % classification |v5.1
+|Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v6.0
 |===
 
 === Deprecated benchmarks hyperparameters
@@ -909,6 +929,29 @@ The following table lists the tunable hyperparameters that were allowed for depr
  |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L268-L269[reference code] |v3.1
  |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/rnn_speech_recognition/pytorch/train.py#L395[reference code] |v3.1
  |rnnt |lamb |model_weights_initialization_scale      |unconstrained |After random initialization of weight and bias tensors, all are scaled with this factorAfter random initialization of weight and bias tensors, all are scaled with this factor |See link:https://github.com/mwawrzos/training/blob/2126999a1ffff542064bb3208650a1e673920dcf/rnn_speech_recognition/pytorch/train.py#L342[reference code] |v3.1
+ |dlrmv2 |adagrad |global_batch_size |unconstrained |global batch size |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L705-L708[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_base_learning_rate |unconstrained |learning rate (for both dense layers and embeddings) |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |learning rate decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L73[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L76[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_adagrad_initial_accumulator_value |0.0 |adagrad initial accumulator value |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L74[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_adagrad_epsilon |1e-8 |adagrad epsilon |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L75[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code] |v6.0
+ |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/recommendation_v2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code] |v6.0
+ |llama31_405b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L301[reference code] |v6.0
+ |llama31_405b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
+ |llama31_405b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
+ |llama31_405b |adamw |opt_adamw_epsilon |1e-5 |AdamW epsilon |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
+ |llama31_405b |adamw |opt_gradient_clip_norm |1.0 |Gradients are clipped above this norm threshold. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
+ |llama31_405b |adamw |dropout |0.0 |Disable all dropouts during training. |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v6.0
+ |llama31_405b |adamw |sequence_length |8192 |sequence length |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v6.0
+ |llama31_405b |adamw |opt_adamw_weight_decay |0.1 |weight decay |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
+ |llama31_405b |adamw |gradient_accumulation_steps |unconstrained |Numer of fwd/bwd steps between optimizer step. |link:https://github.com/mlcommons/training/tree/master/large_language_model_pretraining/nemo[reference code] |v6.0
+ |llama31_405b |adamw |opt_learning_rate_warmup_steps |ceil(8000 * 1152 / global_batch_size) |steps taken for linear warmup. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L157[reference code] |v6.0
+ |llama31_405b |adamw |opt_learning_rate_decay_steps |ceil(1_200_000 * 1152 / global_batch_size) - ceil(8000 * 1152 / global_batch_size) |Step when the end of cosine learning rate curve is reached. Learning rate cosine decay is in range (opt_learning_rate_warmup_steps + 1,opt_learning_rate_decay_steps]. |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L397[reference code] |v6.0
+ |llama31_405b |adamw |opt_init_checkpoint_step |0 |first step after loading initial checkpoint |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L295[reference code] |v6.0
+ |llama31_405b |adamw |opt_base_learning_rate |constrained based on global_batch_size |refer to next table in section "Llama 3.1 405b hyperparameter constraints" |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L153[reference code] |v6.0
+ |llama31_405b |adamw |opt_end_learning_rate |8e-7 |learning rate at the last step of decay period |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/large_language_model_pretraining/nemo/pretrain_llama31.py#L155[reference code] |v6.0
 |===
 
 ==== GPT3 hyperparameter constraints
@@ -932,12 +975,31 @@ Since training large language models is very expensive, the task force aims to l
 
 If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
 
+==== Llama 3.1 405b hyperparameter constraints
+
+Since training large language models is very expensive, the task force aims to limit hyperparameter searches. Thus the allowed range of batch sizes and corresponding batch sizes are fixed as follows.
+
+|===
+ |global_batch_size |opt_base_learning_rate
+
+ |1152 |8e-5
+ |2304 |16e-5
+ |4608 |32e-5
+ |9216 |64e-5
+|===
+
+* GBS<1152 or GBS>9216 - new RCP needs to be generated, reach out to the task force
+* GBS within range but not listed: opt_base_learning_rate = 8e-5 * (GBS / 1152), rounded to the **8th** decimal place. 
+
+If a new learning rate is needed for any GBS point, request new RCPs from the task force or normalize the score if permissible.
+
 === Deprecated benchmarks quality measure
 |===
 |Area |Problem |Model|Evaluation frequency |Latest version available
 
 |Language        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS |v4.1
 |                |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0 |v5.0
+|                |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v6.0
 |Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3 |v4.0
 |       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`. |v4.0
 |       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>> |v5.0
@@ -945,6 +1007,7 @@ If a new learning rate is needed for any GBS point, request new RCPs from the ta
 |       |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
 |Language|Speech recognition |RNN-T|Every 1 epoch |v3.1
 |Graphs |Node classification |RGAT |Evaluate 20 times per epoch |v5.1
+|Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL)) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v6.0
 |===
 
 === Deprecated benchmarks results
@@ -953,6 +1016,7 @@ If a new learning rate is needed for any GBS point, request new RCPs from the ta
 |Area|Problem |Minimum Number of Runs |Latest version available
 
 |Language |NLP |10 |v5.0
+| |LLM pretraining |3 |v6.0
 |Vision |Image classification |5 |v4.0
 | |Image segmentation (medical) | 40 |v4.0
 | |Stable Diffusion v2.0 | 10 |v5.0
@@ -960,6 +1024,7 @@ If a new learning rate is needed for any GBS point, request new RCPs from the ta
 | |Object detection (light weight) |5 |v5.1
 |Language |Speech recognition |10 |v3.1
 |Graphs |Node classification |10 |v5.1
+|Commerce |Recommendation |10 |v6.0
 |===
 
 
@@ -973,12 +1038,14 @@ To extract submission convergence points, logs should report epochs as follows.
 | BERT | Training sample (integer) | v5.0
 | Stable-Diffusion | Training sample (integer) | v5.0
 | GPT3 | Training token starting from 0 (integer) | v4.1
+| Llama31_405B | Training samples starting from 0 (integer) | v6.0
 | RN50 | Epoch | v4.0
 | UNET3D | Epoch | v4.0
 | Mask-RCNN | Epoch | v3.1
 | RNN-T | Epoch | v3.1
 | SSD (RetinaNet) | Epoch | v5.1
 | RGAT | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
+| DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v6.0
 |===
 === Benchmark specific rules for deprecated benchmarks
 * Image Classification
@@ -1003,3 +1070,14 @@ To extract submission convergence points, logs should report epochs as follows.
 2. FID and CLIP scores must to be submitted for the last two checkpoints (the first checkpoint with a passing score and the one before it) for 9/10 of the runs.
 ** evaluation is done offline, the time is not counted towards the submission time.
 ** A passing score is FID<=90 and CLIP>=0.15
+
+* Llama31_405B (LLM pretraining)
+** For Llama31_405B, manipulation of metadata which consists of the number of documents in the dataset and the size of each document is allowed as long as the data tokens are not accessed.
+** Since the hyperparameters are fixed for Llama31_405B, hyperparameter borrowing is not allowed.
+** For Llama31_405B, a request to generate RCPs should be made in the Training WG meeting at least 9 weeks before submission deadline and the reference owner (NVIDIA) should provide RCPs (2N runs each) at least 5 weeks before submission deadline so that all submitters have enough time to train with the new hparams. The RCP requests should be handled in FCFS order and if there are more than 5 RCP requests, the WG should decide if the requester's set of convergence points (2N runs) can be used as temporary RCPs.
+** For all v5.0 and v5.1 specific rules that applied to Llama31_405B (maximum GBS constraint at 9216, single-evaluation-earlier RCP allowance, sparse evaluation schedule), see the v5.0 Specific Rules appendix for historical detail.
+
+* DLRMv2 (DCNv2)
+** Because DLRMv2 (DCNv2) benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
+** DLRMv2 training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
+** In the case of DLRMv2, if data set size is not evenly divisible by batch size, the last partial training batch may be dropped in addition to the general padding/mixed-batch options allowed under the Equivalence exceptions section.
