@@ -573,24 +573,26 @@ Refer to epoch reporting for deprecated benchmarks at <<Epoch reporting for depr
 
 === Handling RCP Failures
 
-In order to reduce the burden on the submitter as well as the Submitter’s Working Group (SWG) during the review period, submitters shall ensure compliance with RCP tests ahead of the submission deadline. Submissions that need new RCPs are required to supply those RCPs at the same time as their submission, as specified in the Training Rules document. While providing new RCPs, a submitter must also include reference run logs for the SWG and reference owner to review.
+In order to reduce the burden on the submitter as well as the Submitter’s Working Group (SWG) during the review period, submitters shall ensure compliance with RCP tests ahead of the submission deadline. Submissions that need new RCPs are required to supply those RCPs 7 days before the submission deadline, as specified in the Training Rules document. While providing new RCPs, a submitter must also include reference run logs for the SWG and reference owner to review.
 
 Submissions with failing RCP tests are rejected by default until the SWG approves the submission. Submitters shall notify the SWG in advance of a potential RCP failure, so they can prefetch requests for additional data and minimize churn during the review period.  A submitter requesting approval for a submission with failing RCP test shall provide additional explanatory data to the SWG explaining why the WG should consider the non-compliant submission a fair comparison to compliant submissions. This list will be decided by the WG for each submission individually. 
 
 A non-exhaustive list of potential requests of data is: 
 
 1. Written statement from the submitter explaining the plausible cause of deviation. This should also be supported by data from A/B experiments.
-2. Logs showing training loss of the submission vs training loss of the reference. Note that the reference run should be on reference hardware platform in FP32
+2. Logs showing training loss of the submission vs training loss of the reference. Note that the reference run should be on reference hardware platform using the reference numerical precision.
 3. Model summary showing number of trainable_parameters (weights) in the model vs the same. 
 4. Debugging via comparing intermediate activations, distributions of initialization weights, and/or compliant randomization on the reference vs the submission.
 The SWG may further request additional information, not listed above, at their discretion.
 
-A submitter requesting approval for their RCP failing submission during the review period shall provide requested information in a timely manner. All evidence supporting the appeal is due at the latest by the end of Review Week 1.  For resubmissions during the review period, all appeal evidence is due at the time of resubmission.
+A submitter requesting approval for their RCP failing submission during the review period shall provide requested information in a timely manner. All evidence supporting the appeal is due at the time of submission.
 
 The SWG must come to majority consensus to approve a submission that fails the RCP test.  If the SWG cannot come to majority consensus to approve a submission, then potential alternatives are:
 
 1. Normalize submission run epochs to reference epochs to pass RCP test irrespective of accuracy achieved
 2. Submission is withdrawn due to non-compliance
+
+If a submission fails the RCP checker, but there is evidence from this submission round or previous submission rounds that other comparable submissions using the same or similar hyperparameters and software stack have passed the RCP checker, then the failing submission will be rejected. The reasoning is that, under these conditions, normal convergence behavior should allow the submission to pass the RCP checker; a failure indicates the result is anomalously fast and thus cannot be accepted for fairness. To avoid rejection, submitters must ensure their results pass the RCP checker either by rerunning the submission or by adjusting hyperparameters (such as lowering the learning rate) to slow convergence and bring it closer in line with reference behavior.
 
 == Appendix: Benchmark Specific Rules [[benchmark_specific_rules]]
 
