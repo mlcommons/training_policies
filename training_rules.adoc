@@ -205,7 +205,7 @@ Reference Convergence Points must be obtained using FP32 precision, FP32 emulati
 OPEN: Any format and scaling may be used.
 
 === Lowest precision, parallelism, and run-config logging
-From v6.1 onwards, every result log in both the Closed and Open divisions must report lowest numerical precision, parallelism, micro-batch size, and the config filename through https://github.com/mlcommons/logging/tree/master/mlperf_logging/mllog[`mllog`]. Values reported by any other method are discarded.
+From v6.1 onwards, every result log in both the Closed and Open divisions must report lowest numerical precision, parallelism, micro-batch size, and the config filename through https://github.com/mlcommons/logging/tree/master/mlperf_logging/mllog[`mllog`].
 
 The following keys must appear exactly once in each result log:
 
@@ -220,8 +220,6 @@ The following keys must appear exactly once in each result log:
 * `config_filename`: the configuration file used for the run, named so that it can be matched to the submitted config
 
 Precision values must be one of the pre-approved numerical formats listed in <<Numerical formats>> unless the working group has approved an additional format. Parallelism and `micro_batch_size` values must be positive integers. Unused parallelism dimensions must be logged as `1`. `config_filename` must be a non-empty string.
-
-Unsatisfying any of the above requirements will result in compliance checker failures reported by the https://github.com/mlcommons/logging/tree/master/mlperf_logging/package_checker[package checker].
 
 === Epoch numbering
 Epochs should always be numbered from 1.
