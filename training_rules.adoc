@@ -204,6 +204,23 @@ Reference Convergence Points must be obtained using FP32 precision, FP32 emulati
 
 OPEN: Any format and scaling may be used.
 
+=== Lowest precision and parallelism logging
+From v6.1 onwards, every result log in both the Closed and Open divisions must report lowest numerical precision and parallelism through https://github.com/mlcommons/logging/tree/master/mlperf_logging/mllog[`mllog`]. Values reported by any other method are discarded.
+
+The following keys must appear exactly once in each result log:
+
+* `lowest_numerical_precision_in_linear`: lowest numerical precision used in linear / GEMM compute
+* `lowest_numerical_precision_in_attn`: lowest numerical precision used in attention compute
+* `lowest_numerical_precision_in_comm`: lowest numerical precision used in communication, for example parameter gather or all-gather
+* `tensor_parallelism`
+* `pipeline_parallelism`
+* `context_parallelism`
+* `expert_parallelism`
+
+Precision values must be one of the pre-approved numerical formats listed in <<Numerical formats>> unless the working group has approved an additional format. Parallelism values must be positive integers. Unused parallelism dimensions must be logged as `1`.
+
+Unsatisfying any of the above requirements will result in compliance checker failures reported by the https://github.com/mlcommons/logging/tree/master/mlperf_logging/package_checker[package checker].
+
 === Epoch numbering
 Epochs should always be numbered from 1.
 
