@@ -83,7 +83,7 @@ The benchmark suite consists of the benchmarks shown in the following table.
 | |LLM finetuning |SCROLLS GovReport |v6.1
 | |LLM MoE pretraining |c4/en/3.0.1 |v6.1
 | |LLM post training |R2E-Gym-Subset (easy split) |v6.1
-|Commerce |Recommendation |Yambda |v6.1
+|Commerce |Recommendation |Yambda-5B |v6.1
 
 |===
 
@@ -148,7 +148,7 @@ The closed division models and quality targets are:
 | |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v6.1
 | |LLM MoE pretraining |deepseekv3_671b |3.6 log perplexity |v6.1
 | |LLM post training |Qwen3.5-397B-A17B |0.69 pass@4 |v6.1
-|Commerce |Recommendation |dlrm_v4_hstu |TBD |v6.1
+|Commerce |Recommendation |dlrm_v4_hstu |0.75 AUC |v6.1
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Recommendation Closed benchmark, the system achieved a result of 7.2.”
@@ -267,7 +267,7 @@ CLOSED: the training and test data must be traversed in the same conceptual orde
 
 Where data pipelines randomly order data, arbitrary sharding, batching, and packing are allowed provided that (1) the data is still overall randomly ordered and not ordered to improve convergence and (2) each datum still appears exactly once. Modifications to data order and/or batching must be presented to the SWG group in advance of the submission deadline for approval if they could affect the ability to borrow hyperparameters and/or approximately follow the learning rate schedule defined by the RCPs.
 
-In the case of dlrm_v4_hstu benchmark, training dataset is shuffled during preprocessing (with a fixed seed) on a per-sample basis. The resulting order of samples should be then used during training and any other extra dataset shuffling is prohibited.
+In the case of dlrm_v4_hstu benchmark, the training data is not shuffled. The dataset is carved by wall clock into a Global Temporal Split, and within the training portion the timeline is sliced into fixed-duration windows (`streaming_window_seconds = 86400`) which are traversed in strict forward chronological order: the loop trains window `T`, then evaluates window `T+1`, then advances. Reordering windows, or any shuffling that moves samples across window boundaries, is prohibited, since doing so would leak future interactions into the training history. Within a window, anchors are consumed in dataset order; the reference exposes an optional partial intra-window shuffle (`STREAMING_SHUFFLE_FRACTION`) which must be left at its default of `0.0` for closed division submissions.
 
 OPEN: The training data may be traversed in any order. The test data must be traversed in the same order as the reference implementation.
 
@@ -411,6 +411,26 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |qwen35_397b_grpo |adamw |grpo.async_grpo.in_flight_weight_updates |allowed (`true` or `false`) |whether policy weight updates on generation workers occur without stalling ongoing rollouts; permitted to be enabled by submitters (reference RCPs use `false`) |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
  |qwen35_397b_grpo |adamw |lora |disallowed (no reference config key) |LoRA-based GRPO is not allowed because it changes the model architecture and reduces the active parameter count; submitters must perform full-parameter GRPO |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
  |qwen35_397b_grpo |adamw |policy.megatron_cfg.draft.enabled |false |the Megatron draft-model speculative-decoding path must be disabled; speculative decoding requires model changes (draft model or additional prediction head) that the reference implementation does not support |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
+ |dlrm_v4_hstu |adam |global_batch_size |unconstrained |global batch size; the reference per-rank `BATCH_SIZE` multiplied by the world size |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_base_learning_rate |[0.5 * 1e-6 * (global_batch_size / 8192), 1.5 * 1e-6 * (global_batch_size / 8192)] |dense target (post-warmup) learning rate; the warmup ramps to this value and then holds it, there is no decay. The reference convergence points are generated at the midpoint of this range, 1e-6 * (global_batch_size / 8192) |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_name |`Adam` |dense optimizer name; fixed |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_adam_beta_1 |0.95 |Adam beta1 |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_adam_beta_2 |0.999 |Adam beta2 |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_adam_epsilon |1e-8 |Adam epsilon |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_gradient_clip_norm |1.0 |gradients are clipped above this norm threshold; clipping is applied to the **dense** parameters only, the fused sparse optimizer is unaffected |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_sparse_name |`RowWiseAdagrad` |sparse (embedding table) optimizer name; fixed, fused FBGEMM TBE |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_sparse_base_learning_rate |must equal opt_base_learning_rate |sparse embedding learning rate; the reference ramps both channels in lockstep, so this tracks whichever dense learning rate the submitter chooses |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_sparse_epsilon |1e-8 |RowWiseAdagrad epsilon |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_sparse_weight_decay |0.0 |RowWiseAdagrad weight decay |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_learning_rate_warmup_steps |24000 |steps taken for the linear warmup ramp |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |opt_learning_rate_warmup_start_lr |0.0 |learning rate at global step 0; the warmup always begins from zero |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |max_sequence_length |4096 |maximum HSTU sequence length |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |hstu_attn_num_layers |3 |number of HSTU attention layers; part of the model definition and may not be changed in the closed division |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |history_length |4086 |user interaction history length; part of the model definition and may not be changed in the closed division |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |train_samples |2290835423 |number of training samples in one epoch; fixed by the dataset |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |eval_samples |2058204 |size of the held-out future evaluation window; every evaluation scores the entire window, subsampling is not allowed |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrm_v4_hstu |adam |eval_every_data_pct |0.001 |evaluation cadence as a fraction of the training stream; fixed. The mutually exclusive per-window cadence (`eval_every_n_windows`) must be disabled |link:https://github.com/mlcommons/training/blob/master/recommendation/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
 |===
 For the tunable hyperparameters used in the past for deprecated benchmarks see <<Deprecated benchmarks hyperparameters>>
 
@@ -485,7 +505,7 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.1
 |        |LLM MoE pretraining |deepseekv3_671b| First evaluation at `GBS * FLOOR(42 + 24576 / GBS)` samples; every step thereafter. |v6.1
 |        |LLM post training |qwen35_397b_grpo| First evaluation at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples; every training step (i.e., every `global_batch_size` samples) thereafter. |v6.1
-|Commerce|Recommendation |dlrm_v4_hstu|TBD |v6.1
+|Commerce|Recommendation |dlrm_v4_hstu|Every `eval_interval_samples = CEIL(0.001 * 2290835423 / global_batch_size) * global_batch_size` training samples, i.e. 2293760 samples at each of GBS 8192, 16384 and 32768. First evaluation at `CEIL(FLOOR((4480 * global_batch_size + 135331840) / 3) / eval_interval_samples) * eval_interval_samples` samples |v6.1
 |===
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
 
@@ -539,7 +559,7 @@ Each benchmark result is based on a set of run results. The number of results fo
 | |LLM MoE pretraining |3 |v6.1
 | |LLM finetuning |10 |v6.1
 | |LLM post training |3* |v6.1
-|Commerce |Recommendation |TBD |v6.1
+|Commerce |Recommendation |10 |v6.1
 |===
 For the minimum number of runs that were required for deprecated benchmarks see <<Deprecated benchmarks results>>
 
@@ -606,7 +626,7 @@ To extract submission convergence points, logs should report epochs as follows.
 | FLUX.1 | Training sample (integer) | v6.1
 | deepseekv3_671b | Training samples starting from 0 (integer) | v6.1
 | qwen35_397b_grpo | Training samples starting from 0 (integer) | v6.1
-| dlrm_v4_hstu | TBD | v6.1
+| dlrm_v4_hstu | Training samples starting from 0 (integer) | v6.1
 |===
 Refer to epoch reporting for deprecated benchmarks at <<Epoch reporting for deprecated benchmarks>>
 
@@ -654,10 +674,6 @@ If a submission fails the RCP checker, but there is evidence from this submissio
 ** Clip-normalization order: The 1.0 and 1.1 exception that benchmarks may implement clip-normalization either before or after accelerator all-reduce has been extended indefinitely to future rounds.
 
 ** --rcp-bert-train-samples log compliance parameter: For all benchmarks other than Bert, convergence for RCP purposes is reported in the last eval_accuracy line of the log file. For Bert, submitters are allowed to add an extra log line with key set to train_samples and value the number of samples to converge. If that is the case, the package compliance checker should be run with the --rcp-bert-train-samples command line parameter.
-
-* dlrm_v4_hstu
-
-** Because dlrm_v4_hstu benchmark is trained for at most one epoch, epoch numbering starts from 0 in this case. More precisely, it stands for the fraction of epoch iterations passed.
 
 == Appendix: Examples of Compliant Optimizers
 
