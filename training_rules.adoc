@@ -504,9 +504,12 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |        |Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.1
 |        |LLM MoE pretraining |deepseekv3_671b| First evaluation at `GBS * FLOOR(42 + 24576 / GBS)` samples; every step thereafter. |v6.1
-|        |LLM post training |qwen35_397b_grpo| First evaluation at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples; every training step (i.e., every `global_batch_size` samples) thereafter. |v6.1
+|        |LLM post training* |qwen35_397b_grpo| First evaluation at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples; at least one additional evaluation thereafter. |v6.1
 |Commerce|Recommendation |dlrm_v4_hstu|Every `eval_interval_samples = CEIL(0.001 * 2290835423 / global_batch_size) * global_batch_size` training samples, i.e. 2293760 samples at each of GBS 8192, 16384 and 32768. First evaluation at `CEIL(FLOOR((4480 * global_batch_size + 135331840) / 3) / eval_interval_samples) * eval_interval_samples` samples |v6.1
 |===
+
+*Submitters may perform evaluation offline after training has stopped, provided that at least two checkpoints are saved, beginning at the first mandatory evaluation step. Rollout collection must continue normally through the final training step and must not be stopped early merely because some collected rollouts cannot be consumed before `max_steps`, given the configured `max_age`. The reported time-to-train is the end time of the earliest training step whose checkpoint meets the target accuracy.
+
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
@@ -668,6 +671,9 @@ If a submission fails the RCP checker, but there is evidence from this submissio
 * Flux.1
 ** 10 runs per submission
 ** Evaluation must be run every 262,144 samples. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS.
+
+* qwen35_397b_grpo (Qwen3.5-397B-A17B)
+** Submitters may perform evaluation offline after training has stopped, provided that at least two checkpoints are saved, beginning at the first mandatory evaluation step. Rollout collection must continue normally through the final training step and must not be stopped early merely because some collected rollouts cannot be consumed before `max_steps`, given the configured `max_age`. The reported time-to-train is the end time of the earliest training step whose checkpoint meets the target accuracy.
 
 * Bert
 
