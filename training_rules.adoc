@@ -504,9 +504,10 @@ CLOSED: The same quality measure as the reference implementation must be used. T
 |        |Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
 |        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.1
 |        |LLM MoE pretraining |deepseekv3_671b| First evaluation at `GBS * FLOOR(42 + 24576 / GBS)` samples; every step thereafter. |v6.1
-|        |LLM post training |qwen35_397b_grpo| First evaluation at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples; every training step (i.e., every `global_batch_size` samples) thereafter. |v6.1
+|        |LLM post training* |qwen35_397b_grpo| Evaluation performed offline on checkpoints starting at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples and every step after that; see <<benchmark_specific_rules>> . |v6.1
 |Commerce|Recommendation |dlrm_v4_hstu|Every `eval_interval_samples = CEIL(0.001 * 2290835423 / global_batch_size) * global_batch_size` training samples, i.e. 2293760 samples at each of GBS 8192, 16384 and 32768. First evaluation at `CEIL(FLOOR((4480 * global_batch_size + 135331840) / 3) / eval_interval_samples) * eval_interval_samples` samples |v6.1
 |===
+
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
 
 OPEN: An arbitrary stopping criteria may be used, including but not limited to the closed quality measure, a different quality measure, the number of epochs, or a fixed time. However, the reported results must include the geometric mean of the final quality as measured by the closed quality measure.
@@ -668,6 +669,13 @@ If a submission fails the RCP checker, but there is evidence from this submissio
 * Flux.1
 ** 10 runs per submission
 ** Evaluation must be run every 262,144 samples. CEIL(262144 / global_batch_size) if 262144 is not divisible by GBS.
+
+* qwen35_397b_grpo (Qwen3.5-397B-A17B)
+** Evaluation is performed offline based on checkpoints. Offline validation requires creating a sequence of checkpoints near the end of training that can be evaluated post-run. Beginning at the `<validation start step>` computed using the benchmark formula `CEIL(2.5 + 3840 / global_batch_size)`, the implementation must save a checkpoint after every individual step until training stops. Each checkpoint must store the timestamp of its latest weight update. Submissions must save at least one checkpoint and have the flexibility to select when to halt training, though stopping at `<validation start step> + 1` is recommended. To maintain consistent system performance and avoid artificial tapering of the workload, training samples must continue to be generated and processed at full capacity right up to the final stopping step.
+
+**  Once training halts, saved checkpoints may be evaluated offline in any order until the one that achieves target evaluation accuracy is found. Checkpoint weights must be evaluated using either BF16 or the exact quantization format used during previous rollout generation. To finalize the run, emit an MLLOGGER run_stop event using the weight update timestamp of the passing checkpoint. Because the final score relies on that weight update timestamp, the time spent writing the final checkpoint itself to disk is excluded from the score.
+
+**  For example, if `<validation start step>` is step 18 and submitter continues training through step 20 while maintaining full hardware load, the submission must write distinct checkpoints with update timestamps for steps 18, 19 and 20. During offline evaluation, if step 19 is evaluated first and it meets the accuracy target, the run_stop event using step 19's weight update timestamp is used to compute the score. Instead, if step 18 meets the accuracy target, the run_stop event using step 18's weight update timestamp is used and no checkpoint saving time in included in the final score.
 
 * Bert
 
