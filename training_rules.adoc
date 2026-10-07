@@ -75,15 +75,15 @@ For benchmarks which are defined as starting from a fixed set of weights, such a
 The benchmark suite consists of the benchmarks shown in the following table.
 
 |===
-|Area|Problem |Dataset |Latest version available
+|Model |Dataset |Latest version available
 
-|Vision |Text to Image |CC12M |v6.1
-|Language | Small LLM MoE pretraining |c4/en/3.0.1 |v6.1
-| |Small LLM pretraining |c4/en/3.0.1 |v6.1
-| |LLM finetuning |SCROLLS GovReport |v6.1
-| |LLM MoE pretraining |c4/en/3.0.1 |v6.1
-| |LLM post training |R2E-Gym-Subset (easy split) |v6.1
-|Commerce |Recommendation |Yambda-5B |v6.1
+| flux1 |CC12M |v6.1
+| gpt_oss_20b |c4/en/3.0.1 |v6.1
+| llama31_8b |c4/en/3.0.1 |v6.1
+| llama2_70b_lora |SCROLLS GovReport |v6.1
+| deepseekv3_671b |c4/en/3.0.1 |v6.1
+| qwen35_397b_grpo |R2E-Gym-Subset (easy split) |v6.1
+| dlrmv4 |Yambda-5B |v6.1
 
 |===
 
@@ -140,15 +140,15 @@ The Closed division requires using the same preprocessing, model, training metho
 The closed division models and quality targets are:
 
 |===
-|Area |Problem |Model |Target |Latest version available
+|Model |Target |Latest version available
 
-|Vision |Text to image |FLUX.1 |0.586 Eval loss |v6.1
-|Language | Small LLM MoE pretraining | GPT_OSS_20B | 3.34 log perplexity |v6.1
-|  |Small LLM pretraining |Llama31_8b |3.3 log perplexity |v6.1
-| |LLM finetuning |Llama2_70B_LoRA |0.925 Eval loss |v6.1
-| |LLM MoE pretraining |deepseekv3_671b |3.6 log perplexity |v6.1
-| |LLM post training |Qwen3.5-397B-A17B |0.69 pass@4 |v6.1
-|Commerce |Recommendation |dlrm_v4_hstu |0.75 AUC |v6.1
+| flux1 |0.586 Eval loss |v6.1
+| gpt_oss_20b | 3.34 log perplexity |v6.1
+| llama31_8b |3.3 log perplexity |v6.1
+| llama2_70b_lora |0.925 Eval loss |v6.1
+| deepseekv3_671b |3.6 log perplexity |v6.1
+| qwen35_397b_grpo |0.69 pass@4 |v6.1
+| dlrmv4 |0.75 AUC |v6.1
 |===
 
 Closed division benchmarks must be referred to using the benchmark name plus the term Closed, e.g. “for the Recommendation Closed benchmark, the system achieved a result of 7.2.”
@@ -414,26 +414,26 @@ The MLPerf verifier scripts checks all hyperparameters except those with names m
  |qwen35_397b_grpo |adamw |grpo.async_grpo.in_flight_weight_updates |allowed (`true` or `false`) |whether policy weight updates on generation workers occur without stalling ongoing rollouts; permitted to be enabled by submitters (reference RCPs use `false`) |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
  |qwen35_397b_grpo |adamw |lora |disallowed (no reference config key) |LoRA-based GRPO is not allowed because it changes the model architecture and reduces the active parameter count; submitters must perform full-parameter GRPO |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
  |qwen35_397b_grpo |adamw |policy.megatron_cfg.draft.enabled |false |the Megatron draft-model speculative-decoding path must be disabled; speculative decoding requires model changes (draft model or additional prediction head) that the reference implementation does not support |link:https://github.com/NVIDIA-NeMo/RL/blob/3fca04c9b313d313302923a5bb6b0c8dc0340ed6/qwen_35/configs/grpo_qwen35_397b_swe_openhands_async.yaml[reference code] |v6.1
- |dlrm_v4_hstu |adam |global_batch_size |unconstrained |global batch size; the reference per-rank `BATCH_SIZE` multiplied by the world size |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_base_learning_rate |[0.5 * 1e-6 * (global_batch_size / 8192), 1.5 * 1e-6 * (global_batch_size / 8192)] |dense target (post-warmup) learning rate; the warmup ramps to this value and then holds it, there is no decay. The reference convergence points are generated at the midpoint of this range, 1e-6 * (global_batch_size / 8192) |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_name |`Adam` |dense optimizer name; fixed |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_adam_beta_1 |0.95 |Adam beta1 |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_adam_beta_2 |0.999 |Adam beta2 |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_adam_epsilon |1e-8 |Adam epsilon |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_gradient_clip_norm |1.0 |gradients are clipped above this norm threshold; clipping is applied to the **dense** parameters only, the fused sparse optimizer is unaffected |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_sparse_name |`RowWiseAdagrad` |sparse (embedding table) optimizer name; fixed, fused FBGEMM TBE |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_sparse_base_learning_rate |must equal opt_base_learning_rate |sparse embedding learning rate; the reference ramps both channels in lockstep, so this tracks whichever dense learning rate the submitter chooses |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_sparse_epsilon |1e-8 |RowWiseAdagrad epsilon |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_sparse_weight_decay |0.0 |RowWiseAdagrad weight decay |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_learning_rate_warmup_steps |24000 |steps taken for the linear warmup ramp |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |opt_learning_rate_warmup_start_lr |0.0 |learning rate at global step 0; the warmup always begins from zero |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |max_sequence_length |4096 |maximum HSTU sequence length |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |hstu_attn_num_layers |3 |number of HSTU attention layers; part of the model definition and may not be changed in the closed division |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |history_length |4086 |user interaction history length; part of the model definition and may not be changed in the closed division |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |train_samples |2290835423 |number of training samples in one epoch; fixed by the dataset |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |eval_samples |2058204 |size of the held-out future evaluation window; every evaluation scores the entire window, subsampling is not allowed |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
- |dlrm_v4_hstu |adam |eval_every_data_pct |0.001 |evaluation cadence as a fraction of the training stream; fixed. The mutually exclusive per-window cadence (`eval_every_n_windows`) must be disabled |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |global_batch_size |unconstrained |global batch size; the reference per-rank `BATCH_SIZE` multiplied by the world size |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_base_learning_rate |[0.5 * 1e-6 * (global_batch_size / 8192), 1.5 * 1e-6 * (global_batch_size / 8192)] |dense target (post-warmup) learning rate; the warmup ramps to this value and then holds it, there is no decay. The reference convergence points are generated at the midpoint of this range, 1e-6 * (global_batch_size / 8192) |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_name |`Adam` |dense optimizer name; fixed |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_adam_beta_1 |0.95 |Adam beta1 |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_adam_beta_2 |0.999 |Adam beta2 |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_adam_epsilon |1e-8 |Adam epsilon |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_gradient_clip_norm |1.0 |gradients are clipped above this norm threshold; clipping is applied to the **dense** parameters only, the fused sparse optimizer is unaffected |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_sparse_name |`RowWiseAdagrad` |sparse (embedding table) optimizer name; fixed, fused FBGEMM TBE |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_sparse_base_learning_rate |must equal opt_base_learning_rate |sparse embedding learning rate; the reference ramps both channels in lockstep, so this tracks whichever dense learning rate the submitter chooses |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_sparse_epsilon |1e-8 |RowWiseAdagrad epsilon |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_sparse_weight_decay |0.0 |RowWiseAdagrad weight decay |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_learning_rate_warmup_steps |24000 |steps taken for the linear warmup ramp |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |opt_learning_rate_warmup_start_lr |0.0 |learning rate at global step 0; the warmup always begins from zero |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |max_sequence_length |4096 |maximum HSTU sequence length |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |hstu_attn_num_layers |3 |number of HSTU attention layers; part of the model definition and may not be changed in the closed division |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |history_length |4086 |user interaction history length; part of the model definition and may not be changed in the closed division |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |train_samples |2290835423 |number of training samples in one epoch; fixed by the dataset |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |eval_samples |2058204 |size of the held-out future evaluation window; every evaluation scores the entire window, subsampling is not allowed |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
+ |dlrmv4 |adam |eval_every_data_pct |0.001 |evaluation cadence as a fraction of the training stream; fixed. The mutually exclusive per-window cadence (`eval_every_n_windows`) must be disabled |link:https://github.com/mlcommons/training/blob/master/dlrmv4/generative_recommenders/dlrm_v4/train/gin/yambda_5b.gin[reference code] |v6.1
 |===
 For the tunable hyperparameters used in the past for deprecated benchmarks see <<Deprecated benchmarks hyperparameters>>
 
@@ -500,15 +500,15 @@ Each run must reach a target quality level on the reference implementation quali
 CLOSED: The same quality measure as the reference implementation must be used. The quality measure must be evaluated at the same frequency (in terms of number of training items between test sets) and at least as thoroughly (in terms of number of tests per set) as in the reference implementation. Where applicable, the required evaluation point may be rounded up to the nearest batch size. Typically, a test consists of comparing the output of one forward pass through the network with the desired output from the test set.
 
 |===
-|Area |Problem |Model|Evaluation frequency |Latest version available
+|Model |Evaluation frequency |Latest version available
 
-|Vision |Text to image |Flux.1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v6.1
-|Language | Small LLM MoE pretraining | GPT_OSS_20B| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
-|        |Small LLM pretraining |Llama31_8b| Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
-|        |LLM finetuning |Llama2_70B_LoRA| Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.1
-|        |LLM MoE pretraining |deepseekv3_671b| First evaluation at `GBS * FLOOR(42 + 24576 / GBS)` samples; every step thereafter. |v6.1
-|        |LLM post training* |qwen35_397b_grpo| Evaluation performed offline on checkpoints starting at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples and every step after that; see <<benchmark_specific_rules>> . |v6.1
-|Commerce|Recommendation |dlrm_v4_hstu|Every `eval_interval_samples = CEIL(0.001 * 2290835423 / global_batch_size) * global_batch_size` training samples, i.e. 2293760 samples at each of GBS 8192, 16384 and 32768. First evaluation at `CEIL(FLOOR((4480 * global_batch_size + 135331840) / 3) / eval_interval_samples) * eval_interval_samples` samples |v6.1
+| flux1 |Every 262144 training samples. CEIL(262144 / global_batch_size) * global_batch_size if 262144 is not divisible by GBS |v6.1
+| gpt_oss_20b | Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
+| llama31_8b | Every 12288 sequences; `CEIL(12288 / global_batch_size) * global_batch_size` steps if 12288 is not divisible by GBS. |v6.1
+| llama2_70b_lora | Every 384 sequences; `CEIL(384 / global_batch_size) * global_batch_size` steps if 384 is not divisible by GBS. Skipping first `FLOOR(0.125*global_batch_size+2)` evaluations |v6.1
+| deepseekv3_671b | First evaluation at `GBS * FLOOR(42 + 24576 / GBS)` samples; every step thereafter. |v6.1
+| qwen35_397b_grpo | Evaluation performed offline on checkpoints starting at `global_batch_size * CEIL(2.5 + 3840 / global_batch_size)` samples and every step after that; see <<benchmark_specific_rules>> . |v6.1
+| dlrmv4 |Every `eval_interval_samples = CEIL(0.001 * 2290835423 / global_batch_size) * global_batch_size` training samples, i.e. 2293760 samples at each of GBS 8192, 16384 and 32768. First evaluation at `CEIL(FLOOR((4480 * global_batch_size + 135331840) / 3) / eval_interval_samples) * eval_interval_samples` samples |v6.1
 |===
 
 For the quality measure used for deprecated benchmarks see <<Deprecated benchmarks quality measure>>
@@ -555,15 +555,15 @@ A valid MLPerf result requires that result log files (result_*.txt) include the 
 Each benchmark result is based on a set of run results. The number of results for each benchmark is based on a combination of the variance of the benchmark result, the cost of each run, and the likelihood of convergence.
 
 |===
-|Area|Problem |Minimum Number of Runs |Latest version available
+|Model |Minimum Number of Runs |Latest version available
 
-|Vision|Text to Image |10 |v6.1
-|Language | Small LLM MoE pretraining | 10 | v6.1
-| |Small LLM pretraining |10 |v6.1
-| |LLM MoE pretraining |3 |v6.1
-| |LLM finetuning |10 |v6.1
-| |LLM post training |3* |v6.1
-|Commerce |Recommendation |10 |v6.1
+| flux1 |10 |v6.1
+| gpt_oss_20b | 10 | v6.1
+| llama31_8b |10 |v6.1
+| deepseekv3_671b |3 |v6.1
+| llama2_70b_lora |10 |v6.1
+| qwen35_397b_grpo |3* |v6.1
+| dlrmv4 |10 |v6.1
 |===
 For the minimum number of runs that were required for deprecated benchmarks see <<Deprecated benchmarks results>>
 
@@ -624,13 +624,13 @@ During hyperparameter borrowing, borrowers can use hyperparameters from submissi
 To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting | Latest version available
-| GPT_OSS_20B | Training samples starting from 0 (integer) | v6.1
-| Llama31_8b | Training sample starting from 0 (integer) | v6.1
-| Llama2_70B_LoRA | Training sample (integer) | v6.1
-| FLUX.1 | Training sample (integer) | v6.1
+| gpt_oss_20b | Training samples starting from 0 (integer) | v6.1
+| llama31_8b | Training sample starting from 0 (integer) | v6.1
+| llama2_70b_lora | Training sample (integer) | v6.1
+| flux1 | Training sample (integer) | v6.1
 | deepseekv3_671b | Training samples starting from 0 (integer) | v6.1
 | qwen35_397b_grpo | Training samples starting from 0 (integer) | v6.1
-| dlrm_v4_hstu | Training samples starting from 0 (integer) | v6.1
+| dlrmv4 | Training samples starting from 0 (integer) | v6.1
 |===
 Refer to epoch reporting for deprecated benchmarks at <<Epoch reporting for deprecated benchmarks>>
 
@@ -830,38 +830,38 @@ Note _utilization_ is not an official MLPerf metric.
 === Deprecated benchmarks
 
 |===
-|Area|Problem |Dataset |Latest version available
+|Model |Dataset |Latest version available
 
-|Language |Large language model |c4/en/3.0.1 |v4.1
-| |NLP |Wikipedia 2020/01/01 |v5.0
-| |LLM pretraining |c4/en/3.0.1 |v6.0
-|Vision |Image classification |ImageNet |v4.0
-| |Image segmentation (medical) |KiTS19 |v4.0
-| |Text to Image |LAION-400M-filtered |v5.0
-|Vision |Object detection (heavy weight) |COCO |v3.1
-| |Object detection (light weight) |A subset of OpenImages |v5.1
-|Language |Speech recognition |LibriSpeech |v3.1
-|Commerce |Recommendation |Criteo 1TB Click Logs (multi-hot variant) |v2.1
-| |Recommendation |Criteo 3.5TB Click Logs (multi-hot variant) |v6.0
-|Graphs |Node classification |IGBH-Full |v5.1
+| gpt3 |c4/en/3.0.1 |v4.1
+| bert |Wikipedia 2020/01/01 |v5.0
+| llama31_405b |c4/en/3.0.1 |v6.0
+| resnet |ImageNet |v4.0
+| unet3d |KiTS19 |v4.0
+| stable_diffusion |LAION-400M-filtered |v5.0
+| maskrcnn |COCO |v3.1
+| retinanet |A subset of OpenImages |v5.1
+| rnnt |LibriSpeech |v3.1
+| dlrm |Criteo 1TB Click Logs (multi-hot variant) |v2.1
+| dlrm_dcnv2 |Criteo 3.5TB Click Logs (multi-hot variant) |v6.0
+| rgat |IGBH-Full |v5.1
 
 |===
 === Deprecated benchmarks models and quality targets
 
 |===
-|Area |Problem |Model |Target |Latest version available
+|Model |Target |Latest version available
 
-|Language |Large Language Model |GPT3 |2.69 log perplexity |v4.1
-| |NLP |BERT |0.720 Mask-LM accuracy |v5.0
-| |LLM pretraining |Llama31_405B |5.6 log perplexity |v6.0
-|Vision |Image classification |ResNet-50 v1.5 |75.90% classification |v4.0
-| |Image segmentation (medical) |U-Net3D |0.908 Mean DICE score |v4.0
-| |Text to image |Stable Diffusion v2.0 |FID<=90 and and CLIP>=0.15 |v5.0
-|Vision |Object detection (heavy weight) |Mask R-CNN |0.377 Box min AP and 0.339 Mask min AP |v3.1
-| |Object detection (light weight) |SSD (RetinaNet) |34.0% mAP |v5.1
-|Language | Speech recognition | RNN-T | 0.058 Word Error Rate |v3.1
-|Graphs |Node classification |RGAT |72.0 % classification |v5.1
-|Commerce |Recommendation |DLRMv2 (DCNv2) |0.80275 AUC |v6.0
+| gpt3 |2.69 log perplexity |v4.1
+| bert |0.720 Mask-LM accuracy |v5.0
+| llama31_405b |5.6 log perplexity |v6.0
+| resnet |75.90% classification |v4.0
+| unet3d |0.908 Mean DICE score |v4.0
+| stable_diffusion |FID<=90 and and CLIP>=0.15 |v5.0
+| maskrcnn |0.377 Box min AP and 0.339 Mask min AP |v3.1
+| retinanet |34.0% mAP |v5.1
+| rnnt | 0.058 Word Error Rate |v3.1
+| rgat |72.0 % classification |v5.1
+| dlrm_dcnv2 |0.80275 AUC |v6.0
 |===
 
 === Deprecated benchmarks hyperparameters
@@ -871,13 +871,13 @@ The following table lists the tunable hyperparameters that were allowed for depr
 |===
  |Model |Optimizer |Name |Constraint |Definition |Reference Code |Latest version available
 
- |ssd |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L80[reference code] |v5.1
- |ssd |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L87[reference code] |v5.1
- |ssd |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L89[reference code] |v5.1
- |ssd |adam |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L84[reference code] |v5.1
- |ssd |adam |opt_weight_decay |0 |L2 weight decay |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L171[reference code] |v5.1
- |gnn |adam |global_batch_size |arbitrary constant |global batch size |link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L293[reference code] |v5.1
- |gnn |adam |opt_base_learning_rate |unconstrained |base learning rate|link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L296[reference code] |v5.1
+ |retinanet |adam |global_batch_size |arbitrary constant |reference --batch-size |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L80[reference code] |v5.1
+ |retinanet |adam |opt_learning_rate_warmup_epochs |integer >= 0 |number of epochs for learning rate to warm up |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L87[reference code] |v5.1
+ |retinanet |adam |opt_learning_rate_warmup_factor |unconstrained |the constant factor applied at learning rate warm up |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L89[reference code] |v5.1
+ |retinanet |adam |opt_base_learning_rate |unconstrained |base learning rate, this should be the learning rate after warm up and before decay |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L84[reference code] |v5.1
+ |retinanet |adam |opt_weight_decay |0 |L2 weight decay |link:https://github.com/mlperf/training/blob/master/retired_benchmarks/ssd/ssd/train.py#L171[reference code] |v5.1
+ |rgat |adam |global_batch_size |arbitrary constant |global batch size |link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L293[reference code] |v5.1
+ |rgat |adam |opt_base_learning_rate |unconstrained |base learning rate|link:https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/igbh/train_rgnn_multi_gpu.py#L296[reference code] |v5.1
  |bert |lamb |global_batch_size |unconstrained |The global batch size for training. |--train_batch_size |v5.0
  |bert |lamb |opt_base_learning_rate |unconstrained |The base learning rate. |--learning_rate |v5.0
  |bert |lamb |opt_epsilon |unconstrained |adam epsilon |link:https://github.com/mlperf/training/blob/fb058e3849c25f6c718434e60906ea3b0cb0f67d/retired_benchmarks/bert/optimization.py#L75[reference code] |v5.0
@@ -985,15 +985,15 @@ The following table lists the tunable hyperparameters that were allowed for depr
  |rnnt |lamb |data_spec_augment_time_max              |0.03          |Maximum number of masked time steps as a fraction of all steps |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/retired_benchmarks/rnnt/pytorch/train.py#L268-L269[reference code] |v3.1
  |rnnt |lamb |model_eval_ema_factor                   |unconstrained |Smoothing factor for Exponential Moving Average |See link:https://github.com/mlcommons/training/blob/651e7c47bcbd7f4708d633afa567205a826438f1/retired_benchmarks/rnnt/pytorch/train.py#L395[reference code] |v3.1
  |rnnt |lamb |model_weights_initialization_scale      |unconstrained |After random initialization of weight and bias tensors, all are scaled with this factorAfter random initialization of weight and bias tensors, all are scaled with this factor |See link:https://github.com/mwawrzos/training/blob/2126999a1ffff542064bb3208650a1e673920dcf/retired_benchmarks/rnnt/pytorch/train.py#L342[reference code] |v3.1
- |dlrmv2 |adagrad |global_batch_size |unconstrained |global batch size |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L705-L708[reference code] |v6.0
- |dlrmv2 |adagrad |opt_base_learning_rate |unconstrained |learning rate (for both dense layers and embeddings) |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code] |v6.0
- |dlrmv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |learning rate decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L73[reference code] |v6.0
- |dlrmv2 |adagrad |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L76[reference code] |v6.0
- |dlrmv2 |adagrad |opt_adagrad_initial_accumulator_value |0.0 |adagrad initial accumulator value |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L74[reference code] |v6.0
- |dlrmv2 |adagrad |opt_adagrad_epsilon |1e-8 |adagrad epsilon |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L75[reference code] |v6.0
- |dlrmv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code] |v6.0
- |dlrmv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code] |v6.0
- |dlrmv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |global_batch_size |unconstrained |global batch size |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L705-L708[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_base_learning_rate |unconstrained |learning rate (for both dense layers and embeddings) |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L230-L235[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_adagrad_learning_rate_decay |0.0 |learning rate decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L73[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_weight_decay |0.0 |weight decay |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L76[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_adagrad_initial_accumulator_value |0.0 |adagrad initial accumulator value |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L74[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_adagrad_epsilon |1e-8 |adagrad epsilon |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L75[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_learning_rate_warmup_steps |0 (disabled) |number to steps from 0 to sgd_opt_base_learning_rate with a linear warmup |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L303-L307[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_learning_rate_decay_start_step |0 (disabled) |step at which poly decay is started |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L308-L312[reference code] |v6.0
+ |dlrm_dcnv2 |adagrad |opt_learning_rate_decay_steps |0 (disabled) |the step at which the end learning rate is reached |link:https://github.com/mlcommons/training/blob/a9056b8e5840d811484ad91f9fe23ed09a3f97cf/retired_benchmarks/dlrm_dcnv2/torchrec_dlrm/dlrm_main.py#L313-L317[reference code] |v6.0
  |llama31_405b |adamw |global_batch_size |unconstrained |batch size in sequences |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/retired_benchmarks/llama31_405b/nemo/pretrain_llama31.py#L301[reference code] |v6.0
  |llama31_405b |adamw |opt_adamw_beta_1 |0.9 |AdamW beta1 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/retired_benchmarks/llama31_405b/nemo/pretrain_llama31.py#L155[reference code] |v6.0
  |llama31_405b |adamw |opt_adamw_beta_2 |0.95 |AdamW beta2 |link:https://github.com/mlcommons/training/blob/a70765e9885ec1cba8e69a842ecfbdea750336c4/retired_benchmarks/llama31_405b/nemo/pretrain_llama31.py#L155[reference code] |v6.0
@@ -1051,36 +1051,36 @@ If a new learning rate is needed for any GBS point, request new RCPs from the ta
 
 === Deprecated benchmarks quality measure
 |===
-|Area |Problem |Model|Evaluation frequency |Latest version available
+|Model |Evaluation frequency |Latest version available
 
-|Language        |large Language Model |GPT3| Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS |v4.1
-|                |NLP |BERT| eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0 |v5.0
-|                |LLM pretraining |Llama31_405B| Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v6.0
-|Vision |Image classification |Resnet-50 v1.5|Every 4 epochs with offset 0 or 1 or 2 or 3 |v4.0
-|       |Image segmentation (medical) |U-Net3D | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`. |v4.0
-|       |Text to image |Stable Diffusion v2.0 | See <<benchmark_specific_rules>> |v5.0
-|Vision |Object detection (heavy weight) |Mask R-CNN|Every 1 epoch |v3.1
-|       |Object detection (light weight) |SSD (RetinaNet) |Every 1 epoch |v5.1
-|Language|Speech recognition |RNN-T|Every 1 epoch |v3.1
-|Graphs |Node classification |RGAT |Evaluate 20 times per epoch |v5.1
-|Commerce|Recommendation |DLRMv2 (DCNv2)|Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL)) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v6.0
+| gpt3 | Every 24576 sequences. CEIL(24576 / global_batch_size) if 24576 is not divisible by GBS |v4.1
+| bert | eval_interval_samples=FLOOR(0.05*(230.23*GBS+3000000), 25000), skipping 0 |v5.0
+| llama31_405b | Every 18432 sequences; `CEIL(18432 / global_batch_size) * global_batch_size` steps if 18432 is not divisible by GBS. Skipping first `FLOOR(0.0026*global_batch_size+12)` evaluations |v6.0
+| resnet |Every 4 epochs with offset 0 or 1 or 2 or 3 |v4.0
+| unet3d | Starting at `CEILING(1000*168/samples_per_epoch)` epochs, then every `CEILING(20*168/samples_per_epoch)` epochs. Where `samples_per_epoch` is the number of samples processed in a given epoch assuming that in the case of uneven batches the last batch is padded, e.g. `CEILING(168/global_batch_size) * global_batch_size`. |v4.0
+| stable_diffusion | See <<benchmark_specific_rules>> |v5.0
+| maskrcnn |Every 1 epoch |v3.1
+| retinanet |Every 1 epoch |v5.1
+| rnnt |Every 1 epoch |v3.1
+| rgat |Evaluate 20 times per epoch |v5.1
+| dlrm_dcnv2 |Every FLOOR(TOTAL_TRAINING_SAMPLES / (GLOBAL_BATCH_SIZE * NUM_EVAL)) samples, where TOTAL_TRAINING_SAMPLES = 4195197692 and NUM_EVAL = 20 |v6.0
 |===
 
 === Deprecated benchmarks results
 
 |===
-|Area|Problem |Minimum Number of Runs |Latest version available
+|Model |Minimum Number of Runs |Latest version available
 
-|Language |NLP |10 |v5.0
-| |LLM pretraining |3 |v6.0
-|Vision |Image classification |5 |v4.0
-| |Image segmentation (medical) | 40 |v4.0
-| |Stable Diffusion v2.0 | 10 |v5.0
-| |Object detection (heavy weight) |5 |v3.1
-| |Object detection (light weight) |5 |v5.1
-|Language |Speech recognition |10 |v3.1
-|Graphs |Node classification |10 |v5.1
-|Commerce |Recommendation |10 |v6.0
+| bert |10 |v5.0
+| llama31_405b |3 |v6.0
+| resnet |5 |v4.0
+| unet3d | 40 |v4.0
+| stable_diffusion | 10 |v5.0
+| maskrcnn |5 |v3.1
+| retinanet |5 |v5.1
+| rnnt |10 |v3.1
+| rgat |10 |v5.1
+| dlrm_dcnv2 |10 |v6.0
 |===
 
 
@@ -1091,17 +1091,17 @@ To extract submission convergence points, logs should report epochs as follows.
 |===
 | Benchmark | Epoch reporting | Latest version available
 
-| BERT | Training sample (integer) | v5.0
-| Stable-Diffusion | Training sample (integer) | v5.0
-| GPT3 | Training token starting from 0 (integer) | v4.1
-| Llama31_405B | Training samples starting from 0 (integer) | v6.0
-| RN50 | Epoch | v4.0
-| UNET3D | Epoch | v4.0
-| Mask-RCNN | Epoch | v3.1
-| RNN-T | Epoch | v3.1
-| SSD (RetinaNet) | Epoch | v5.1
-| RGAT | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
-| DLRMv2 (DCNv2) | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v6.0
+| bert | Training sample (integer) | v5.0
+| stable_diffusion | Training sample (integer) | v5.0
+| gpt3 | Training token starting from 0 (integer) | v4.1
+| llama31_405b | Training samples starting from 0 (integer) | v6.0
+| resnet | Epoch | v4.0
+| unet3d | Epoch | v4.0
+| maskrcnn | Epoch | v3.1
+| rnnt | Epoch | v3.1
+| retinanet | Epoch | v5.1
+| rgat | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v5.1
+| dlrm_dcnv2 | Training iteration as the fraction of a total number of iterations for one epoch (0.05, 0.1, 0.15, ..., 1.0) | v6.0
 |===
 === Benchmark specific rules for deprecated benchmarks
 * Image Classification
